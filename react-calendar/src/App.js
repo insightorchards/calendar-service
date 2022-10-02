@@ -7,7 +7,12 @@ function App() {
   const [value, onChange] = useState(new Date());
   return (
     <div className="container">
-      <Calendar className="calendar" onChange={onChange} value={value} />
+      <Calendar
+        defaultView="month"
+        className="calendar"
+        onChange={onChange}
+        value={value}
+      />
     </div>
   );
 }
