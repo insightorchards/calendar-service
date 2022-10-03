@@ -1,23 +1,24 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import FullCalendar from "@fullcalendar/react"; // must go before plugins
+import dayGridPlugin from "@fullcalendar/daygrid"; // a plugin!
+import timeGridPlugin from "@fullcalendar/timegrid";
+
+// import "@fullcalendar/core/main.css";
+import "@fullcalendar/daygrid/main.css";
+import "@fullcalendar/timegrid/main.css";
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <FullCalendar
+        plugins={[dayGridPlugin, timeGridPlugin]}
+        header={{
+          left: "prev,next",
+          center: "title",
+          right: "dayGridMonth,timeGridWeek,timeGridDay",
+        }}
+        initialView="dayGridMonth"
+      />
     </div>
   );
 }
