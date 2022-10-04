@@ -21,16 +21,17 @@ function App() {
     }
   ]);
 
+  const [eventName, setEventName] = useState("")
+
   const handleSelect = (info) => {
     const { start, end } = info;
-    const eventNamePrompt = prompt("Enter, event name");
-    if (eventNamePrompt) {
+    if (eventName) {
       setEvents([
         ...events,
         {
           start,
           end,
-          title: eventNamePrompt,
+          title: eventName,
           id: "uuid()",
         },
       ]);
@@ -38,6 +39,8 @@ function App() {
   };
   return (
     <div className="App">
+      <p>Enter your event:</p>
+      <input onChange = {e => setEventName(e.target.value) }/>
       <FullCalendar
       editable
         headerToolbar={{
