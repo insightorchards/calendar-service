@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import FullCalendar from "@fullcalendar/react"; // must go before plugins
 import dayGridPlugin from "@fullcalendar/daygrid"; // a plugin!
 import interactionPlugin from "@fullcalendar/interaction";
+import { v4 as uuid } from "uuid";
 
 function App() {
   const EventItem = ({ info }) => {
@@ -19,13 +20,15 @@ function App() {
 
   const handleSubmit = () => {
     if (eventName) {
+      console.log("events", events);
+
       setEvents([
         ...events,
         {
           start: selectedInfo.start,
           end: selectedInfo.end,
           title: eventName,
-          id: "uuid()",
+          id: uuid(),
         },
       ]);
 
