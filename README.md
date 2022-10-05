@@ -10,4 +10,7 @@
 
 ## full-calendar
 
+- It shows day/month/week views
+- It also creates events
+
 ## big-calendar
