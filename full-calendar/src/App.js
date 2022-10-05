@@ -12,37 +12,42 @@ function App() {
       </div>
     );
   };
-  const [events, setEvents] = useState([
-    {
-      start: new Date(),
-      end: new Date(),
-      title: "Unicorn",
-      id: "uuid()",
-    }
-  ]);
+  const [events, setEvents] = useState([]);
+  //   [
+  //   {
+  //     start: new Date(),
+  //     end: new Date(),
+  //     title: "Unicorn",
+  //     id: "uuid()",
+  //   },
+  // ]
 
-  const [eventName, setEventName] = useState("")
+  const [eventName, setEventName] = useState("");
+  const [selectedInfo, setSelectedInfo] = useState("");
 
   const handleSelect = (info) => {
+    console.log("info", info);
     const { start, end } = info;
     if (eventName) {
       setEvents([
         ...events,
         {
-          start,
-          end,
+          start: selectedInfo.start,
+          end: selectedInfo.end,
           title: eventName,
           id: "uuid()",
         },
       ]);
     }
   };
+
   return (
     <div className="App">
       <p>Enter your event:</p>
-      <input onChange = {e => setEventName(e.target.value) }/>
+      <input onChange={(e) => setEventName(e.target.value)} />
+      <button onClick={handleSelect}>Submit</button>
       <FullCalendar
-      editable
+        editable
         headerToolbar={{
           start: "today prev next",
           center: "title",
@@ -51,7 +56,7 @@ function App() {
         events={events}
         eventContent={(info) => <EventItem info={info} />}
         selectable
-        select={handleSelect}
+        select={setSelectedInfo}
         plugins={[dayGridPlugin, interactionPlugin]}
         views={["dayGridMonth", "dayGridWeek", "dayGridDay"]}
       />
