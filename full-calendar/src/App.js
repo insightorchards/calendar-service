@@ -1,23 +1,61 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import FullCalendar from "@fullcalendar/react"; // must go before plugins
+import dayGridPlugin from "@fullcalendar/daygrid"; // a plugin!
+import interactionPlugin from "@fullcalendar/interaction";
+import { v4 as uuid } from "uuid";
 
 function App() {
+  const EventItem = ({ info }) => {
+    const { event } = info;
+    return (
+      <div>
+        <p>{event.title}</p>
+      </div>
+    );
+  };
+  const [events, setEvents] = useState([]);
+
+  const [eventName, setEventName] = useState("");
+  const [selectedInfo, setSelectedInfo] = useState({});
+
+  const handleSubmit = () => {
+    if (eventName) {
+      console.log("events", events);
+
+      setEvents([
+        ...events,
+        {
+          start: selectedInfo.start,
+          end: selectedInfo.end,
+          title: eventName,
+          id: uuid(),
+        },
+      ]);
+
+      setEventName("");
+      setSelectedInfo({});
+    }
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <p>Enter your event:</p>
+      <input onChange={(e) => setEventName(e.target.value)} value={eventName} />
+      <button onClick={handleSubmit}>Submit</button>
+      <FullCalendar
+        editable
+        headerToolbar={{
+          start: "today prev next",
+          center: "title",
+          end: "dayGridMonth dayGridWeek dayGridDay",
+        }}
+        events={events}
+        eventContent={(info) => <EventItem info={info} />}
+        selectable
+        select={setSelectedInfo}
+        plugins={[dayGridPlugin, interactionPlugin]}
+        views={["dayGridMonth", "dayGridWeek", "dayGridDay"]}
+      />
     </div>
   );
 }
