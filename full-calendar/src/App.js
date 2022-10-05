@@ -13,21 +13,11 @@ function App() {
     );
   };
   const [events, setEvents] = useState([]);
-  //   [
-  //   {
-  //     start: new Date(),
-  //     end: new Date(),
-  //     title: "Unicorn",
-  //     id: "uuid()",
-  //   },
-  // ]
 
   const [eventName, setEventName] = useState("");
-  const [selectedInfo, setSelectedInfo] = useState("");
+  const [selectedInfo, setSelectedInfo] = useState({});
 
-  const handleSelect = (info) => {
-    console.log("info", info);
-    const { start, end } = info;
+  const handleSubmit = () => {
     if (eventName) {
       setEvents([
         ...events,
@@ -38,14 +28,17 @@ function App() {
           id: "uuid()",
         },
       ]);
+
+      setEventName("");
+      setSelectedInfo({});
     }
   };
 
   return (
     <div className="App">
       <p>Enter your event:</p>
-      <input onChange={(e) => setEventName(e.target.value)} />
-      <button onClick={handleSelect}>Submit</button>
+      <input onChange={(e) => setEventName(e.target.value)} value={eventName} />
+      <button onClick={handleSubmit}>Submit</button>
       <FullCalendar
         editable
         headerToolbar={{
