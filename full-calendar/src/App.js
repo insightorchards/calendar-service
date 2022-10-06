@@ -16,24 +16,30 @@ function App() {
   const [events, setEvents] = useState([]);
 
   const [eventName, setEventName] = useState("");
-  const [selectedInfo, setSelectedInfo] = useState({});
+  const [eventStartTime, setEventStartTime] = useState("");
+  const [eventEndTime, setEventEndTime] = useState("");
+  const [selectedDateInfo, setSelectedDateInfo] = useState({});
 
   const handleSubmit = () => {
-    if (eventName) {
-      console.log("events", events);
+    if (eventName && eventStartTime && eventEndTime && selectedDateInfo) {
+      const [startHour, startMin] = eventStartTime.split(":");
+      const [endHour, endMin] = eventEndTime.split(":");
+
+      // FullCalendar defaults to midnight the next day as end date
+      selectedDateInfo.end.setDate(selectedDateInfo.end.getDate() - 1);
 
       setEvents([
         ...events,
         {
-          start: selectedInfo.start,
-          end: selectedInfo.end,
+          start: selectedDateInfo.start.setHours(startHour, startMin),
+          end: selectedDateInfo.end.setHours(endHour, endMin),
           title: eventName,
           id: uuid(),
         },
       ]);
 
       setEventName("");
-      setSelectedInfo({});
+      setSelectedDateInfo({});
     }
   };
 
@@ -41,6 +47,16 @@ function App() {
     <div className="App">
       <p>Enter your event:</p>
       <input onChange={(e) => setEventName(e.target.value)} value={eventName} />
+      <input
+        type="time"
+        onChange={(e) => setEventStartTime(e.target.value)}
+        value={eventStartTime}
+      />
+      <input
+        type="time"
+        onChange={(e) => setEventEndTime(e.target.value)}
+        value={eventEndTime}
+      />
       <button onClick={handleSubmit}>Submit</button>
       <FullCalendar
         editable
@@ -51,7 +67,7 @@ function App() {
         }}
         events={events}
         selectable
-        select={setSelectedInfo}
+        select={setSelectedDateInfo}
         plugins={[dayGridPlugin, interactionPlugin]}
         views={["dayGridMonth", "dayGridWeek", "dayGridDay"]}
       />
