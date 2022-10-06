@@ -50,7 +50,6 @@ function App() {
           end: "dayGridMonth dayGridWeek dayGridDay",
         }}
         events={events}
-        eventContent={(info) => <EventItem info={info} />}
         selectable
         select={setSelectedInfo}
         plugins={[dayGridPlugin, interactionPlugin]}
