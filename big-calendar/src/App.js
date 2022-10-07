@@ -20,7 +20,6 @@ const events = [
 function App() {
   return (
     <div className="App">
-      I'm a big calendar
       <div>
         <Calendar
           localizer={localizer}
