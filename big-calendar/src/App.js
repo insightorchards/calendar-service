@@ -40,6 +40,7 @@ function App() {
   const [endDate, setEndDate] = useState(formatDate(new Date()));
   const [startTime, setStartTime] = useState(defaultStartTime);
   const [endTime, setEndTime] = useState(defaultEndTime);
+  const [title, setTitle] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -58,7 +59,13 @@ function App() {
         />
       </div>
       <label>Title</label>
-      <input type="text" />
+      <input
+        type="text"
+        onChange={(e) => {
+          setTitle(e.target.value);
+        }}
+        value={title}
+      />
 
       <label>Start Date</label>
       <input
