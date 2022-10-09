@@ -5,6 +5,15 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useState } from "react";
 
 const localizer = momentLocalizer(moment);
+const currentHour = new Date().getHours();
+const nextHour = currentHour + 1;
+const currentMinutes = new Date().getMinutes();
+const formatToHourAndMinutes = (time) => time + ":00:00.000";
+const defaultStartTime =
+  currentMinutes > 0
+    ? formatToHourAndMinutes(nextHour)
+    : formatToHourAndMinutes(currentHour);
+const defaultEndTime = formatToHourAndMinutes(nextHour + 1);
 
 const events = [
   {
@@ -29,8 +38,8 @@ function formatDate(date) {
 function App() {
   const [startDate, setStartDate] = useState(formatDate(new Date())); // may set this to a Date object later.
   const [endDate, setEndDate] = useState(formatDate(new Date()));
-  const [startTime, setStartTime] = useState("");
-  const [endTime, setEndTime] = useState("");
+  const [startTime, setStartTime] = useState(defaultStartTime);
+  const [endTime, setEndTime] = useState(defaultEndTime);
 
   return (
     <div className="App">
@@ -50,6 +59,7 @@ function App() {
           setStartDate(e.target.value);
           setEndDate(e.target.value);
         }}
+        value={startDate}
       />
       <label>Start Time</label>
       <input
@@ -57,15 +67,23 @@ function App() {
         onChange={(e) => {
           setStartTime(e.target.value);
         }}
+        value={startTime}
       />
       <label>End Date</label>
-      <input type="date" />
+      <input
+        type="date"
+        onChange={(e) => {
+          setEndDate(e.target.value);
+        }}
+        value={endDate}
+      />
       <label>End Time</label>
       <input
         type="time"
         onChange={(e) => {
           setEndTime(e.target.value);
         }}
+        value={endTime}
       />
     </div>
   );
