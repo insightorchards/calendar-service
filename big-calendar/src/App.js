@@ -41,6 +41,11 @@ function App() {
   const [startTime, setStartTime] = useState(defaultStartTime);
   const [endTime, setEndTime] = useState(defaultEndTime);
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log("You clicked submit.");
+  };
+
   return (
     <div className="App">
       <div>
@@ -52,6 +57,9 @@ function App() {
           style={{ height: 500 }}
         />
       </div>
+      <label>Title</label>
+      <input type="text" />
+
       <label>Start Date</label>
       <input
         type="date"
@@ -85,6 +93,7 @@ function App() {
         }}
         value={endTime}
       />
+      <button onClick={handleSubmit}>Create Event</button>
     </div>
   );
 }
