@@ -15,14 +15,6 @@ const defaultStartTime =
     : formatToHourAndMinutes(currentHour);
 const defaultEndTime = formatToHourAndMinutes(nextHour + 1);
 
-const events = [
-  {
-    title: "Beetha's Birthday",
-    start: new Date(),
-    end: new Date(),
-  },
-];
-
 function padTo2Digits(num) {
   return num.toString().padStart(2, "0");
 }
@@ -41,10 +33,26 @@ function App() {
   const [startTime, setStartTime] = useState(defaultStartTime);
   const [endTime, setEndTime] = useState(defaultEndTime);
   const [title, setTitle] = useState("");
+  const [events, setEvents] = useState([]);
+
+  // issue: With big-calenders UI the event that gets added will show up on the start date up until the end date but not on the end date it's self.
+  // solution: In order to resolve this issue, end date is modified to be a day past the specified end date.
+  // result: As a result the UI now shows the event ending on the end date specified rather than the day before.
+  const modifyEndDateToIncludeEndDateSelectedInPicker = () => {
+    let result;
+    const arrayOfEndDateValues = endDate.split("-");
+    arrayOfEndDateValues.splice(2, 1, parseInt(endDate.split("-")[2]) + 1)
+    result = arrayOfEndDateValues.join("-")
+    return result
+  }
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("You clicked submit.");
+    setEvents([{
+      title: title,
+      start: startDate,
+      end: modifyEndDateToIncludeEndDateSelectedInPicker(),
+    }])
   };
 
   return (
@@ -72,7 +80,6 @@ function App() {
         type="date"
         onChange={(e) => {
           setStartDate(e.target.value);
-          setEndDate(e.target.value);
         }}
         value={startDate}
       />
