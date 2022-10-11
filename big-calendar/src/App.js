@@ -27,6 +27,17 @@ function formatDate(date) {
   ].join("-");
 }
 
+const formatAMPM = (timeString) => {
+  const date = timeString.substring(0, 5);
+  let hours = date.substring(0, 2);
+  let minutes = date.substring(3, 5);
+  let ampm = hours >= 12 ? "pm" : "am";
+  hours = hours % 12;
+  hours = hours ? hours : 12;
+  let strTime = hours + ":" + minutes + " " + ampm;
+  return strTime;
+};
+
 function App() {
   const [startDate, setStartDate] = useState(formatDate(new Date())); // may set this to a Date object later.
   const [endDate, setEndDate] = useState(formatDate(new Date()));
@@ -41,18 +52,20 @@ function App() {
   const modifyEndDateToIncludeEndDateSelectedInPicker = () => {
     let result;
     const arrayOfEndDateValues = endDate.split("-");
-    arrayOfEndDateValues.splice(2, 1, parseInt(endDate.split("-")[2]) + 1)
-    result = arrayOfEndDateValues.join("-")
-    return result
-  }
+    arrayOfEndDateValues.splice(2, 1, parseInt(endDate.split("-")[2]) + 1);
+    result = arrayOfEndDateValues.join("-");
+    return result;
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setEvents([{
-      title: title,
-      start: startDate,
-      end: modifyEndDateToIncludeEndDateSelectedInPicker(),
-    }])
+    setEvents([
+      {
+        title: `${formatAMPM(startTime)} ${title}`,
+        start: startDate,
+        end: modifyEndDateToIncludeEndDateSelectedInPicker(),
+      },
+    ]);
   };
 
   return (
