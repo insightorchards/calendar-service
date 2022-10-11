@@ -46,24 +46,13 @@ function App() {
   const [title, setTitle] = useState("");
   const [events, setEvents] = useState([]);
 
-  // issue: With big-calenders UI the event that gets added will show up on the start date up until the end date but not on the end date it's self.
-  // solution: In order to resolve this issue, end date is modified to be a day past the specified end date.
-  // result: As a result the UI now shows the event ending on the end date specified rather than the day before.
-  const modifyEndDateToIncludeEndDateSelectedInPicker = () => {
-    let result;
-    const arrayOfEndDateValues = endDate.split("-");
-    arrayOfEndDateValues.splice(2, 1, parseInt(endDate.split("-")[2]) + 1);
-    result = arrayOfEndDateValues.join("-");
-    return result;
-  };
-
   const handleSubmit = (e) => {
     e.preventDefault();
     setEvents([
       {
         title: `${formatAMPM(startTime)} ${title}`,
-        start: startDate,
-        end: modifyEndDateToIncludeEndDateSelectedInPicker(),
+        start: new Date(`${startDate}T${startTime}`),
+        end: new Date(`${endDate}T${endTime}`),
       },
     ]);
   };
