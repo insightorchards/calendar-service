@@ -5,37 +5,18 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useState } from "react";
 
 const localizer = momentLocalizer(moment);
-const currentHour = new Date().getHours();
-const nextHour = currentHour + 1;
-const currentMinutes = new Date().getMinutes();
-const formatToHourAndMinutes = (time) => time + ":00:00.000";
-const defaultStartTime1 =
-  currentMinutes > 0
-    ? formatToHourAndMinutes(nextHour)
-    : formatToHourAndMinutes(currentHour);
-const defaultEndTime1 = formatToHourAndMinutes(nextHour + 1);
-console.log({ defaultStartTime1, defaultEndTime1 });
-
 const hours = new Date().getHours();
 const minutes = new Date().getMinutes();
-const makeMinutesDoubleDigits = (min) =>
-  String(min).length === 1 ? "0" + min : min;
-const defaultStartTime = `${hours}:${makeMinutesDoubleDigits(minutes)}`;
-
-const now = new Date();
-// const defaultStartTime = now.toISOString().substring(11, 16); // "10-05-2022T10:10:100.000Z" -> "10:10:100.000"
-// const defaultStartTime = now.getTime().substring(11, 16); // "10-05-2022T10:10:100.000Z" -> "10:10:100.000"
-console.log("now", now);
-
-console.log(now.toISOString());
+const padNumberWith0 = (num) =>
+  num.toString().padStart(2, '0')
+const defaultStartTime = `${padNumberWith0(hours)}:${padNumberWith0(minutes)}`;
 
 Date.prototype.addHours = function (h) {
   this.setTime(this.getTime() + h * 60 * 60 * 1000);
   return this;
 };
 
-const defaultEndTime = new Date().addHours(1).toISOString().substring(11, 16);
-console.log({ defaultStartTime, defaultEndTime });
+const defaultEndTime = `${padNumberWith0(hours + 1)}:${padNumberWith0(minutes)}`;
 
 function padTo2Digits(num) {
   return num.toString().padStart(2, "0");
@@ -61,7 +42,7 @@ const formatAMPM = (timeString) => {
 };
 
 function App() {
-  const [startDate, setStartDate] = useState(formatDate(new Date())); // may set this to a Date object later.
+  const [startDate, setStartDate] = useState(formatDate(new Date()));
   const [endDate, setEndDate] = useState(formatDate(new Date()));
   const [startTime, setStartTime] = useState(defaultStartTime);
   const [endTime, setEndTime] = useState(defaultEndTime);
