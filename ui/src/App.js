@@ -16,15 +16,25 @@ const defaultStartTime1 =
 const defaultEndTime1 = formatToHourAndMinutes(nextHour + 1);
 console.log({ defaultStartTime1, defaultEndTime1 });
 
+const hours = new Date().getHours();
+const minutes = new Date().getMinutes();
+const makeMinutesDoubleDigits = (min) =>
+  String(min).length === 1 ? "0" + min : min;
+const defaultStartTime = `${hours}:${makeMinutesDoubleDigits(minutes)}`;
+
 const now = new Date();
-const defaultStartTime = now.toISOString().substring(11, 23); // "10-05-2022T10:10:100.000Z" -> "10:10:100.000"
+// const defaultStartTime = now.toISOString().substring(11, 16); // "10-05-2022T10:10:100.000Z" -> "10:10:100.000"
+// const defaultStartTime = now.getTime().substring(11, 16); // "10-05-2022T10:10:100.000Z" -> "10:10:100.000"
+console.log("now", now);
+
+console.log(now.toISOString());
 
 Date.prototype.addHours = function (h) {
   this.setTime(this.getTime() + h * 60 * 60 * 1000);
   return this;
 };
 
-const defaultEndTime = new Date().addHours(1).toISOString().substring(11, 23);
+const defaultEndTime = new Date().addHours(1).toISOString().substring(11, 16);
 console.log({ defaultStartTime, defaultEndTime });
 
 function padTo2Digits(num) {
