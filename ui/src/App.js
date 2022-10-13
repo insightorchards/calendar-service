@@ -9,11 +9,23 @@ const currentHour = new Date().getHours();
 const nextHour = currentHour + 1;
 const currentMinutes = new Date().getMinutes();
 const formatToHourAndMinutes = (time) => time + ":00:00.000";
-const defaultStartTime =
+const defaultStartTime1 =
   currentMinutes > 0
     ? formatToHourAndMinutes(nextHour)
     : formatToHourAndMinutes(currentHour);
-const defaultEndTime = formatToHourAndMinutes(nextHour + 1);
+const defaultEndTime1 = formatToHourAndMinutes(nextHour + 1);
+console.log({ defaultStartTime1, defaultEndTime1 });
+
+const now = new Date();
+const defaultStartTime = now.toISOString().substring(11, 23); // "10-05-2022T10:10:100.000Z" -> "10:10:100.000"
+
+Date.prototype.addHours = function (h) {
+  this.setTime(this.getTime() + h * 60 * 60 * 1000);
+  return this;
+};
+
+const defaultEndTime = new Date().addHours(1).toISOString().substring(11, 23);
+console.log({ defaultStartTime, defaultEndTime });
 
 function padTo2Digits(num) {
   return num.toString().padStart(2, "0");
