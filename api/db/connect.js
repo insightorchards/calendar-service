@@ -1,5 +1,6 @@
-import { MongoClient } from "mongodb";
-const connectionString = process.env.ATLAS_URI;
+const { MongoClient } = require("mongodb");
+
+const connectionString = "mongodb://127.0.0.1:27017";
 const client = new MongoClient(connectionString, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -7,18 +8,21 @@ const client = new MongoClient(connectionString, {
 
 let dbConnection;
 
-export function connectToServer(callback) {
+module.exports = {
+  connectToServer: function (callback) {
     client.connect(function (err, db) {
-        if (err || !db) {
-            return callback(err);
-        }
+      if (err || !db) {
+        return callback(err);
+      }
 
-        dbConnection = db.db("sample_airbnb");
-        console.log("Successfully connected to MongoDB.");
+      dbConnection = db.db("calendar-app");
+      console.log("Successfully connected to MongoDB.");
 
-        return callback();
+      return callback();
     });
-}
-export function getDb() {
+  },
+
+  getDb: function () {
     return dbConnection;
-}
+  },
+};
