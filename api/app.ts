@@ -5,10 +5,10 @@ import { connectToServer, getDb } from "./db/connect";
 const app = express();
 const port = 4000;
 
-let database;
+let db;
 connectToServer(async () => {
-  database = getDb();
-  const entries = await database
+  db = getDb();
+  const entries = await db
     .collection("calendarEntries")
     .find({})
     .limit(5)
@@ -21,4 +21,4 @@ app.listen(port, () => {
   console.log(`Calendar application is running on port ${port}.`);
 });
 
-app.get("/entries", getCalendarEntries);
+exports.default = { app, db };
