@@ -66,7 +66,6 @@ export const getCalendarEntries = async (req: Request, res: Response, next: Next
   const entries: CalendarEntry[] = await db
     .collection("calendarEntries")
     .find({})
-    .limit(5)
     .toArray();
   res.status(200).json(entries);
 };
