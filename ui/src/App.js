@@ -1,8 +1,8 @@
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
-import "./App.css";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useState } from "react";
+import s from "./App.module.css";
 
 const localizer = momentLocalizer(moment);
 const hours = new Date().getHours();
@@ -16,7 +16,7 @@ Date.prototype.addHours = function (h) {
 };
 
 const defaultEndTime = `${padNumberWith0(hours + 1)}:${padNumberWith0(
-  minutes,
+  minutes
 )}`;
 
 function padTo2Digits(num) {
@@ -49,16 +49,27 @@ function App() {
   const [endTime, setEndTime] = useState(defaultEndTime);
   const [title, setTitle] = useState("");
   const [events, setEvents] = useState([]);
+  const [error, setError] = useState(null);
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const startDateAndTime = new Date(`${startDate}T${startTime}`);
+    const endDateAndTime = new Date(`${endDate}T${endTime}`);
+
+    if (startDateAndTime > endDateAndTime) {
+      setError("Error: end cannot be before start.");
+      return;
+    }
+
     setEvents([
       {
         title: `${formatAMPM(startTime)} ${title}`,
-        start: new Date(`${startDate}T${startTime}`),
-        end: new Date(`${endDate}T${endTime}`),
+        start: startDateAndTime,
+        end: endDateAndTime,
       },
     ]);
+
+    setError(null);
   };
 
   return (
@@ -116,6 +127,7 @@ function App() {
         value={endTime}
       />
       <button onClick={handleSubmit}>Create Event</button>
+      {error && <p className={s.error}>{error}</p>}
     </div>
   );
 }
