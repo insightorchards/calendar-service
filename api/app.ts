@@ -1,6 +1,6 @@
 import express from "express";
 import { connectToServer, getDb } from "./db/connect";
-import { getCalendarEntries } from "./controllers/calendarEntry.controller";
+import { getCalendarEntries, seedDatabaseWithEntry } from "./controllers/calendarEntry.controller";
 
 const app = express();
 const port = 4000;
@@ -15,5 +15,6 @@ app.listen(port, () => {
 });
 
 app.get("/entries", getCalendarEntries);
+app.post("/seedDatabase", seedDatabaseWithEntry);
 
 export { db }
