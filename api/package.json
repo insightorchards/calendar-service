@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Calendar API",
   "main": "index.js",
+  "engines": {
+    "node": "16.13.0"
+  },
   "scripts": {
     "test": "npm test",
     "serve": "nodemon app.ts"
