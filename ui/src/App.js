@@ -5,44 +5,29 @@ import { useState } from "react";
 import s from "./App.module.css";
 
 const localizer = momentLocalizer(moment);
-const hours = new Date().getHours();
-const minutes = new Date().getMinutes();
+const currentHour = new Date().getHours();
+const currentMinute = new Date().getMinutes();
 const padNumberWith0 = (num) => num.toString().padStart(2, "0");
-const defaultStartTime = `${padNumberWith0(hours)}:${padNumberWith0(minutes)}`;
+const defaultStartTime = `${padNumberWith0(currentHour)}:${padNumberWith0(currentMinute)}`;
 
-Date.prototype.addHours = function (h) {
+Date.prototype.addHours = (h) => {
   this.setTime(this.getTime() + h * 60 * 60 * 1000);
   return this;
 };
 
-const defaultEndTime = `${padNumberWith0(hours + 1)}:${padNumberWith0(
-  minutes
+const defaultEndTime = `${padNumberWith0(currentHour + 1)}:${padNumberWith0(
+  currentMinute
 )}`;
 
-function padTo2Digits(num) {
-  return num.toString().padStart(2, "0");
-}
-
-function formatDate(date) {
+const formatDate = (date) => {
   return [
     date.getFullYear(),
-    padTo2Digits(date.getMonth() + 1),
-    padTo2Digits(date.getDate()),
+    padNumberWith0(date.getMonth() + 1),
+    padNumberWith0(date.getDate()),
   ].join("-");
 }
 
-const formatAMPM = (timeString) => {
-  const date = timeString.substring(0, 5);
-  let hours = date.substring(0, 2);
-  let minutes = date.substring(3, 5);
-  let ampm = hours >= 12 ? "pm" : "am";
-  hours = hours % 12;
-  hours = hours ? hours : 12;
-  let strTime = hours + ":" + minutes + " " + ampm;
-  return strTime;
-};
-
-function App() {
+const App = () => {
   const [startDate, setStartDate] = useState(formatDate(new Date()));
   const [endDate, setEndDate] = useState(formatDate(new Date()));
   const [startTime, setStartTime] = useState(defaultStartTime);
@@ -63,7 +48,7 @@ function App() {
 
     setEvents([
       {
-        title: `${formatAMPM(startTime)} ${title}`,
+        title: title,
         start: startDateAndTime,
         end: endDateAndTime,
       },
