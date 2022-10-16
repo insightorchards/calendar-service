@@ -7,8 +7,7 @@ import { useState } from "react";
 const localizer = momentLocalizer(moment);
 const hours = new Date().getHours();
 const minutes = new Date().getMinutes();
-const padNumberWith0 = (num) =>
-  num.toString().padStart(2, '0')
+const padNumberWith0 = (num) => num.toString().padStart(2, "0");
 const defaultStartTime = `${padNumberWith0(hours)}:${padNumberWith0(minutes)}`;
 
 Date.prototype.addHours = function (h) {
@@ -16,7 +15,9 @@ Date.prototype.addHours = function (h) {
   return this;
 };
 
-const defaultEndTime = `${padNumberWith0(hours + 1)}:${padNumberWith0(minutes)}`;
+const defaultEndTime = `${padNumberWith0(hours + 1)}:${padNumberWith0(
+  minutes,
+)}`;
 
 function padTo2Digits(num) {
   return num.toString().padStart(2, "0");
@@ -82,6 +83,7 @@ function App() {
 
       <label>Start Date</label>
       <input
+        min={formatDate(new Date())}
         type="date"
         onChange={(e) => {
           setStartDate(e.target.value);
@@ -98,6 +100,7 @@ function App() {
       />
       <label>End Date</label>
       <input
+        min={startDate}
         type="date"
         onChange={(e) => {
           setEndDate(e.target.value);
