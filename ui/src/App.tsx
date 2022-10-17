@@ -1,10 +1,10 @@
 import React, { MouseEvent } from "react";
-import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
-import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useState } from "react";
-import s from "./App.module.css";
+import { Calendar, momentLocalizer } from "react-big-calendar";
+import "react-big-calendar/lib/css/react-big-calendar.css";
 import { CalendarEvent } from "./configs/CalendarEvent";
+import s from "./App.module.css";
 
 const currentHour = new Date().getHours();
 const currentMinute = new Date().getMinutes();
@@ -31,7 +31,7 @@ const App = () => {
   const [endTime, setEndTime] = useState(defaultEndTime);
   const [title, setTitle] = useState("");
   const [error, setError] = useState<String | null>(null);
-  const [events, setEvents] = useState<CalendarEvent[]>([]); // put type here in itialized
+  const [events, setEvents] = useState<CalendarEvent[]>([]);
 
   const handleSubmit = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
