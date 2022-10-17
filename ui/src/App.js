@@ -10,11 +10,6 @@ const currentMinute = new Date().getMinutes();
 const padNumberWith0 = (num) => num.toString().padStart(2, "0");
 const defaultStartTime = `${padNumberWith0(currentHour)}:${padNumberWith0(currentMinute)}`;
 
-Date.prototype.addHours = (h) => {
-  this.setTime(this.getTime() + h * 60 * 60 * 1000);
-  return this;
-};
-
 const defaultEndTime = `${padNumberWith0(currentHour + 1)}:${padNumberWith0(
   currentMinute
 )}`;

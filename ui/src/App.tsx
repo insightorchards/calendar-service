@@ -6,46 +6,25 @@ import { useState } from "react";
 import s from "./App.module.css";
 import { CalendarEvent } from "./configs/CalendarEvent";
 
-const hours = new Date().getHours();
-const minutes = new Date().getMinutes();
+const currentHour = new Date().getHours();
+const currentMinute = new Date().getMinutes();
 const padNumberWith0 = (num) => num.toString().padStart(2, "0");
-const defaultStartTime = `${padNumberWith0(hours)}:${padNumberWith0(minutes)}`;
-
-// Date.prototype.addHours = function (h) {
-//   this.setTime(this.getTime() + h * 60 * 60 * 1000);
-//   return this;
-// }; // looks like we may not be using the .addHours() function anywhere currently in this file. Not sure if it is outdated or needs to be added.
-
-const defaultEndTime = `${padNumberWith0(hours + 1)}:${padNumberWith0(
-  minutes
+const defaultStartTime = `${padNumberWith0(currentHour)}:${padNumberWith0(currentMinute)}`;
+const defaultEndTime = `${padNumberWith0(currentHour + 1)}:${padNumberWith0(
+  currentMinute
 )}`;
 
 const localizer = momentLocalizer(moment);
 
-function padTo2Digits(num: Number) {
-  return num.toString().padStart(2, "0");
-}
-
-function formatDate(date: Date) {
+const formatDate = (date: Date) => {
   return [
     date.getFullYear(),
-    padTo2Digits(date.getMonth() + 1),
-    padTo2Digits(date.getDate()),
+    padNumberWith0(date.getMonth() + 1),
+    padNumberWith0(date.getDate()),
   ].join("-");
 }
 
-const formatAMPM = (timeString: String) => {
-  const date = timeString.substring(0, 5);
-  let hours = parseInt(date.substring(0, 2));
-  let minutes = date.substring(3, 5);
-  let ampm = hours >= 12 ? "pm" : "am";
-  hours = hours % 12;
-  hours = hours ? hours : 12;
-  let strTime = hours + ":" + minutes + " " + ampm;
-  return strTime;
-};
-
-function App() {
+const App = () => {
   const [startDate, setStartDate] = useState(formatDate(new Date()));
   const [endDate, setEndDate] = useState(formatDate(new Date()));
   const [startTime, setStartTime] = useState(defaultStartTime);
@@ -66,7 +45,7 @@ function App() {
 
     setEvents([
       {
-        title: `${formatAMPM(startTime)} ${title}`,
+        title: title,
         start: startDateAndTime,
         end: endDateAndTime,
       },
