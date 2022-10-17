@@ -8,7 +8,7 @@ import { CalendarEvent } from "./configs/CalendarEvent";
 
 const currentHour = new Date().getHours();
 const currentMinute = new Date().getMinutes();
-const padNumberWith0 = (num) => num.toString().padStart(2, "0");
+const padNumberWith0 = (num: Number) => num.toString().padStart(2, "0");
 const defaultStartTime = `${padNumberWith0(currentHour)}:${padNumberWith0(currentMinute)}`;
 const defaultEndTime = `${padNumberWith0(currentHour + 1)}:${padNumberWith0(
   currentMinute
