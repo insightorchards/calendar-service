@@ -7,7 +7,7 @@
     "node": "16.13.0"
   },
   "scripts": {
-    "test": "npm test",
+    "test": "jest",
     "serve": "nodemon app.ts"
   },
   "author": "",
