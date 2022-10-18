@@ -1,23 +1,24 @@
-const supertest = require("supertest");
-const app = require('./app');
-const { connectToDatabase, disconnectDatabase, getDb } = require("./db/connect");
+const { MongoClient } = require("mongodb");
 
-let db
+const { MongoMemoryServer } = require("mongodb-memory-server");
 
-beforeEach(() => {
-   connectToDatabase("jestDb", async () => {
-    db = getDb();
-    console.log({db})
-  })
+let client;
+let mongod;
+beforeAll(async () => {
+  mongod = await MongoMemoryServer.create();
+  client = new MongoClient(mongod.getUri(), {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  }).connect();
 });
 
-afterEach(() => {
-  db.dropDatabase();
-  disconnectDatabase()
+afterAll(async () => {
+  await client.close();
+  await mongod.stop();
 });
 
-describe('GET /', () => {
-  it('GET / => array of items', () => {
-    console.log("this is a test")
-  })
-})
+describe("GET /", () => {
+  it("GET / => array of items", async () => {
+    console.log("this is a test");
+  });
+});
