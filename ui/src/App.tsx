@@ -1,45 +1,45 @@
-import { Calendar, momentLocalizer } from "react-big-calendar";
+import React, { MouseEvent } from "react";
 import moment from "moment";
-import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useState } from "react";
+import { Calendar, momentLocalizer } from "react-big-calendar";
+import "react-big-calendar/lib/css/react-big-calendar.css";
+import { CalendarEvent } from "./configs/CalendarEvent";
 import s from "./App.module.css";
 
+const currentHour: number = new Date().getHours();
+const currentMinute: number = new Date().getMinutes();
+const padNumberWith0: Function = (num: Number): string =>
+  num.toString().padStart(2, "0");
+const defaultStartTime: string = `${padNumberWith0(
+  currentHour,
+)}:${padNumberWith0(currentMinute)}`;
+const defaultEndTime: string = `${padNumberWith0(
+  currentHour + 1,
+)}:${padNumberWith0(currentMinute)}`;
+
 const localizer = momentLocalizer(moment);
-const currentHour = new Date().getHours();
-const currentMinute = new Date().getMinutes();
-const padNumberWith0 = (num) => num.toString().padStart(2, "0");
-const defaultStartTime = `${padNumberWith0(currentHour)}:${padNumberWith0(currentMinute)}`;
 
-Date.prototype.addHours = (h) => {
-  this.setTime(this.getTime() + h * 60 * 60 * 1000);
-  return this;
-};
-
-const defaultEndTime = `${padNumberWith0(currentHour + 1)}:${padNumberWith0(
-  currentMinute
-)}`;
-
-const formatDate = (date) => {
+const formatDate: Function = (date: Date): string => {
   return [
     date.getFullYear(),
     padNumberWith0(date.getMonth() + 1),
     padNumberWith0(date.getDate()),
   ].join("-");
-}
+};
 
 const App = () => {
-  const [startDate, setStartDate] = useState(formatDate(new Date()));
-  const [endDate, setEndDate] = useState(formatDate(new Date()));
-  const [startTime, setStartTime] = useState(defaultStartTime);
-  const [endTime, setEndTime] = useState(defaultEndTime);
-  const [title, setTitle] = useState("");
-  const [events, setEvents] = useState([]);
-  const [error, setError] = useState(null);
+  const [startDate, setStartDate] = useState<string>(formatDate(new Date()));
+  const [endDate, setEndDate] = useState<string>(formatDate(new Date()));
+  const [startTime, setStartTime] = useState<string>(defaultStartTime);
+  const [endTime, setEndTime] = useState<string>(defaultEndTime);
+  const [title, setTitle] = useState<string>("");
+  const [error, setError] = useState<string | null>(null);
+  const [events, setEvents] = useState<CalendarEvent[]>([]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    const startDateAndTime = new Date(`${startDate}T${startTime}`);
-    const endDateAndTime = new Date(`${endDate}T${endTime}`);
+    const startDateAndTime: Date = new Date(`${startDate}T${startTime}`);
+    const endDateAndTime: Date = new Date(`${endDate}T${endTime}`);
 
     if (startDateAndTime > endDateAndTime) {
       setError("Error: end cannot be before start.");
@@ -115,6 +115,6 @@ const App = () => {
       {error && <p className={s.error}>{error}</p>}
     </div>
   );
-}
+};
 
 export default App;
