@@ -8,7 +8,7 @@ import s from "./App.module.css";
 
 const currentHour: number = new Date().getHours();
 const currentMinute: number = new Date().getMinutes();
-const padNumberWith0: Function = (num: Number): String =>
+const padNumberWith0: Function = (num: Number): string =>
   num.toString().padStart(2, "0");
 const defaultStartTime: string = `${padNumberWith0(
   currentHour,
@@ -19,7 +19,7 @@ const defaultEndTime: string = `${padNumberWith0(
 
 const localizer = momentLocalizer(moment);
 
-const formatDate: Function = (date: Date): String => {
+const formatDate: Function = (date: Date): string => {
   return [
     date.getFullYear(),
     padNumberWith0(date.getMonth() + 1),
