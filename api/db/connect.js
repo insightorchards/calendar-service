@@ -9,19 +9,21 @@ const client = new MongoClient(connectionString, {
 let dbConnection;
 
 module.exports = {
-  connectToServer: function (callback) {
+  connectToDatabase: function (dbName, callback) {
     client.connect(function (err, db) {
       if (err || !db) {
         return callback(err);
       }
 
-      dbConnection = db.db("calendar-app");
-      console.log("Successfully connected to MongoDB.");
+      dbConnection = db.db(dbName);
+      console.log(`Successfully connected to MongoDB. DB name ${dbName}`);
 
       return callback();
     });
   },
-
+  disconnectDatabase: function() {
+    client.close()
+  },
   getDb: function () {
     return dbConnection;
   },
