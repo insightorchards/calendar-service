@@ -1,7 +1,7 @@
 const { MongoClient } = require("mongodb");
-
+const supertest = require("supertest");
 const { MongoMemoryServer } = require("mongodb-memory-server");
-
+const { app } = require("./app");
 let client;
 let mongod;
 beforeAll(async () => {
@@ -17,8 +17,11 @@ afterAll(async () => {
   await mongod.stop();
 });
 
-describe("GET /", () => {
-  it("GET / => array of items", async () => {
-    console.log("this is a test");
+describe("POST /", () => {
+  it("POST / => seeded database items", async () => {
+    await supertest(app)
+      .post("/seedDatabase")
+      .expect(201)
+      .then((response) => {});
   });
 });
