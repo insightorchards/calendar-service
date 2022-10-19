@@ -35,7 +35,7 @@ exports[`App renders correctly 1`] = `
           <span
             class="rbc-toolbar-label"
           >
-            October 2022
+            December 2016
           </span>
           <span
             class="rbc-btn-group"
@@ -166,10 +166,10 @@ exports[`App renders correctly 1`] = `
                 class="rbc-day-bg rbc-off-range-bg"
               />
               <div
-                class="rbc-day-bg rbc-off-range-bg"
+                class="rbc-day-bg"
               />
               <div
-                class="rbc-day-bg rbc-off-range-bg"
+                class="rbc-day-bg"
               />
               <div
                 class="rbc-day-bg"
@@ -182,30 +182,6 @@ exports[`App renders correctly 1`] = `
               <div
                 class="rbc-row "
               >
-                <div
-                  class="rbc-date-cell rbc-off-range"
-                  role="cell"
-                >
-                  <button
-                    class="rbc-button-link"
-                    role="cell"
-                    type="button"
-                  >
-                    25
-                  </button>
-                </div>
-                <div
-                  class="rbc-date-cell rbc-off-range"
-                  role="cell"
-                >
-                  <button
-                    class="rbc-button-link"
-                    role="cell"
-                    type="button"
-                  >
-                    26
-                  </button>
-                </div>
                 <div
                   class="rbc-date-cell rbc-off-range"
                   role="cell"
@@ -266,6 +242,30 @@ exports[`App renders correctly 1`] = `
                     01
                   </button>
                 </div>
+                <div
+                  class="rbc-date-cell"
+                  role="cell"
+                >
+                  <button
+                    class="rbc-button-link"
+                    role="cell"
+                    type="button"
+                  >
+                    02
+                  </button>
+                </div>
+                <div
+                  class="rbc-date-cell"
+                  role="cell"
+                >
+                  <button
+                    class="rbc-button-link"
+                    role="cell"
+                    type="button"
+                  >
+                    03
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -305,30 +305,6 @@ exports[`App renders correctly 1`] = `
               <div
                 class="rbc-row "
               >
-                <div
-                  class="rbc-date-cell"
-                  role="cell"
-                >
-                  <button
-                    class="rbc-button-link"
-                    role="cell"
-                    type="button"
-                  >
-                    02
-                  </button>
-                </div>
-                <div
-                  class="rbc-date-cell"
-                  role="cell"
-                >
-                  <button
-                    class="rbc-button-link"
-                    role="cell"
-                    type="button"
-                  >
-                    03
-                  </button>
-                </div>
                 <div
                   class="rbc-date-cell"
                   role="cell"
@@ -389,6 +365,30 @@ exports[`App renders correctly 1`] = `
                     08
                   </button>
                 </div>
+                <div
+                  class="rbc-date-cell"
+                  role="cell"
+                >
+                  <button
+                    class="rbc-button-link"
+                    role="cell"
+                    type="button"
+                  >
+                    09
+                  </button>
+                </div>
+                <div
+                  class="rbc-date-cell"
+                  role="cell"
+                >
+                  <button
+                    class="rbc-button-link"
+                    role="cell"
+                    type="button"
+                  >
+                    10
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -428,30 +428,6 @@ exports[`App renders correctly 1`] = `
               <div
                 class="rbc-row "
               >
-                <div
-                  class="rbc-date-cell"
-                  role="cell"
-                >
-                  <button
-                    class="rbc-button-link"
-                    role="cell"
-                    type="button"
-                  >
-                    09
-                  </button>
-                </div>
-                <div
-                  class="rbc-date-cell"
-                  role="cell"
-                >
-                  <button
-                    class="rbc-button-link"
-                    role="cell"
-                    type="button"
-                  >
-                    10
-                  </button>
-                </div>
                 <div
                   class="rbc-date-cell"
                   role="cell"
@@ -512,6 +488,30 @@ exports[`App renders correctly 1`] = `
                     15
                   </button>
                 </div>
+                <div
+                  class="rbc-date-cell"
+                  role="cell"
+                >
+                  <button
+                    class="rbc-button-link"
+                    role="cell"
+                    type="button"
+                  >
+                    16
+                  </button>
+                </div>
+                <div
+                  class="rbc-date-cell"
+                  role="cell"
+                >
+                  <button
+                    class="rbc-button-link"
+                    role="cell"
+                    type="button"
+                  >
+                    17
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -526,7 +526,7 @@ exports[`App renders correctly 1`] = `
                 class="rbc-day-bg"
               />
               <div
-                class="rbc-day-bg rbc-today"
+                class="rbc-day-bg"
               />
               <div
                 class="rbc-day-bg"
@@ -551,30 +551,6 @@ exports[`App renders correctly 1`] = `
               <div
                 class="rbc-row "
               >
-                <div
-                  class="rbc-date-cell"
-                  role="cell"
-                >
-                  <button
-                    class="rbc-button-link"
-                    role="cell"
-                    type="button"
-                  >
-                    16
-                  </button>
-                </div>
-                <div
-                  class="rbc-date-cell rbc-now rbc-current"
-                  role="cell"
-                >
-                  <button
-                    class="rbc-button-link"
-                    role="cell"
-                    type="button"
-                  >
-                    17
-                  </button>
-                </div>
                 <div
                   class="rbc-date-cell"
                   role="cell"
@@ -635,6 +611,30 @@ exports[`App renders correctly 1`] = `
                     22
                   </button>
                 </div>
+                <div
+                  class="rbc-date-cell"
+                  role="cell"
+                >
+                  <button
+                    class="rbc-button-link"
+                    role="cell"
+                    type="button"
+                  >
+                    23
+                  </button>
+                </div>
+                <div
+                  class="rbc-date-cell"
+                  role="cell"
+                >
+                  <button
+                    class="rbc-button-link"
+                    role="cell"
+                    type="button"
+                  >
+                    24
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -664,7 +664,7 @@ exports[`App renders correctly 1`] = `
                 class="rbc-day-bg"
               />
               <div
-                class="rbc-day-bg"
+                class="rbc-day-bg rbc-today"
               />
             </div>
             <div
@@ -674,30 +674,6 @@ exports[`App renders correctly 1`] = `
               <div
                 class="rbc-row "
               >
-                <div
-                  class="rbc-date-cell"
-                  role="cell"
-                >
-                  <button
-                    class="rbc-button-link"
-                    role="cell"
-                    type="button"
-                  >
-                    23
-                  </button>
-                </div>
-                <div
-                  class="rbc-date-cell"
-                  role="cell"
-                >
-                  <button
-                    class="rbc-button-link"
-                    role="cell"
-                    type="button"
-                  >
-                    24
-                  </button>
-                </div>
                 <div
                   class="rbc-date-cell"
                   role="cell"
@@ -758,45 +734,6 @@ exports[`App renders correctly 1`] = `
                     29
                   </button>
                 </div>
-              </div>
-            </div>
-          </div>
-          <div
-            class="rbc-month-row"
-            role="rowgroup"
-          >
-            <div
-              class="rbc-row-bg"
-            >
-              <div
-                class="rbc-day-bg"
-              />
-              <div
-                class="rbc-day-bg"
-              />
-              <div
-                class="rbc-day-bg rbc-off-range-bg"
-              />
-              <div
-                class="rbc-day-bg rbc-off-range-bg"
-              />
-              <div
-                class="rbc-day-bg rbc-off-range-bg"
-              />
-              <div
-                class="rbc-day-bg rbc-off-range-bg"
-              />
-              <div
-                class="rbc-day-bg rbc-off-range-bg"
-              />
-            </div>
-            <div
-              class="rbc-row-content"
-              role="row"
-            >
-              <div
-                class="rbc-row "
-              >
                 <div
                   class="rbc-date-cell"
                   role="cell"
@@ -810,7 +747,7 @@ exports[`App renders correctly 1`] = `
                   </button>
                 </div>
                 <div
-                  class="rbc-date-cell"
+                  class="rbc-date-cell rbc-now rbc-current"
                   role="cell"
                 >
                   <button
@@ -819,66 +756,6 @@ exports[`App renders correctly 1`] = `
                     type="button"
                   >
                     31
-                  </button>
-                </div>
-                <div
-                  class="rbc-date-cell rbc-off-range"
-                  role="cell"
-                >
-                  <button
-                    class="rbc-button-link"
-                    role="cell"
-                    type="button"
-                  >
-                    01
-                  </button>
-                </div>
-                <div
-                  class="rbc-date-cell rbc-off-range"
-                  role="cell"
-                >
-                  <button
-                    class="rbc-button-link"
-                    role="cell"
-                    type="button"
-                  >
-                    02
-                  </button>
-                </div>
-                <div
-                  class="rbc-date-cell rbc-off-range"
-                  role="cell"
-                >
-                  <button
-                    class="rbc-button-link"
-                    role="cell"
-                    type="button"
-                  >
-                    03
-                  </button>
-                </div>
-                <div
-                  class="rbc-date-cell rbc-off-range"
-                  role="cell"
-                >
-                  <button
-                    class="rbc-button-link"
-                    role="cell"
-                    type="button"
-                  >
-                    04
-                  </button>
-                </div>
-                <div
-                  class="rbc-date-cell rbc-off-range"
-                  role="cell"
-                >
-                  <button
-                    class="rbc-button-link"
-                    role="cell"
-                    type="button"
-                  >
-                    05
                   </button>
                 </div>
               </div>
@@ -898,31 +775,31 @@ exports[`App renders correctly 1`] = `
       Start Date
     </label>
     <input
-      min="2022-10-17"
+      min="2016-12-31"
       type="date"
-      value="2022-10-17"
+      value="2016-12-31"
     />
     <label>
       Start Time
     </label>
     <input
       type="time"
-      value="23:00"
+      value="16:00"
     />
     <label>
       End Date
     </label>
     <input
-      min="2022-10-17"
+      min="2016-12-31"
       type="date"
-      value="2022-10-17"
+      value="2016-12-31"
     />
     <label>
       End Time
     </label>
     <input
       type="time"
-      value="24:00"
+      value="17:00"
     />
     <button>
       Create Event

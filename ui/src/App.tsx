@@ -6,28 +6,28 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import { CalendarEvent } from "./configs/CalendarEvent";
 import s from "./App.module.css";
 
-const currentHour: number = new Date().getHours();
-const currentMinute: number = new Date().getMinutes();
-const padNumberWith0: Function = (num: Number): string =>
-  num.toString().padStart(2, "0");
-const defaultStartTime: string = `${padNumberWith0(
-  currentHour,
-)}:${padNumberWith0(currentMinute)}`;
-const defaultEndTime: string = `${padNumberWith0(
-  currentHour + 1,
-)}:${padNumberWith0(currentMinute)}`;
-
-const localizer = momentLocalizer(moment);
-
-const formatDate: Function = (date: Date): string => {
-  return [
-    date.getFullYear(),
-    padNumberWith0(date.getMonth() + 1),
-    padNumberWith0(date.getDate()),
-  ].join("-");
-};
-
 const App = () => {
+  const currentHour: number = new Date().getHours();
+  const currentMinute: number = new Date().getMinutes();
+  const padNumberWith0: Function = (num: Number): string =>
+    num.toString().padStart(2, "0");
+  const defaultStartTime: string = `${padNumberWith0(
+    currentHour
+  )}:${padNumberWith0(currentMinute)}`;
+  const defaultEndTime: string = `${padNumberWith0(
+    currentHour + 1
+  )}:${padNumberWith0(currentMinute)}`;
+
+  const localizer = momentLocalizer(moment);
+
+  const formatDate: Function = (date: Date): string => {
+    return [
+      date.getFullYear(),
+      padNumberWith0(date.getMonth() + 1),
+      padNumberWith0(date.getDate()),
+    ].join("-");
+  };
+
   const [startDate, setStartDate] = useState<string>(formatDate(new Date()));
   const [endDate, setEndDate] = useState<string>(formatDate(new Date()));
   const [startTime, setStartTime] = useState<string>(defaultStartTime);
