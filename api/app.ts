@@ -1,12 +1,15 @@
 import express from "express";
 import { connectToDatabase, getDb } from "./db/connect";
 import { getCalendarEntries, seedDatabaseWithEntry } from "./controllers/calendarEntry.controller";
+import * as dotenv from 'dotenv'
 
 const app = express();
-const port = 4000;
+const port = process.env.NODE_ENV === 'test' ? 4001 : 4000;
+dotenv.config()
 
 let db;
-connectToDatabase("calendar-app", async () => {
+const databaseName = process.env.NODE_ENV === 'test' ? 'test-db' : 'calendar-app'
+connectToDatabase(databaseName, async () => {
   db = getDb();
 });
 

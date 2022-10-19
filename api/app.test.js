@@ -4,7 +4,9 @@ const { MongoMemoryServer } = require("mongodb-memory-server");
 const { app } = require("./app");
 let client;
 let mongod;
+
 beforeAll(async () => {
+  process.env.NODE_ENV = 'test'
   mongod = await MongoMemoryServer.create();
   client = await new MongoClient(mongod.getUri(), {
     useNewUrlParser: true,
@@ -13,6 +15,7 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
+  process.env.NODE_ENV = 'dev'
   await client.close();
   await mongod.stop();
 });
