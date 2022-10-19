@@ -771,10 +771,13 @@ exports[`App renders correctly 1`] = `
       type="text"
       value=""
     />
-    <label>
+    <label
+      for="startDate"
+    >
       Start Date
     </label>
     <input
+      id="startDate"
       min="2016-12-31"
       type="date"
       value="2016-12-31"
@@ -786,10 +789,13 @@ exports[`App renders correctly 1`] = `
       type="time"
       value="16:00"
     />
-    <label>
+    <label
+      for="endDate"
+    >
       End Date
     </label>
     <input
+      id="endDate"
       min="2016-12-31"
       type="date"
       value="2016-12-31"

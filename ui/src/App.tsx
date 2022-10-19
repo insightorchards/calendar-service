@@ -77,8 +77,9 @@ const App = () => {
         value={title}
       />
 
-      <label>Start Date</label>
+      <label htmlFor="startDate">Start Date</label>
       <input
+        id="startDate"
         min={formatDate(new Date())}
         type="date"
         onChange={(e) => {
@@ -94,8 +95,9 @@ const App = () => {
         }}
         value={startTime}
       />
-      <label>End Date</label>
+      <label htmlFor="endDate">End Date</label>
       <input
+        id="endDate"
         min={startDate}
         type="date"
         onChange={(e) => {
