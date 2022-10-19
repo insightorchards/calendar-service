@@ -6,7 +6,7 @@ let client;
 let mongod;
 beforeAll(async () => {
   mongod = await MongoMemoryServer.create();
-  client = new MongoClient(mongod.getUri(), {
+  client = await new MongoClient(mongod.getUri(), {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   }).connect();
