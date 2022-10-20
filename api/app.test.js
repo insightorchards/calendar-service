@@ -7,7 +7,7 @@ let client;
 let mongod;
 
 beforeAll(async () => {
-  process.env.NODE_ENV = 'test'
+  process.env.NODE_ENV = "test";
   mongod = await MongoMemoryServer.create();
   client = await new MongoClient(mongod.getUri(), {
     useNewUrlParser: true,
@@ -15,18 +15,15 @@ beforeAll(async () => {
   }).connect();
 });
 
-afterAll( (done) => {
-  process.env.NODE_ENV = 'dev'
+afterAll((done) => {
+  process.env.NODE_ENV = "dev";
   client.close();
   mongod.stop();
-  done()
+  done();
 });
 
 describe("POST /", () => {
   it("POST / => seeded database items", async () => {
-    await supertest(app)
-      .post("/seedDatabase")
-      .expect(201)
-      .then((response) => {});
+    await supertest(app).post("/seedDatabase").expect(201);
   });
 });
