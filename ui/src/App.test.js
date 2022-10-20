@@ -6,8 +6,10 @@ describe("App", () => {
   beforeAll(() => {
     jest.useFakeTimers("modern");
     //mock this as utc time zone to stay consistent throughout tests
-    jest.setSystemTime(new Date("2017-01-01"));
+    jest.setSystemTime(new Date("2022-02-15"));
+    console.log("before all", Date.now());
   });
+
   afterAll(() => {
     jest.useRealTimers();
   });
@@ -24,13 +26,14 @@ describe("App", () => {
 
   describe("events", () => {
     // beforeAll(() => render(<App />)); // this didn't work it may need to be beforeEach instead or something else.
-    it("displays correct default values for event inputs on page load", async () => {
+    it.only("displays correct default values for event inputs on page load", async () => {
       render(<App />);
+      console.log("time", Date.now());
       expect(await screen.findByLabelText("Start Date")).toHaveValue(
-        "2016-12-31"
+        "2022-02-15",
       );
       expect(await screen.findByLabelText("End Date")).toHaveValue(
-        "2016-12-31"
+        "2022-02-15",
       );
       expect(await screen.findByLabelText("Start Time")).toHaveValue("16:00");
       expect(await screen.findByLabelText("End Time")).toHaveValue("17:00");
@@ -41,18 +44,36 @@ describe("App", () => {
       userEvent.click(await screen.findByLabelText("Title"));
       userEvent.type(
         await screen.findByLabelText("Title"),
-        "Berta goes to the baseball game!"
+        "Berta goes to the baseball game!",
       );
+
       userEvent.click(screen.getByRole("button", { name: "Create Event" }));
       expect(await screen.findByLabelText("Title")).toHaveAttribute(
         "value",
-        ""
+        "",
       );
+
       expect(
-        screen.getByText("Berta goes to the baseball game!")
+        screen.getByText("Berta goes to the baseball game!"),
       ).toBeVisible();
     });
-    xit("errors when end date is before start date", () => {});
+
+    it("errors when end date is before start date", async () => {
+      render(<App />);
+      userEvent.click(screen.getByLabelText("Start Date"));
+      userEvent.type(screen.getByLabelText("Start Date"), "12122016");
+      userEvent.click(screen.getByLabelText("End Date"));
+      userEvent.type(screen.getByLabelText("End Date"), "11112016");
+      expect(
+        screen.getByRole("button", { name: "Create Event" }),
+      ).toBeVisible();
+      expect(screen.getByText("12/12/2016")).toBeVisible();
+      userEvent.click(screen.getByRole("button", { name: "Create Event" }));
+      expect(
+        await screen.findByText("Error: end cannot be before start."),
+      ).toBeVisible();
+    });
+
     xit("errors when end time is before start time on the same day", () => {});
   });
 });
