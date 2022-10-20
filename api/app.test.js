@@ -2,6 +2,7 @@ const { MongoClient } = require("mongodb");
 const supertest = require("supertest");
 const { MongoMemoryServer } = require("mongodb-memory-server");
 const { app } = require("./app");
+const { doesNotMatch } = require("assert");
 let client;
 let mongod;
 
@@ -14,10 +15,11 @@ beforeAll(async () => {
   }).connect();
 });
 
-afterAll(async () => {
+afterAll( (done) => {
   process.env.NODE_ENV = 'dev'
-  await client.close();
-  await mongod.stop();
+  client.close();
+  mongod.stop();
+  done()
 });
 
 describe("POST /", () => {
