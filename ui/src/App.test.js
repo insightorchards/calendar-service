@@ -1,4 +1,5 @@
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import App from "./App";
 
 describe("App", () => {
@@ -22,12 +23,35 @@ describe("App", () => {
   });
 
   describe("events", () => {
-    it("displays correct default values for event inputs on page load",  async () => {
-    render(<App />);
-    expect(await screen.findByLabelText("Start Date")).toHaveValue("2016-12-31");
-    expect(await screen.findByLabelText("End Date")).toHaveValue("2016-12-31");
+    // beforeAll(() => render(<App />)); // this didn't work it may need to be beforeEach instead or something else.
+    it("displays correct default values for event inputs on page load", async () => {
+      render(<App />);
+      expect(await screen.findByLabelText("Start Date")).toHaveValue(
+        "2016-12-31"
+      );
+      expect(await screen.findByLabelText("End Date")).toHaveValue(
+        "2016-12-31"
+      );
+      expect(await screen.findByLabelText("Start Time")).toHaveValue("16:00");
+      expect(await screen.findByLabelText("End Time")).toHaveValue("17:00");
     });
-    xit("displays event in ui when all inputs are provided valid values", () => {});
+
+    it("displays event in ui when all inputs are provided valid values", async () => {
+      render(<App />);
+      userEvent.click(await screen.findByLabelText("Title"));
+      userEvent.type(
+        await screen.findByLabelText("Title"),
+        "Berta goes to the baseball game!"
+      );
+      userEvent.click(screen.getByRole("button", { name: "Create Event" }));
+      expect(await screen.findByLabelText("Title")).toHaveAttribute(
+        "value",
+        ""
+      );
+      expect(
+        screen.getByText("Berta goes to the baseball game!")
+      ).toBeVisible();
+    });
     xit("errors when end date is before start date", () => {});
     xit("errors when end time is before start time on the same day", () => {});
   });

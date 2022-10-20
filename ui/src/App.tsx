@@ -53,7 +53,7 @@ const App = () => {
         end: endDateAndTime,
       },
     ]);
-
+    setTitle("");
     setError(null);
   };
 
@@ -68,8 +68,9 @@ const App = () => {
           style={{ height: 500 }}
         />
       </div>
-      <label>Title</label>
+      <label htmlFor="title">Title</label>
       <input
+        id="title"
         type="text"
         onChange={(e) => {
           setTitle(e.target.value);
@@ -87,8 +88,9 @@ const App = () => {
         }}
         value={startDate}
       />
-      <label>Start Time</label>
+      <label htmlFor="startTime">Start Time</label>
       <input
+        id="startTime"
         type="time"
         onChange={(e) => {
           setStartTime(e.target.value);
@@ -105,8 +107,9 @@ const App = () => {
         }}
         value={endDate}
       />
-      <label>End Time</label>
+      <label htmlFor="endTime">End Time</label>
       <input
+        id="endTime"
         type="time"
         onChange={(e) => {
           setEndTime(e.target.value);
