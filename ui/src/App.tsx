@@ -7,7 +7,6 @@ import { CalendarEvent } from "./configs/CalendarEvent";
 import s from "./App.module.css";
 
 const App = () => {
-  console.log("before all", Date.now());
   const currentHour: number = new Date().getHours();
   const currentMinute: number = new Date().getMinutes();
   const padNumberWith0: Function = (num: Number): string =>
@@ -22,11 +21,10 @@ const App = () => {
   const localizer = momentLocalizer(moment);
 
   const formatDate: Function = (date: Date): string => {
-    console.log("date", date);
     return [
       date.getFullYear(),
       padNumberWith0(date.getMonth() + 1),
-      padNumberWith0(date.getDate()),
+      padNumberWith0(date.getDate() + 1),
     ].join("-");
   };
 
@@ -37,7 +35,6 @@ const App = () => {
   const [title, setTitle] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const [events, setEvents] = useState<CalendarEvent[]>([]);
-  console.log({ startDate });
 
   const handleSubmit = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -63,13 +60,13 @@ const App = () => {
   return (
     <div className="App">
       <div>
-        {/* <Calendar
+        <Calendar
           localizer={localizer}
           events={events}
           startAccessor="start"
           endAccessor="end"
           style={{ height: 500 }}
-        /> */}
+        />
       </div>
       <label htmlFor="title">Title</label>
       <input

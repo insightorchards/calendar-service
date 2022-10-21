@@ -5,9 +5,7 @@ import App from "./App";
 describe("App", () => {
   beforeAll(() => {
     jest.useFakeTimers("modern");
-    //mock this as utc time zone to stay consistent throughout tests
     jest.setSystemTime(new Date("2022-02-15"));
-    console.log("before all", Date.now());
   });
 
   afterAll(() => {
@@ -28,7 +26,6 @@ describe("App", () => {
     // beforeAll(() => render(<App />)); // this didn't work it may need to be beforeEach instead or something else.
     it.only("displays correct default values for event inputs on page load", async () => {
       render(<App />);
-      console.log("time", Date.now());
       expect(await screen.findByLabelText("Start Date")).toHaveValue(
         "2022-02-15",
       );
