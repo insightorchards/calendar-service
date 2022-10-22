@@ -23,24 +23,23 @@ describe("App", () => {
   });
 
   describe("events", () => {
-    // beforeAll(() => render(<App />)); // this didn't work it may need to be beforeEach instead or something else.
-    it("displays correct default values for event inputs on page load", async () => {
+    it("defaults to today's date and a one hour time window", () => {
       render(<App />);
-      expect(await screen.findByLabelText("Start Date")).toHaveValue(
+      expect(screen.getByLabelText("Start Date")).toHaveValue(
         "2022-02-15",
       );
-      expect(await screen.findByLabelText("End Date")).toHaveValue(
+      expect(screen.getByLabelText("End Date")).toHaveValue(
         "2022-02-15",
       );
-      expect(await screen.findByLabelText("Start Time")).toHaveValue("16:00");
-      expect(await screen.findByLabelText("End Time")).toHaveValue("17:00");
+      expect(screen.getByLabelText("Start Time")).toHaveValue("16:00");
+      expect(screen.getByLabelText("End Time")).toHaveValue("17:00");
     });
 
     it("displays event in ui when all inputs are provided valid values", async () => {
       render(<App />);
-      userEvent.click(await screen.findByLabelText("Title"));
+      userEvent.click(screen.getByLabelText("Title"));
       userEvent.type(
-        await screen.findByLabelText("Title"),
+        screen.getByLabelText("Title"),
         "Berta goes to the baseball game!",
       );
 
@@ -55,7 +54,7 @@ describe("App", () => {
       ).toBeVisible();
     });
 
-    it("errors when end date is before start date", async () => {
+    it("errors when end date is before start date", () => {
       render(<App />);
       fireEvent.change(screen.getByLabelText("Start Date"), {
         target: { value: "2016-12-12" },
@@ -69,15 +68,32 @@ describe("App", () => {
 
       userEvent.click(screen.getByRole("button", { name: "Create Event" }));
       expect(
-        await screen.findByText("Error: end cannot be before start."),
+        screen.getByText("Error: end cannot be before start."),
       ).toBeVisible();
     });
 
-    it.only("errors when end time is before start time on the same day", () => {
+    it("errors when end time is before start time on the same day", () => {
       render(<App />);
       expect(screen.getByLabelText("Start Date")).toHaveValue("2022-02-15");
       expect(screen.getByLabelText("End Date")).toHaveValue("2022-02-15");
-      // expect(screen.getByLableText("Star Time")).
+
+      fireEvent.change(screen.getByLabelText("Start Time"), {
+        target: {
+          value: '12:00'
+        }
+      })
+      expect(screen.getByLabelText("Start Time")).toHaveValue('12:00');
+      fireEvent.change(screen.getByLabelText("End Time"), {
+        target: {
+          value: '04:00'
+        }
+      })
+      expect(screen.getByLabelText("End Time")).toHaveValue('04:00');
+
+      userEvent.click(screen.getByRole("button", { name: "Create Event" }));
+      expect(
+        screen.getByText("Error: end cannot be before start."),
+      ).toBeVisible();
     });
   });
 });
