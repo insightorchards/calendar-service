@@ -1,7 +1,7 @@
 const { MongoClient } = require("mongodb");
 const supertest = require("supertest");
 const { MongoMemoryServer } = require("mongodb-memory-server");
-const { app, db } = require("./app");
+const { app } = require("./app");
 let client;
 let mongod;
 let dbConnection;
@@ -12,9 +12,7 @@ beforeAll(async () => {
   client = await new MongoClient(mongod.getUri(), {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-  }).connect(function (err, db) {
-    dbConnection = db.db('test-db') 
-  });
+  }).connect();
 });
 
 afterAll((done) => {
