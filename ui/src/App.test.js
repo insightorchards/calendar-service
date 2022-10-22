@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import App from "./App";
 
@@ -24,7 +24,7 @@ describe("App", () => {
 
   describe("events", () => {
     // beforeAll(() => render(<App />)); // this didn't work it may need to be beforeEach instead or something else.
-    it.only("displays correct default values for event inputs on page load", async () => {
+    it("displays correct default values for event inputs on page load", async () => {
       render(<App />);
       expect(await screen.findByLabelText("Start Date")).toHaveValue(
         "2022-02-15",
@@ -57,20 +57,27 @@ describe("App", () => {
 
     it("errors when end date is before start date", async () => {
       render(<App />);
-      userEvent.click(screen.getByLabelText("Start Date"));
-      userEvent.type(screen.getByLabelText("Start Date"), "12122016");
-      userEvent.click(screen.getByLabelText("End Date"));
-      userEvent.type(screen.getByLabelText("End Date"), "11112016");
-      expect(
-        screen.getByRole("button", { name: "Create Event" }),
-      ).toBeVisible();
-      expect(screen.getByText("12/12/2016")).toBeVisible();
+      fireEvent.change(screen.getByLabelText("Start Date"), {
+        target: { value: "2016-12-12" },
+      });
+      expect(screen.getByLabelText("Start Date")).toHaveValue("2016-12-12");
+
+      fireEvent.change(screen.getByLabelText("End Date"), {
+        target: { value: "2016-11-11" },
+      });
+      expect(screen.getByLabelText("End Date")).toHaveValue("2016-11-11");
+
       userEvent.click(screen.getByRole("button", { name: "Create Event" }));
       expect(
         await screen.findByText("Error: end cannot be before start."),
       ).toBeVisible();
     });
 
-    xit("errors when end time is before start time on the same day", () => {});
+    it.only("errors when end time is before start time on the same day", () => {
+      render(<App />);
+      expect(screen.getByLabelText("Start Date")).toHaveValue("2022-02-15");
+      expect(screen.getByLabelText("End Date")).toHaveValue("2022-02-15");
+      // expect(screen.getByLableText("Star Time")).
+    });
   });
 });
