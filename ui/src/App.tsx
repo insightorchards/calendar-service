@@ -24,7 +24,7 @@ const App = () => {
     return [
       date.getFullYear(),
       padNumberWith0(date.getMonth() + 1),
-      padNumberWith0(date.getDate() + 1),
+      padNumberWith0(date.getDate()),
     ].join("-");
   };
 

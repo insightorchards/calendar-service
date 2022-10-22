@@ -403,10 +403,10 @@ exports[`App renders correctly 1`] = `
                 class="rbc-day-bg"
               />
               <div
-                class="rbc-day-bg rbc-today"
+                class="rbc-day-bg"
               />
               <div
-                class="rbc-day-bg"
+                class="rbc-day-bg rbc-today"
               />
               <div
                 class="rbc-day-bg"
@@ -441,7 +441,7 @@ exports[`App renders correctly 1`] = `
                   </button>
                 </div>
                 <div
-                  class="rbc-date-cell rbc-now rbc-current"
+                  class="rbc-date-cell"
                   role="cell"
                 >
                   <button
@@ -453,7 +453,7 @@ exports[`App renders correctly 1`] = `
                   </button>
                 </div>
                 <div
-                  class="rbc-date-cell"
+                  class="rbc-date-cell rbc-now rbc-current"
                   role="cell"
                 >
                   <button
@@ -793,7 +793,7 @@ exports[`App renders correctly 1`] = `
     <input
       id="startTime"
       type="time"
-      value="16:00"
+      value="04:00"
     />
     <label
       for="endDate"
@@ -814,7 +814,7 @@ exports[`App renders correctly 1`] = `
     <input
       id="endTime"
       type="time"
-      value="17:00"
+      value="05:00"
     />
     <button>
       Create Event

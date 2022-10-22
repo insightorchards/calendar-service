@@ -5,7 +5,9 @@ import App from "./App";
 describe("App", () => {
   beforeAll(() => {
     jest.useFakeTimers("modern");
-    jest.setSystemTime(new Date("2022-02-15"));
+    const date = new Date("2022-02-15T04:00")
+    console.log("date", date)
+    jest.setSystemTime(date);
   });
 
   afterAll(() => {
@@ -31,8 +33,8 @@ describe("App", () => {
       expect(screen.getByLabelText("End Date")).toHaveValue(
         "2022-02-15",
       );
-      expect(screen.getByLabelText("Start Time")).toHaveValue("16:00");
-      expect(screen.getByLabelText("End Time")).toHaveValue("17:00");
+      expect(screen.getByLabelText("Start Time")).toHaveValue("04:00");
+      expect(screen.getByLabelText("End Time")).toHaveValue("05:00");
     });
 
     it("displays event in ui when all inputs are provided valid values", async () => {
