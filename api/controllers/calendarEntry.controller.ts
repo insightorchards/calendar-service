@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { db } from '../app'
 
-
 interface CalendarEntryInput {
   eventId: string
   creatorId: string
