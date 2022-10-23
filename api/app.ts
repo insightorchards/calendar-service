@@ -1,20 +1,28 @@
 import express from "express";
-import { connectToServer, getDb } from "./db/connect";
+import mongoose from "mongoose";
 import { getCalendarEntries, seedDatabaseWithEntry } from "./controllers/calendarEntry.controller";
+import * as dotenv from 'dotenv'
 
 const app = express();
-const port = 4000;
+app.use(express.json());
+dotenv.config()
 
-let db;
-connectToServer(async () => {
-  db = getDb();
-});
-
-app.listen(port, () => {
-  console.log(`Calendar application is running on port ${port}.`);
-});
+const connectionString = "mongodb://127.0.0.1:27017/calendar-app";
+const PORT = process.env.NODE_ENV === 'test' ? 4001 : 4000;
 
 app.get("/entries", getCalendarEntries);
 app.post("/seedDatabase", seedDatabaseWithEntry);
 
-export { db }
+const start = async () => {
+  try {
+    await mongoose.connect(connectionString);
+    app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
+  } catch (error) {
+    console.error(error);
+    process.exit(1);
+  }
+};
+
+start();
+
+module.exports = { app }
