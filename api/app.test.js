@@ -1,8 +1,8 @@
 const { connectDB, dropDB, dropCollections } = require("./setupTestDb");
-const { CalendarEntry } = require('./models/calendarEntry')
+const { CalendarEntry } = require("./models/calendarEntry");
 const supertest = require("supertest");
 const { app } = require("./app");
-const { dayAfter } = require('./lib/dateHelpers');
+const { dayAfter } = require("./lib/dateHelpers");
 
 beforeAll(async () => {
   await connectDB();
@@ -17,18 +17,17 @@ afterAll(async () => {
 });
 
 describe("POST /seedDatabase", () => {
-  // EB_TODO: figure out why this is flakey
   it("adds items into the database", async () => {
-    const numBefore = await CalendarEntry.countDocuments()
+    const numBefore = await CalendarEntry.countDocuments();
     await supertest(app).post("/seedDatabase").expect(201);
-    const numAfter = await CalendarEntry.countDocuments()
-    expect(numAfter).toBeGreaterThan(numBefore)
+    const numAfter = await CalendarEntry.countDocuments();
+    expect(numAfter - numBefore).toEqual(3);
   });
 });
 
 describe("GET /entries", () => {
   it("returns the entries that exist in the database", async () => {
-    const today = new Date()
+    const today = new Date();
     CalendarEntry.create({
       eventId: "634b339218b3b892b312e5ca",
       creatorId: "424b339218b3b892b312e5cb",
@@ -37,7 +36,7 @@ describe("GET /entries", () => {
       isAllDay: false,
       startTimeUtc: today,
       endTimeUtc: dayAfter(today),
-    })
+    });
     CalendarEntry.create({
       eventId: "634b339218b3b892b312e5ca",
       creatorId: "424b339218b3b892b312e5cb",
@@ -46,9 +45,9 @@ describe("GET /entries", () => {
       isAllDay: false,
       startTimeUtc: today,
       endTimeUtc: dayAfter(today),
-    })
+    });
 
     const response = await supertest(app).get("/entries").expect(200);
-    expect(response.body.length).toEqual(2)
+    expect(response.body.length).toEqual(2);
   });
 });
