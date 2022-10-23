@@ -11,11 +11,11 @@ const App = () => {
   const currentMinute: number = new Date().getMinutes();
   const padNumberWith0: Function = (num: Number): string =>
     num.toString().padStart(2, "0");
-  const defaultStartTime: string = `${padNumberWith0(
-    currentHour,
+  const DEFAULT_START_TIME: string = `${padNumberWith0(
+    currentHour
   )}:${padNumberWith0(currentMinute)}`;
-  const defaultEndTime: string = `${padNumberWith0(
-    currentHour + 1,
+  const DEFAULT_END_TIME: string = `${padNumberWith0(
+    currentHour + 1
   )}:${padNumberWith0(currentMinute)}`;
 
   const localizer = momentLocalizer(moment);
@@ -27,11 +27,12 @@ const App = () => {
       padNumberWith0(date.getDate()),
     ].join("-");
   };
+  const DEFAULT_DATE = formatDate(new Date());
 
-  const [startDate, setStartDate] = useState<string>(formatDate(new Date()));
-  const [endDate, setEndDate] = useState<string>(formatDate(new Date()));
-  const [startTime, setStartTime] = useState<string>(defaultStartTime);
-  const [endTime, setEndTime] = useState<string>(defaultEndTime);
+  const [startDate, setStartDate] = useState<string>(DEFAULT_DATE);
+  const [endDate, setEndDate] = useState<string>(DEFAULT_DATE);
+  const [startTime, setStartTime] = useState<string>(DEFAULT_START_TIME);
+  const [endTime, setEndTime] = useState<string>(DEFAULT_END_TIME);
   const [title, setTitle] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const [events, setEvents] = useState<CalendarEvent[]>([]);
@@ -55,6 +56,10 @@ const App = () => {
     ]);
     setTitle("");
     setError(null);
+    setStartDate(DEFAULT_DATE);
+    setEndDate(DEFAULT_DATE);
+    setStartTime(DEFAULT_START_TIME);
+    setEndTime(DEFAULT_END_TIME);
   };
 
   return (

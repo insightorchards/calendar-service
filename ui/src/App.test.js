@@ -5,8 +5,7 @@ import App from "./App";
 describe("App", () => {
   beforeAll(() => {
     jest.useFakeTimers("modern");
-    const date = new Date("2022-02-15T04:00")
-    console.log("date", date)
+    const date = new Date("2022-02-15T04:00");
     jest.setSystemTime(date);
   });
 
@@ -27,12 +26,8 @@ describe("App", () => {
   describe("events", () => {
     it("defaults to today's date and a one hour time window", () => {
       render(<App />);
-      expect(screen.getByLabelText("Start Date")).toHaveValue(
-        "2022-02-15",
-      );
-      expect(screen.getByLabelText("End Date")).toHaveValue(
-        "2022-02-15",
-      );
+      expect(screen.getByLabelText("Start Date")).toHaveValue("2022-02-15");
+      expect(screen.getByLabelText("End Date")).toHaveValue("2022-02-15");
       expect(screen.getByLabelText("Start Time")).toHaveValue("04:00");
       expect(screen.getByLabelText("End Time")).toHaveValue("05:00");
     });
@@ -42,18 +37,32 @@ describe("App", () => {
       userEvent.click(screen.getByLabelText("Title"));
       userEvent.type(
         screen.getByLabelText("Title"),
-        "Berta goes to the baseball game!",
+        "Berta goes to the baseball game!"
       );
 
       userEvent.click(screen.getByRole("button", { name: "Create Event" }));
       expect(await screen.findByLabelText("Title")).toHaveAttribute(
         "value",
-        "",
+        ""
       );
 
       expect(
-        screen.getByText("Berta goes to the baseball game!"),
+        screen.getByText("Berta goes to the baseball game!")
       ).toBeVisible();
+    });
+
+    it("resets inputs correclty to default values when submitted", () => {
+      render(<App />);
+      userEvent.type(screen.getByLabelText("Start Date"), "2022-03-16");
+      userEvent.type(screen.getByLabelText("Start Time"), "08:10");
+      userEvent.type(screen.getByLabelText("End Date"), "2022-03-18");
+      userEvent.type(screen.getByLabelText("End Time"), "10:10");
+      userEvent.click(screen.getByRole("button", { name: "Create Event" }));
+
+      expect(screen.getByLabelText("Start Date")).toHaveValue("2022-02-15");
+      expect(screen.getByLabelText("End Date")).toHaveValue("2022-02-15");
+      expect(screen.getByLabelText("Start Time")).toHaveValue("04:00");
+      expect(screen.getByLabelText("End Time")).toHaveValue("05:00");
     });
 
     it("errors when end date is before start date", () => {
@@ -70,7 +79,7 @@ describe("App", () => {
 
       userEvent.click(screen.getByRole("button", { name: "Create Event" }));
       expect(
-        screen.getByText("Error: end cannot be before start."),
+        screen.getByText("Error: end cannot be before start.")
       ).toBeVisible();
     });
 
@@ -81,20 +90,20 @@ describe("App", () => {
 
       fireEvent.change(screen.getByLabelText("Start Time"), {
         target: {
-          value: '12:00'
-        }
-      })
-      expect(screen.getByLabelText("Start Time")).toHaveValue('12:00');
+          value: "12:00",
+        },
+      });
+      expect(screen.getByLabelText("Start Time")).toHaveValue("12:00");
       fireEvent.change(screen.getByLabelText("End Time"), {
         target: {
-          value: '04:00'
-        }
-      })
-      expect(screen.getByLabelText("End Time")).toHaveValue('04:00');
+          value: "04:00",
+        },
+      });
+      expect(screen.getByLabelText("End Time")).toHaveValue("04:00");
 
       userEvent.click(screen.getByRole("button", { name: "Create Event" }));
       expect(
-        screen.getByText("Error: end cannot be before start."),
+        screen.getByText("Error: end cannot be before start.")
       ).toBeVisible();
     });
   });
