@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import App from "./App";
 
@@ -21,6 +21,7 @@ describe("App", () => {
   it("shows calander", async () => {
     render(<App />);
     expect(await screen.findByText("Month")).toBeVisible();
+    expect(await screen.findByLabelText("Month View")).toBeVisible();
   });
 
   describe("events", () => {
@@ -67,14 +68,10 @@ describe("App", () => {
 
     it("errors when end date is before start date", () => {
       render(<App />);
-      fireEvent.change(screen.getByLabelText("Start Date"), {
-        target: { value: "2016-12-12" },
-      });
+      userEvent.type(screen.getByLabelText("Start Date"), "2016-12-12");
       expect(screen.getByLabelText("Start Date")).toHaveValue("2016-12-12");
 
-      fireEvent.change(screen.getByLabelText("End Date"), {
-        target: { value: "2016-11-11" },
-      });
+      userEvent.type(screen.getByLabelText("End Date"), "2016-11-11");
       expect(screen.getByLabelText("End Date")).toHaveValue("2016-11-11");
 
       userEvent.click(screen.getByRole("button", { name: "Create Event" }));
@@ -88,17 +85,9 @@ describe("App", () => {
       expect(screen.getByLabelText("Start Date")).toHaveValue("2022-02-15");
       expect(screen.getByLabelText("End Date")).toHaveValue("2022-02-15");
 
-      fireEvent.change(screen.getByLabelText("Start Time"), {
-        target: {
-          value: "12:00",
-        },
-      });
+      userEvent.type(screen.getByLabelText("Start Time"), "12:00");
       expect(screen.getByLabelText("Start Time")).toHaveValue("12:00");
-      fireEvent.change(screen.getByLabelText("End Time"), {
-        target: {
-          value: "04:00",
-        },
-      });
+      userEvent.type(screen.getByLabelText("End Time"), "04:00");
       expect(screen.getByLabelText("End Time")).toHaveValue("04:00");
 
       userEvent.click(screen.getByRole("button", { name: "Create Event" }));
