@@ -6,32 +6,33 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import { CalendarEvent } from "./configs/CalendarEvent";
 import s from "./App.module.css";
 
-const currentHour: number = new Date().getHours();
-const currentMinute: number = new Date().getMinutes();
-const padNumberWith0: Function = (num: Number): string =>
-  num.toString().padStart(2, "0");
-const defaultStartTime: string = `${padNumberWith0(
-  currentHour,
-)}:${padNumberWith0(currentMinute)}`;
-const defaultEndTime: string = `${padNumberWith0(
-  currentHour + 1,
-)}:${padNumberWith0(currentMinute)}`;
-
-const localizer = momentLocalizer(moment);
-
-const formatDate: Function = (date: Date): string => {
-  return [
-    date.getFullYear(),
-    padNumberWith0(date.getMonth() + 1),
-    padNumberWith0(date.getDate()),
-  ].join("-");
-};
-
 const App = () => {
-  const [startDate, setStartDate] = useState<string>(formatDate(new Date()));
-  const [endDate, setEndDate] = useState<string>(formatDate(new Date()));
-  const [startTime, setStartTime] = useState<string>(defaultStartTime);
-  const [endTime, setEndTime] = useState<string>(defaultEndTime);
+  const currentHour: number = new Date().getHours();
+  const currentMinute: number = new Date().getMinutes();
+  const padNumberWith0Zero: Function = (num: Number): string =>
+    num.toString().padStart(2, "0");
+  const DEFAULT_START_TIME: string = `${padNumberWith0Zero(
+    currentHour
+  )}:${padNumberWith0Zero(currentMinute)}`;
+  const DEFAULT_END_TIME: string = `${padNumberWith0Zero(
+    currentHour + 1
+  )}:${padNumberWith0Zero(currentMinute)}`;
+
+  const localizer = momentLocalizer(moment);
+
+  const formatDate: Function = (date: Date): string => {
+    return [
+      date.getFullYear(),
+      padNumberWith0Zero(date.getMonth() + 1),
+      padNumberWith0Zero(date.getDate()),
+    ].join("-");
+  };
+  const DEFAULT_DATE = formatDate(new Date());
+
+  const [startDate, setStartDate] = useState<string>(DEFAULT_DATE);
+  const [endDate, setEndDate] = useState<string>(DEFAULT_DATE);
+  const [startTime, setStartTime] = useState<string>(DEFAULT_START_TIME);
+  const [endTime, setEndTime] = useState<string>(DEFAULT_END_TIME);
   const [title, setTitle] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const [events, setEvents] = useState<CalendarEvent[]>([]);
@@ -53,8 +54,12 @@ const App = () => {
         end: endDateAndTime,
       },
     ]);
-
+    setTitle("");
     setError(null);
+    setStartDate(DEFAULT_DATE);
+    setEndDate(DEFAULT_DATE);
+    setStartTime(DEFAULT_START_TIME);
+    setEndTime(DEFAULT_END_TIME);
   };
 
   return (
@@ -68,8 +73,9 @@ const App = () => {
           style={{ height: 500 }}
         />
       </div>
-      <label>Title</label>
+      <label htmlFor="title">Title</label>
       <input
+        id="title"
         type="text"
         onChange={(e) => {
           setTitle(e.target.value);
@@ -77,8 +83,9 @@ const App = () => {
         value={title}
       />
 
-      <label>Start Date</label>
+      <label htmlFor="startDate">Start Date</label>
       <input
+        id="startDate"
         min={formatDate(new Date())}
         type="date"
         onChange={(e) => {
@@ -86,16 +93,18 @@ const App = () => {
         }}
         value={startDate}
       />
-      <label>Start Time</label>
+      <label htmlFor="startTime">Start Time</label>
       <input
+        id="startTime"
         type="time"
         onChange={(e) => {
           setStartTime(e.target.value);
         }}
         value={startTime}
       />
-      <label>End Date</label>
+      <label htmlFor="endDate">End Date</label>
       <input
+        id="endDate"
         min={startDate}
         type="date"
         onChange={(e) => {
@@ -103,8 +112,9 @@ const App = () => {
         }}
         value={endDate}
       />
-      <label>End Time</label>
+      <label htmlFor="endTime">End Time</label>
       <input
+        id="endTime"
         type="time"
         onChange={(e) => {
           setEndTime(e.target.value);
