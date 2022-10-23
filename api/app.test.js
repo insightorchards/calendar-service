@@ -1,31 +1,26 @@
-const { MongoClient } = require("mongodb");
+const mongoose = require("mongoose");
+const { connectDB, dropDB, dropCollections } = require("./setupTestDb");
+const { CalendarEntry } = require('./models/calendarEntry')
 const supertest = require("supertest");
-const { MongoMemoryServer } = require("mongodb-memory-server");
 const { app } = require("./app");
-let client;
-let mongod;
-let dbConnection;
 
 beforeAll(async () => {
-  process.env.NODE_ENV = "test";
-  mongod = await MongoMemoryServer.create();
-  client = await new MongoClient(mongod.getUri(), {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  }).connect();
+  await connectDB();
 });
 
-afterAll((done) => {
-  process.env.NODE_ENV = "dev";
-  client.close();
-  mongod.stop();
-  done();
+afterEach(async () => {
+  await dropCollections();
+});
+
+afterAll(async () => {
+  await dropDB();
 });
 
 describe("POST /", () => {
   it("POST / => seeded database items", async () => {
-    // console.log("total items", dbConnection.collection('calendarEntries').count())
+    const numBefore = await CalendarEntry.countDocuments()
     await supertest(app).post("/seedDatabase").expect(201);
-    // EB_TODO: Add assertion to show that 3 more items exist in the DB now
+    const numAfter = await CalendarEntry.countDocuments()
+    expect(numAfter).toBeGreaterThan(numBefore)
   });
 });
