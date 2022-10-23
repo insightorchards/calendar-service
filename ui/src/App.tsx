@@ -9,22 +9,22 @@ import s from "./App.module.css";
 const App = () => {
   const currentHour: number = new Date().getHours();
   const currentMinute: number = new Date().getMinutes();
-  const padNumberWith0: Function = (num: Number): string =>
+  const padNumberWith0Zero: Function = (num: Number): string =>
     num.toString().padStart(2, "0");
-  const DEFAULT_START_TIME: string = `${padNumberWith0(
+  const DEFAULT_START_TIME: string = `${padNumberWith0Zero(
     currentHour
-  )}:${padNumberWith0(currentMinute)}`;
-  const DEFAULT_END_TIME: string = `${padNumberWith0(
+  )}:${padNumberWith0Zero(currentMinute)}`;
+  const DEFAULT_END_TIME: string = `${padNumberWith0Zero(
     currentHour + 1
-  )}:${padNumberWith0(currentMinute)}`;
+  )}:${padNumberWith0Zero(currentMinute)}`;
 
   const localizer = momentLocalizer(moment);
 
   const formatDate: Function = (date: Date): string => {
     return [
       date.getFullYear(),
-      padNumberWith0(date.getMonth() + 1),
-      padNumberWith0(date.getDate()),
+      padNumberWith0Zero(date.getMonth() + 1),
+      padNumberWith0Zero(date.getDate()),
     ].join("-");
   };
   const DEFAULT_DATE = formatDate(new Date());
