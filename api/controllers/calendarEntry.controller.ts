@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { CalendarEntry } from '../models/calendarEntry'
+import { dayAfter } from '../lib/dateHelpers';
 
 interface CalendarEntryInput {
   eventId: string
@@ -22,8 +23,6 @@ interface CalendarEntry {
   createdAt: Date
   updatedAt: Date
 };
-
-const dayAfter = (date) => (new Date((date).valueOf() + 1000*3600*24))
 
 export const seedDatabaseWithEntry = async (req: Request, res: Response, next: NextFunction) => {
   const today = new Date()
