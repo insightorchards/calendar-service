@@ -1,8 +1,13 @@
 import React, { MouseEvent } from "react";
-import moment from "moment";
+// import moment from "moment";
 import { useState } from "react";
-import { Calendar, momentLocalizer } from "react-big-calendar";
-import "react-big-calendar/lib/css/react-big-calendar.css";
+import FullCalendar from "@fullcalendar/react"; // must go before plugins
+import dayGridPlugin from "@fullcalendar/daygrid"; // a plugin!
+import timeGridPlugin from "@fullcalendar/timegrid";
+import listPlugin from "@fullcalendar/list";
+// import interactionPlugin from "@fullcalendar/interaction";
+// import { Calendar, momentLocalizer } from "react-big-calendar";
+// import "react-big-calendar/lib/css/react-big-calendar.css";
 import { CalendarEvent } from "./configs/CalendarEvent";
 import s from "./App.module.css";
 
@@ -18,7 +23,7 @@ const App = () => {
     currentHour + 1
   )}:${padNumberWith0Zero(currentMinute)}`;
 
-  const localizer = momentLocalizer(moment);
+  // const localizer = momentLocalizer(moment);
 
   const formatDate: Function = (date: Date): string => {
     return [
@@ -38,10 +43,11 @@ const App = () => {
   const [events, setEvents] = useState<CalendarEvent[]>([]);
 
   const handleSubmit = (e: MouseEvent<HTMLButtonElement>) => {
+    console.log("inside handleSubmit");
     e.preventDefault();
     const startDateAndTime: Date = new Date(`${startDate}T${startTime}`);
     const endDateAndTime: Date = new Date(`${endDate}T${endTime}`);
-
+    console.log(startDateAndTime, endDateAndTime, startDate, endDate);
     if (startDateAndTime > endDateAndTime) {
       setError("Error: end cannot be before start.");
       return;
@@ -50,8 +56,8 @@ const App = () => {
     setEvents([
       {
         title: title,
-        start: startDateAndTime,
-        end: endDateAndTime,
+        start: "2022-10-24",
+        end: "2022-10-25",
       },
     ]);
     setTitle("");
@@ -65,12 +71,43 @@ const App = () => {
   return (
     <div className="App">
       <div>
-        <Calendar
+        {/* <Calendar
           localizer={localizer}
           events={events}
           startAccessor="start"
           endAccessor="end"
           style={{ height: 500 }}
+        /> */}
+        <FullCalendar
+          plugins={[dayGridPlugin, timeGridPlugin, listPlugin]}
+          headerToolbar={{
+            left: "prev,next today",
+            center: "title",
+            right: "dayGridMonth,timeGridWeek,timeGridDay",
+          }}
+          events={[
+            {
+              title: "My event",
+              start: "2022-10-24T08:00:00.000Z",
+              end: "2022-10-26T00:10:00.000Z",
+            },
+          ]}
+          initialView="dayGridMonth"
+          editable={true}
+          selectable={true}
+          selectMirror={true}
+          dayMaxEvents={true}
+          weekends={true}
+          // initialEvents={INITIAL_EVENTS} // alternatively, use the `events` setting to fetch from a feed
+          // select={this.handleDateSelect}
+          // eventContent={renderEventContent} // custom render function
+          // eventClick={this.handleEventClick}
+          // eventsSet={this.handleEvents} // called after events are initialized/added/changed/removed
+          /* you can update a remote database when these fire:
+          eventAdd={function(){}}
+          eventChange={function(){}}
+          eventRemove={function(){}}
+          */
         />
       </div>
       <label htmlFor="title">Title</label>

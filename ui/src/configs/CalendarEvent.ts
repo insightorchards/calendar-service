@@ -1,7 +1,7 @@
 interface CalendarEvent {
   title: String;
-  start: Date;
-  end: Date;
+  start: String;
+  end: String;
 }
 
 export { CalendarEvent };
