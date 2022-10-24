@@ -1,14 +1,9 @@
 import React, { MouseEvent } from "react";
-// import moment from "moment";
 import { useState } from "react";
-import FullCalendar from "@fullcalendar/react"; // must go before plugins
-import dayGridPlugin from "@fullcalendar/daygrid"; // a plugin!
+import FullCalendar, { EventSourceInput } from "@fullcalendar/react";
+import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import listPlugin from "@fullcalendar/list";
-// import interactionPlugin from "@fullcalendar/interaction";
-// import { Calendar, momentLocalizer } from "react-big-calendar";
-// import "react-big-calendar/lib/css/react-big-calendar.css";
-import { CalendarEvent } from "./configs/CalendarEvent";
 import s from "./App.module.css";
 
 const App = () => {
@@ -22,8 +17,6 @@ const App = () => {
   const DEFAULT_END_TIME: string = `${padNumberWith0Zero(
     currentHour + 1
   )}:${padNumberWith0Zero(currentMinute)}`;
-
-  // const localizer = momentLocalizer(moment);
 
   const formatDate: Function = (date: Date): string => {
     return [
@@ -40,14 +33,21 @@ const App = () => {
   const [endTime, setEndTime] = useState<string>(DEFAULT_END_TIME);
   const [title, setTitle] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
-  const [events, setEvents] = useState<CalendarEvent[]>([]);
+  const [events, setEvents] = useState<EventSourceInput>([]);
 
   const handleSubmit = (e: MouseEvent<HTMLButtonElement>) => {
     console.log("inside handleSubmit");
     e.preventDefault();
-    const startDateAndTime: Date = new Date(`${startDate}T${startTime}`);
-    const endDateAndTime: Date = new Date(`${endDate}T${endTime}`);
-    console.log(startDateAndTime, endDateAndTime, startDate, endDate);
+    const startDateAndTime: string = `${startDate}T${startTime}`;
+    const endDateAndTime: string = `${endDate}T${endTime}`;
+    console.log(
+      startDate,
+      endDate,
+      startTime,
+      endTime,
+      startDateAndTime,
+      endDateAndTime
+    );
     if (startDateAndTime > endDateAndTime) {
       setError("Error: end cannot be before start.");
       return;
@@ -56,8 +56,8 @@ const App = () => {
     setEvents([
       {
         title: title,
-        start: "2022-10-24",
-        end: "2022-10-25",
+        start: startDateAndTime,
+        end: endDateAndTime,
       },
     ]);
     setTitle("");
@@ -71,13 +71,6 @@ const App = () => {
   return (
     <div className="App">
       <div>
-        {/* <Calendar
-          localizer={localizer}
-          events={events}
-          startAccessor="start"
-          endAccessor="end"
-          style={{ height: 500 }}
-        /> */}
         <FullCalendar
           plugins={[dayGridPlugin, timeGridPlugin, listPlugin]}
           headerToolbar={{
@@ -85,29 +78,13 @@ const App = () => {
             center: "title",
             right: "dayGridMonth,timeGridWeek,timeGridDay",
           }}
-          events={[
-            {
-              title: "My event",
-              start: "2022-10-24T08:00:00.000Z",
-              end: "2022-10-26T00:10:00.000Z",
-            },
-          ]}
+          events={events}
           initialView="dayGridMonth"
-          editable={true}
-          selectable={true}
-          selectMirror={true}
-          dayMaxEvents={true}
-          weekends={true}
-          // initialEvents={INITIAL_EVENTS} // alternatively, use the `events` setting to fetch from a feed
-          // select={this.handleDateSelect}
-          // eventContent={renderEventContent} // custom render function
-          // eventClick={this.handleEventClick}
-          // eventsSet={this.handleEvents} // called after events are initialized/added/changed/removed
-          /* you can update a remote database when these fire:
-          eventAdd={function(){}}
-          eventChange={function(){}}
-          eventRemove={function(){}}
-          */
+          // editable={true}
+          // selectable={true}
+          // selectMirror={true}
+          // dayMaxEvents={true}
+          // weekends={true}
         />
       </div>
       <label htmlFor="title">Title</label>
