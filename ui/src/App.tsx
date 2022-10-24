@@ -36,18 +36,9 @@ const App = () => {
   const [events, setEvents] = useState<EventSourceInput>([]);
 
   const handleSubmit = (e: MouseEvent<HTMLButtonElement>) => {
-    console.log("inside handleSubmit");
     e.preventDefault();
     const startDateAndTime: string = `${startDate}T${startTime}`;
     const endDateAndTime: string = `${endDate}T${endTime}`;
-    console.log(
-      startDate,
-      endDate,
-      startTime,
-      endTime,
-      startDateAndTime,
-      endDateAndTime
-    );
     if (startDateAndTime > endDateAndTime) {
       setError("Error: end cannot be before start.");
       return;
