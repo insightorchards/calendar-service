@@ -1,9 +1,9 @@
 import React, { MouseEvent } from "react";
-import moment from "moment";
 import { useState } from "react";
-import { Calendar, momentLocalizer } from "react-big-calendar";
-import "react-big-calendar/lib/css/react-big-calendar.css";
-import { CalendarEvent } from "./configs/CalendarEvent";
+import FullCalendar, { EventSourceInput } from "@fullcalendar/react";
+import dayGridPlugin from "@fullcalendar/daygrid";
+import timeGridPlugin from "@fullcalendar/timegrid";
+import listPlugin from "@fullcalendar/list";
 import s from "./App.module.css";
 
 const App = () => {
@@ -17,8 +17,6 @@ const App = () => {
   const DEFAULT_END_TIME: string = `${padNumberWith0Zero(
     currentHour + 1
   )}:${padNumberWith0Zero(currentMinute)}`;
-
-  const localizer = momentLocalizer(moment);
 
   const formatDate: Function = (date: Date): string => {
     return [
@@ -35,13 +33,12 @@ const App = () => {
   const [endTime, setEndTime] = useState<string>(DEFAULT_END_TIME);
   const [title, setTitle] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
-  const [events, setEvents] = useState<CalendarEvent[]>([]);
+  const [events, setEvents] = useState<EventSourceInput>([]);
 
   const handleSubmit = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    const startDateAndTime: Date = new Date(`${startDate}T${startTime}`);
-    const endDateAndTime: Date = new Date(`${endDate}T${endTime}`);
-
+    const startDateAndTime: string = `${startDate}T${startTime}`;
+    const endDateAndTime: string = `${endDate}T${endTime}`;
     if (startDateAndTime > endDateAndTime) {
       setError("Error: end cannot be before start.");
       return;
@@ -65,12 +62,20 @@ const App = () => {
   return (
     <div className="App">
       <div>
-        <Calendar
-          localizer={localizer}
+        <FullCalendar
+          plugins={[dayGridPlugin, timeGridPlugin, listPlugin]}
+          headerToolbar={{
+            left: "prev,next today",
+            center: "title",
+            right: "dayGridMonth,timeGridWeek,timeGridDay",
+          }}
           events={events}
-          startAccessor="start"
-          endAccessor="end"
-          style={{ height: 500 }}
+          initialView="dayGridMonth"
+          // editable={true}
+          // selectable={true}
+          // selectMirror={true}
+          // dayMaxEvents={true}
+          // weekends={true}
         />
       </div>
       <label htmlFor="title">Title</label>

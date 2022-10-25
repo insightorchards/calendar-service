@@ -20,8 +20,13 @@ describe("App", () => {
 
   it("shows calander", async () => {
     render(<App />);
-    expect(await screen.findByText("Month")).toBeVisible();
-    expect(await screen.findByLabelText("Month View")).toBeVisible();
+    expect(await screen.findByText(/Mon/)).toBeVisible();
+    expect(await screen.findByText(/Tue/)).toBeVisible();
+    expect(await screen.findByText(/Wed/)).toBeVisible();
+    expect(await screen.findByText(/Thu/)).toBeVisible();
+    expect(await screen.findByText(/Fri/)).toBeVisible();
+    expect(await screen.findByText(/Sat/)).toBeVisible();
+    expect(await screen.findByText(/Sun/)).toBeVisible();
   });
 
   describe("events", () => {
