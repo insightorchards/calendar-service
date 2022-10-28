@@ -7,10 +7,6 @@ import listPlugin from "@fullcalendar/list";
 import s from "./App.module.css";
 
 const App = () => {
-  // axios
-  //   .get("http://localhost:4000/entries")
-  //   .then((result: any) => console.log("check it", result.data));
-
   const currentHour: number = new Date().getHours();
   const currentMinute: number = new Date().getMinutes();
   const padNumberWith0Zero: Function = (num: Number): string =>
@@ -46,13 +42,12 @@ const App = () => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        description: "helloworld",
-        title: title,
-        creatorId: "123",
-        eventId: "1234",
-        isAllDay: false,
-        // startTimeUtc: startTime,
-        // endTimeUtc: endTime,
+        description: "default entry description",
+        title: "default title",
+        creatorId: "1234",
+        eventId: "5678",
+        startTimeUtc: new Date(`${startDate}T${startTime}`).toISOString(),
+        endTimeUtc: new Date(`${endDate}T${endTime}`).toISOString(),
       }),
     });
     const result = await response.json();
