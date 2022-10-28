@@ -25,6 +25,34 @@ describe("POST /seedDatabase", () => {
   });
 });
 
+describe("POST /entries", () => {
+  it.only("adds an item to the database", async () => {
+    await supertest(app)
+      .post("/entries")
+      .send({
+        eventId: "123",
+        creatorId: "456",
+        title: "Happy day",
+        description: "and a happy night too",
+      })
+      .expect(201);
+
+    const mostRecentEntry = await CalendarEntry.findOne({}).sort({
+      $natural: -1,
+    });
+
+    expect(mostRecentEntry).toEqual(
+      expect.objectContaining({
+        eventId: "123",
+        creatorId: "456",
+        title: "Happy day",
+        description: "and a happy night too",
+      })
+    );
+    // grab the most recent entry in the DB and assert that the lastest entry matches to body that we sent
+  });
+});
+
 describe("GET /entries", () => {
   it("returns the entries that exist in the database", async () => {
     const today = new Date();

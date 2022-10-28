@@ -7,6 +7,10 @@ import listPlugin from "@fullcalendar/list";
 import s from "./App.module.css";
 
 const App = () => {
+  // axios
+  //   .get("http://localhost:4000/entries")
+  //   .then((result: any) => console.log("check it", result.data));
+
   const currentHour: number = new Date().getHours();
   const currentMinute: number = new Date().getMinutes();
   const padNumberWith0Zero: Function = (num: Number): string =>
@@ -34,6 +38,29 @@ const App = () => {
   const [title, setTitle] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const [events, setEvents] = useState<EventSourceInput>([]);
+
+  const handleCreateEntry = async () => {
+    const response = await fetch("http://localhost:4000/entries", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        description: "helloworld",
+        title: title,
+        creatorId: "123",
+        eventId: "1234",
+        isAllDay: false,
+        // startTimeUtc: startTime,
+        // endTimeUtc: endTime,
+      }),
+    });
+    const result = await response.json();
+    return result;
+  };
+  handleCreateEntry().then((result) => {
+    console.log({ result });
+  });
 
   const handleSubmit = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
