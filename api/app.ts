@@ -17,9 +17,9 @@ dotenv.config();
 const connectionString = "mongodb://127.0.0.1:27017/calendar-app";
 const PORT = process.env.NODE_ENV === "test" ? 4001 : 4000;
 
+app.post("/entry", createCalendarEntry);
 app.get("/entries", getCalendarEntries);
 app.post("/seedDatabase", seedDatabaseWithEntry);
-app.post("/entries", createCalendarEntry);
 
 const start = async () => {
   try {

@@ -25,10 +25,10 @@ describe("POST /seedDatabase", () => {
   });
 });
 
-describe("POST /entries", () => {
+describe("POST /entry", () => {
   it.only("adds an item to the database", async () => {
     await supertest(app)
-      .post("/entries")
+      .post("/entry")
       .send({
         eventId: "123",
         creatorId: "456",
@@ -47,7 +47,7 @@ describe("POST /entries", () => {
         creatorId: "456",
         title: "Happy day",
         description: "and a happy night too",
-      })
+      }),
     );
     // grab the most recent entry in the DB and assert that the lastest entry matches to body that we sent
   });

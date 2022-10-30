@@ -12,10 +12,10 @@ const App = () => {
   const padNumberWith0Zero: Function = (num: Number): string =>
     num.toString().padStart(2, "0");
   const DEFAULT_START_TIME: string = `${padNumberWith0Zero(
-    currentHour
+    currentHour,
   )}:${padNumberWith0Zero(currentMinute)}`;
   const DEFAULT_END_TIME: string = `${padNumberWith0Zero(
-    currentHour + 1
+    currentHour + 1,
   )}:${padNumberWith0Zero(currentMinute)}`;
 
   const formatDate: Function = (date: Date): string => {
@@ -36,7 +36,7 @@ const App = () => {
   const [events, setEvents] = useState<EventSourceInput>([]);
 
   const handleCreateEntry = async () => {
-    const response = await fetch("http://localhost:4000/entries", {
+    const response = await fetch("http://localhost:4000/entry", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
