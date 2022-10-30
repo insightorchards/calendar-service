@@ -43,7 +43,7 @@ const App = () => {
       },
       body: JSON.stringify({
         description: "default entry description",
-        title: "default title",
+        title: title,
         creatorId: "1234",
         eventId: "5678",
         startTimeUtc: new Date(`${startDate}T${startTime}`).toISOString(),
@@ -53,9 +53,6 @@ const App = () => {
     const result = await response.json();
     return result;
   };
-  handleCreateEntry().then((result) => {
-    console.log({ result });
-  });
 
   const handleSubmit = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -148,7 +145,16 @@ const App = () => {
         }}
         value={endTime}
       />
-      <button onClick={handleSubmit}>Create Event</button>
+      <button
+        onClick={(e) => {
+          handleSubmit(e);
+          handleCreateEntry().then((result) => {
+            console.log({ result });
+          });
+        }}
+      >
+        Create Event
+      </button>
       {error && <p className={s.error}>{error}</p>}
     </div>
   );
