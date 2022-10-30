@@ -26,7 +26,7 @@ describe("POST /seedDatabase", () => {
 });
 
 describe("POST /entry", () => {
-  it.only("adds an item to the database", async () => {
+  it("adds an item to the database", async () => {
     await supertest(app)
       .post("/entry")
       .send({

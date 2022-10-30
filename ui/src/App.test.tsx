@@ -50,11 +50,11 @@ describe("App", () => {
         screen.getByText("Berta goes to the baseball game!"),
       ).toBeVisible();
     });
-    it("resets inputs correclty to default values when submitted", () => {
+    it("resets inputs correctly to default values when submitted", () => {
       render(<App />);
-      userEvent.type(screen.getByLabelText("Start Date"), "2022-03-16");
+      userEvent.type(screen.getByLabelText("Start Date"), "03162022");
       userEvent.type(screen.getByLabelText("Start Time"), "08:10");
-      userEvent.type(screen.getByLabelText("End Date"), "2022-03-18");
+      userEvent.type(screen.getByLabelText("End Date"), "03182022");
       userEvent.type(screen.getByLabelText("End Time"), "10:10");
       userEvent.click(screen.getByRole("button", { name: "Create Event" }));
       expect(screen.getByLabelText("Start Date")).toHaveValue("2022-02-15");
@@ -85,6 +85,23 @@ describe("App", () => {
       expect(
         screen.getByText("Error: end cannot be before start."),
       ).toBeVisible();
+    });
+    it("successfully creates an event, and displays it", async () => {
+      render(<App />);
+      userEvent.type(screen.getByLabelText("Start Date"), "02152022");
+      userEvent.type(screen.getByLabelText("Start Time"), "08:10");
+      userEvent.type(screen.getByLabelText("End Date"), "02152022");
+      userEvent.type(screen.getByLabelText("End Time"), "10:10");
+      userEvent.type(screen.getByLabelText("Title"), "Birthyay!");
+      userEvent.click(screen.getByRole("button", { name: "Create Event" }));
+
+      userEvent.click(screen.getByLabelText("Title"));
+      expect(await screen.findByLabelText("Title")).toHaveAttribute(
+        "value",
+        "",
+      );
+      expect(screen.getByText("Birthyay!")).toBeVisible();
+      expect(screen.getByText("8:10a")).toBeVisible();
     });
   });
 });

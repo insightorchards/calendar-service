@@ -27,7 +27,7 @@ interface CalendarEntry {
 export const seedDatabaseWithEntry = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   const today = new Date();
   await CalendarEntry.insertMany([
@@ -67,17 +67,18 @@ export const seedDatabaseWithEntry = async (
 export const createCalendarEntry = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
-  await CalendarEntry.create(req.body);
-  res.status(201).json();
+  const entry = await CalendarEntry.create(req.body);
+  res.status(201);
+  res.json(entry);
   return;
 };
 
 export const getCalendarEntries = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   const entries = await CalendarEntry.find();
   res.status(200).json(entries);
