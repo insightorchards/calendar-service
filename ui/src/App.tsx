@@ -44,8 +44,15 @@ const App = () => {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log({ data });
-        setEvents(data);
+        const formattedEvents = data.map((event: any) => {
+          return {
+            title: event.title,
+            start: event.startTimeUtc,
+            end: event.endTimeUtc,
+          };
+        });
+        console.log(formattedEvents);
+        setEvents(formattedEvents);
       });
   }, []);
 
@@ -78,6 +85,8 @@ const App = () => {
     }
 
     setEvents([
+      // AP_&JM_TODO typescript error does not allow previous events to be spread.
+      // ...events
       {
         title: title,
         start: startDateAndTime,
