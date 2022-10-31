@@ -81,5 +81,8 @@ export const getCalendarEntries = async (
   next: NextFunction,
 ) => {
   const entries = await CalendarEntry.find();
-  res.status(200).json(entries);
+  console.log({ entries });
+  res.status(200);
+  res.json(entries);
+  // return;
 };
