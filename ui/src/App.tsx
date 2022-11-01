@@ -34,6 +34,7 @@ const App = () => {
   const [title, setTitle] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const [events, setEvents] = useState<EventSourceInput>([]);
+  const [newEvent, setNewEvent] = useState<object>({});
 
   useEffect(() => {
     fetch("http://localhost:4000/entries", {
@@ -51,10 +52,9 @@ const App = () => {
             end: event.endTimeUtc,
           };
         });
-        console.log(formattedEvents);
         setEvents(formattedEvents);
       });
-  }, []);
+  }, [newEvent]);
 
   const handleCreateEntry = async () => {
     const response = await fetch("http://localhost:4000/entry", {
@@ -84,15 +84,11 @@ const App = () => {
       return;
     }
 
-    setEvents([
-      // AP_&JM_TODO typescript error does not allow previous events to be spread.
-      // ...events
-      {
-        title: title,
-        start: startDateAndTime,
-        end: endDateAndTime,
-      },
-    ]);
+    setNewEvent({
+      title: title,
+      start: startDateAndTime,
+      end: endDateAndTime,
+    });
     setTitle("");
     setError(null);
     setStartDate(DEFAULT_DATE);
