@@ -4,6 +4,7 @@ import FullCalendar, { EventSourceInput } from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import listPlugin from "@fullcalendar/list";
+import { getEntries, createEntry } from "./fetchers";
 import s from "./App.module.css";
 
 const App = () => {
@@ -34,54 +35,19 @@ const App = () => {
   const [title, setTitle] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const [events, setEvents] = useState<EventSourceInput>([]);
-  // const [newEvent, setNewEvent] = useState<object>({});
-  // const []
 
   useEffect(() => {
-    fetch("http://localhost:4000/entries", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        const formattedEvents = data.map((event: any) => {
-          return {
-            title: event.title,
-            start: event.startTimeUtc,
-            end: event.endTimeUtc,
-          };
-        });
-        setEvents(formattedEvents);
-      });
-    console.log("Calling Use effect");
+    getEntries().then((entries) => setEvents(entries));
   }, []);
 
   const handleCreateEntry = async () => {
-    console.log("title", title);
-    const response = await fetch("http://localhost:4000/entry", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        description: "default entry description",
-        title: title,
-        creatorId: "1234",
-        eventId: "5678",
-        startTimeUtc: new Date(`${startDate}T${startTime}`).toISOString(),
-        endTimeUtc: new Date(`${endDate}T${endTime}`).toISOString(),
-      }),
+    const startTimeUtc = new Date(`${startDate}T${startTime}`);
+    const endTimeUtc = new Date(`${endDate}T${endTime}`);
+    createEntry({
+      title,
+      startTimeUtc,
+      endTimeUtc,
     });
-    // setTitle("");
-    // setError(null);
-    // setStartDate(DEFAULT_DATE);
-    // setEndDate(DEFAULT_DATE);
-    // setStartTime(DEFAULT_START_TIME);
-    // setEndTime(DEFAULT_END_TIME);
-    const result = await response.json();
-    return result;
   };
 
   const handleSubmit = (e: MouseEvent<HTMLButtonElement>) => {
@@ -93,11 +59,6 @@ const App = () => {
       return;
     }
 
-    // setNewEvent({
-    //   title: title,
-    //   start: startDateAndTime,
-    //   end: endDateAndTime,
-    // });
     setTitle("");
     setError(null);
     setStartDate(DEFAULT_DATE);
@@ -179,23 +140,7 @@ const App = () => {
           handleCreateEntry().then((result) => {
             console.log({ result });
           });
-          fetch("http://localhost:4000/entries", {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          })
-            .then((response) => response.json())
-            .then((data) => {
-              const formattedEvents = data.map((event: any) => {
-                return {
-                  title: event.title,
-                  start: event.startTimeUtc,
-                  end: event.endTimeUtc,
-                };
-              });
-              setEvents(formattedEvents);
-            });
+          getEntries().then((entries) => setEvents(entries));
         }}
       >
         Create Event
