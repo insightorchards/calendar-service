@@ -34,7 +34,8 @@ const App = () => {
   const [title, setTitle] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const [events, setEvents] = useState<EventSourceInput>([]);
-  const [newEvent, setNewEvent] = useState<object>({});
+  // const [newEvent, setNewEvent] = useState<object>({});
+  // const []
 
   useEffect(() => {
     fetch("http://localhost:4000/entries", {
@@ -54,9 +55,11 @@ const App = () => {
         });
         setEvents(formattedEvents);
       });
-  }, [newEvent]);
+    console.log("Calling Use effect");
+  }, []);
 
   const handleCreateEntry = async () => {
+    console.log("title", title);
     const response = await fetch("http://localhost:4000/entry", {
       method: "POST",
       headers: {
@@ -71,6 +74,12 @@ const App = () => {
         endTimeUtc: new Date(`${endDate}T${endTime}`).toISOString(),
       }),
     });
+    // setTitle("");
+    // setError(null);
+    // setStartDate(DEFAULT_DATE);
+    // setEndDate(DEFAULT_DATE);
+    // setStartTime(DEFAULT_START_TIME);
+    // setEndTime(DEFAULT_END_TIME);
     const result = await response.json();
     return result;
   };
@@ -84,11 +93,11 @@ const App = () => {
       return;
     }
 
-    setNewEvent({
-      title: title,
-      start: startDateAndTime,
-      end: endDateAndTime,
-    });
+    // setNewEvent({
+    //   title: title,
+    //   start: startDateAndTime,
+    //   end: endDateAndTime,
+    // });
     setTitle("");
     setError(null);
     setStartDate(DEFAULT_DATE);
@@ -170,6 +179,23 @@ const App = () => {
           handleCreateEntry().then((result) => {
             console.log({ result });
           });
+          fetch("http://localhost:4000/entries", {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              const formattedEvents = data.map((event: any) => {
+                return {
+                  title: event.title,
+                  start: event.startTimeUtc,
+                  end: event.endTimeUtc,
+                };
+              });
+              setEvents(formattedEvents);
+            });
         }}
       >
         Create Event

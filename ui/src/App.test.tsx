@@ -3,7 +3,37 @@ import React from "react";
 import userEvent from "@testing-library/user-event";
 import App from "./App";
 
+// declare let global: { fetch: {} };
+
+// var globalRef: any = global;
+// const fakeFetch = jest.fn();
+// window.fetch = fakeFetch;
+
+// global.fetch = jest.fn(() => {
+//   const result = {
+//     json: () => Promise.resolve({}),
+//   } as Response;
+//   return Promise.resolve(result);
+// }) as jest.Mock;
+
+// const fetchMock = jest
+//   .spyOn(global, "fetch")
+//   .mockImplementation(
+//     jest.fn(() =>
+//       Promise.resolve({ json: () => Promise.resolve({ data: 100 }) })
+//     ) as jest.Mock
+//   );
+
+// global.fetch = jest.fn(() =>
+//   Promise.resolve({
+//     json: () => Promise.resolve({ test: 100 }),
+//   })
+// ) as jest.Mock;
+
 describe("App", () => {
+  // beforeEach(() => {
+  //   fetchMock.mockClear;
+  // });
   beforeAll(() => {
     jest.useFakeTimers("modern" as FakeTimersConfig);
     const date = new Date("2022-02-15T04:00");
