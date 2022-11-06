@@ -13,13 +13,15 @@ const getEntries = async () => {
   })
     .then((response) => response.json())
     .then((data) => {
-      return data.map((event: any) => {
+      const result = data.map((event: any) => {
         return {
           title: event.title,
           start: event.startTimeUtc,
           end: event.endTimeUtc,
         };
       });
+      console.log("result", result);
+      return result;
     });
 };
 
@@ -43,6 +45,7 @@ const createEntry = async ({
     }),
   });
   const result = await response.json();
+  // console.log("result", result);
   return result;
 };
 

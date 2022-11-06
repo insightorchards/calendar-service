@@ -1,39 +1,15 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import React from "react";
 import userEvent from "@testing-library/user-event";
 import App from "./App";
+import { createEntry, getEntries } from "./fetchers";
+import { act } from "react-dom/test-utils";
+jest.mock("./fetchers");
 
-// declare let global: { fetch: {} };
-
-// var globalRef: any = global;
-// const fakeFetch = jest.fn();
-// window.fetch = fakeFetch;
-
-// global.fetch = jest.fn(() => {
-//   const result = {
-//     json: () => Promise.resolve({}),
-//   } as Response;
-//   return Promise.resolve(result);
-// }) as jest.Mock;
-
-// const fetchMock = jest
-//   .spyOn(global, "fetch")
-//   .mockImplementation(
-//     jest.fn(() =>
-//       Promise.resolve({ json: () => Promise.resolve({ data: 100 }) })
-//     ) as jest.Mock
-//   );
-
-// global.fetch = jest.fn(() =>
-//   Promise.resolve({
-//     json: () => Promise.resolve({ test: 100 }),
-//   })
-// ) as jest.Mock;
+const mockCreateEntry = createEntry as jest.MockedFunction<typeof createEntry>;
+const mockGetEntries = getEntries as jest.MockedFunction<typeof getEntries>;
 
 describe("App", () => {
-  // beforeEach(() => {
-  //   fetchMock.mockClear;
-  // });
   beforeAll(() => {
     jest.useFakeTimers("modern" as FakeTimersConfig);
     const date = new Date("2022-02-15T04:00");
@@ -64,20 +40,29 @@ describe("App", () => {
       expect(screen.getByLabelText("Start Time")).toHaveValue("04:00");
       expect(screen.getByLabelText("End Time")).toHaveValue("05:00");
     });
-    it("displays event in ui when all inputs are provided valid values", async () => {
+    it.only("displays event in ui when all inputs are provided valid values", async () => {
+      mockCreateEntry.mockResolvedValue({});
+      mockGetEntries.mockResolvedValue([
+        {
+          end: "2022-10-28T05:43:37.868Z",
+          start: "2022-10-27T05:43:37.868Z",
+          title: "Berta goes to the baseball game!",
+        },
+      ]);
       render(<App />);
       userEvent.click(screen.getByLabelText("Title"));
       userEvent.type(
         screen.getByLabelText("Title"),
-        "Berta goes to the baseball game!",
+        "Berta goes to the baseball game!"
       );
       userEvent.click(screen.getByRole("button", { name: "Create Event" }));
       expect(await screen.findByLabelText("Title")).toHaveAttribute(
         "value",
-        "",
+        ""
       );
+      expect(mockGetEntries).toHaveBeenCalledTimes(2);
       expect(
-        screen.getByText("Berta goes to the baseball game!"),
+        await screen.findByText("Berta goes to the baseball game!")
       ).toBeVisible();
     });
     it("resets inputs correctly to default values when submitted", () => {

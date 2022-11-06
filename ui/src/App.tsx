@@ -37,7 +37,10 @@ const App = () => {
   const [events, setEvents] = useState<EventSourceInput>([]);
 
   useEffect(() => {
-    getEntries().then((entries) => setEvents(entries));
+    getEntries().then((entries) => {
+      console.log("entries called on page load:", entries);
+      setEvents(entries);
+    });
   }, []);
 
   const handleCreateEntry = async () => {
@@ -138,9 +141,12 @@ const App = () => {
         onClick={(e) => {
           handleSubmit(e);
           handleCreateEntry().then((result) => {
-            console.log({ result });
+            console.log("created entry", result);
           });
-          getEntries().then((entries) => setEvents(entries));
+          getEntries().then((entries) => {
+            console.log("entries called on entry submit:", entries);
+            setEvents(entries);
+          });
         }}
       >
         Create Event
