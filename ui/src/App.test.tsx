@@ -40,12 +40,12 @@ describe("App", () => {
       expect(screen.getByLabelText("Start Time")).toHaveValue("04:00");
       expect(screen.getByLabelText("End Time")).toHaveValue("05:00");
     });
-    it.only("displays event in ui when all inputs are provided valid values", async () => {
+    it("displays event in ui when all inputs are provided valid values", async () => {
       mockCreateEntry.mockResolvedValue({});
       mockGetEntries.mockResolvedValue([
         {
-          end: "2022-10-28T05:43:37.868Z",
-          start: "2022-10-27T05:43:37.868Z",
+          end: "2022-02-27T05:43:37.868Z",
+          start: "2022-02-27T05:43:37.868Z",
           title: "Berta goes to the baseball game!",
         },
       ]);
