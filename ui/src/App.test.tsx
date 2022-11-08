@@ -19,10 +19,26 @@ describe("App", () => {
     jest.useRealTimers();
   });
   it("renders correctly", () => {
+    mockCreateEntry.mockResolvedValue({});
+    mockGetEntries.mockResolvedValue([
+      {
+        end: "2022-02-27T05:43:37.868Z",
+        start: "2022-02-27T05:43:37.868Z",
+        title: "Berta goes to the baseball game!",
+      },
+    ]);
     const app: any = render(<App />);
     expect(app.asFragment()).toMatchSnapshot();
   });
   it("shows calander", async () => {
+    mockCreateEntry.mockResolvedValue({});
+    mockGetEntries.mockResolvedValue([
+      {
+        end: "2022-02-27T05:43:37.868Z",
+        start: "2022-02-27T05:43:37.868Z",
+        title: "Berta goes to the baseball game!",
+      },
+    ]);
     render(<App />);
     expect(await screen.findByText(/Mon/)).toBeVisible();
     expect(await screen.findByText(/Tue/)).toBeVisible();
@@ -34,6 +50,14 @@ describe("App", () => {
   });
   describe("events", () => {
     it("defaults to today's date and a one hour time window", () => {
+      mockCreateEntry.mockResolvedValue({});
+      mockGetEntries.mockResolvedValue([
+        {
+          end: "2022-02-27T05:43:37.868Z",
+          start: "2022-02-27T05:43:37.868Z",
+          title: "Berta goes to the baseball game!",
+        },
+      ]);
       render(<App />);
       expect(screen.getByLabelText("Start Date")).toHaveValue("2022-02-15");
       expect(screen.getByLabelText("End Date")).toHaveValue("2022-02-15");
@@ -55,6 +79,10 @@ describe("App", () => {
         screen.getByLabelText("Title"),
         "Berta goes to the baseball game!"
       );
+      userEvent.type(screen.getByLabelText("Start Date"), "02152022");
+      userEvent.type(screen.getByLabelText("Start Time"), "08:10");
+      userEvent.type(screen.getByLabelText("End Date"), "02152022");
+      userEvent.type(screen.getByLabelText("End Time"), "10:10");
       userEvent.click(screen.getByRole("button", { name: "Create Event" }));
       expect(await screen.findByLabelText("Title")).toHaveAttribute(
         "value",
@@ -66,6 +94,14 @@ describe("App", () => {
       ).toBeVisible();
     });
     it("resets inputs correctly to default values when submitted", () => {
+      mockCreateEntry.mockResolvedValue({});
+      mockGetEntries.mockResolvedValue([
+        {
+          end: "2022-02-27T05:43:37.868Z",
+          start: "2022-02-27T05:43:37.868Z",
+          title: "Berta goes to the baseball game!",
+        },
+      ]);
       render(<App />);
       userEvent.type(screen.getByLabelText("Start Date"), "03162022");
       userEvent.type(screen.getByLabelText("Start Time"), "08:10");
@@ -78,6 +114,14 @@ describe("App", () => {
       expect(screen.getByLabelText("End Time")).toHaveValue("05:00");
     });
     it("errors when end date is before start date", () => {
+      mockCreateEntry.mockResolvedValue({});
+      mockGetEntries.mockResolvedValue([
+        {
+          end: "2022-02-27T05:43:37.868Z",
+          start: "2022-02-27T05:43:37.868Z",
+          title: "Berta goes to the baseball game!",
+        },
+      ]);
       render(<App />);
       userEvent.type(screen.getByLabelText("Start Date"), "2016-12-12");
       expect(screen.getByLabelText("Start Date")).toHaveValue("2016-12-12");
@@ -85,10 +129,18 @@ describe("App", () => {
       expect(screen.getByLabelText("End Date")).toHaveValue("2016-11-11");
       userEvent.click(screen.getByRole("button", { name: "Create Event" }));
       expect(
-        screen.getByText("Error: end cannot be before start."),
+        screen.getByText("Error: end cannot be before start.")
       ).toBeVisible();
     });
     it("errors when end time is before start time on the same day", () => {
+      mockCreateEntry.mockResolvedValue({});
+      mockGetEntries.mockResolvedValue([
+        {
+          end: "2022-02-27T05:43:37.868Z",
+          start: "2022-02-27T05:43:37.868Z",
+          title: "Berta goes to the baseball game!",
+        },
+      ]);
       render(<App />);
       expect(screen.getByLabelText("Start Date")).toHaveValue("2022-02-15");
       expect(screen.getByLabelText("End Date")).toHaveValue("2022-02-15");
@@ -98,25 +150,8 @@ describe("App", () => {
       expect(screen.getByLabelText("End Time")).toHaveValue("04:00");
       userEvent.click(screen.getByRole("button", { name: "Create Event" }));
       expect(
-        screen.getByText("Error: end cannot be before start."),
+        screen.getByText("Error: end cannot be before start.")
       ).toBeVisible();
-    });
-    it("successfully creates an event, and displays it", async () => {
-      render(<App />);
-      userEvent.type(screen.getByLabelText("Start Date"), "02152022");
-      userEvent.type(screen.getByLabelText("Start Time"), "08:10");
-      userEvent.type(screen.getByLabelText("End Date"), "02152022");
-      userEvent.type(screen.getByLabelText("End Time"), "10:10");
-      userEvent.type(screen.getByLabelText("Title"), "Birthyay!");
-      userEvent.click(screen.getByRole("button", { name: "Create Event" }));
-
-      userEvent.click(screen.getByLabelText("Title"));
-      expect(await screen.findByLabelText("Title")).toHaveAttribute(
-        "value",
-        "",
-      );
-      expect(screen.getByText("Birthyay!")).toBeVisible();
-      expect(screen.getByText("8:10a")).toBeVisible();
     });
   });
 });
