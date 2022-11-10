@@ -61,7 +61,6 @@ export const seedDatabaseWithEntry = async (
   ]);
 
   res.sendStatus(201);
-  return;
 };
 
 export const createCalendarEntry = async (
@@ -72,7 +71,6 @@ export const createCalendarEntry = async (
   const entry = await CalendarEntry.create(req.body as CalendarEntry);
   res.status(201);
   res.json(entry);
-  return;
 };
 
 export const getCalendarEntries = async (
@@ -81,8 +79,6 @@ export const getCalendarEntries = async (
   next: NextFunction,
 ) => {
   const entries = await CalendarEntry.find();
-  console.log({ entries });
   res.status(200);
   res.json(entries);
-  // return;
 };

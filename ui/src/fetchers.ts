@@ -20,7 +20,6 @@ const getEntries = async () => {
           end: event.endTimeUtc,
         };
       });
-      console.log("result", result);
       return result;
     });
 };
@@ -45,7 +44,6 @@ const createEntry = async ({
     }),
   });
   const result = await response.json();
-  // console.log("result", result);
   return result;
 };
 

@@ -38,7 +38,6 @@ const App = () => {
 
   useEffect(() => {
     getEntries().then((entries) => {
-      console.log("entries called on page load:", entries);
       setEvents(entries);
     });
   }, []);
@@ -51,8 +50,6 @@ const App = () => {
       startTimeUtc,
       endTimeUtc,
     });
-    console.log({ startTimeUtc });
-    console.log({ endTimeUtc });
   };
 
   const handleSubmit = (e: MouseEvent<HTMLButtonElement>) => {
@@ -142,11 +139,8 @@ const App = () => {
       <button
         onClick={(e) => {
           handleSubmit(e);
-          handleCreateEntry().then((result) => {
-            console.log("created entry", result);
-          });
+          handleCreateEntry();
           getEntries().then((entries) => {
-            console.log("entries called on entry submit:", entries);
             setEvents(entries);
           });
         }}
