@@ -51,6 +51,8 @@ const App = () => {
       startTimeUtc,
       endTimeUtc,
     });
+    console.log({ startTimeUtc });
+    console.log({ endTimeUtc });
   };
 
   const handleSubmit = (e: MouseEvent<HTMLButtonElement>) => {
