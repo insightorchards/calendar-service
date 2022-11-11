@@ -60,6 +60,10 @@ const App = () => {
       setError("Error: end cannot be before start.");
       return;
     }
+    handleCreateEntry();
+    getEntries().then((entries) => {
+      setEvents(entries);
+    });
 
     setTitle("");
     setError(null);
@@ -136,17 +140,7 @@ const App = () => {
         }}
         value={endTime}
       />
-      <button
-        onClick={(e) => {
-          handleSubmit(e);
-          handleCreateEntry();
-          getEntries().then((entries) => {
-            setEvents(entries);
-          });
-        }}
-      >
-        Create Event
-      </button>
+      <button onClick={(e) => handleSubmit(e)}>Create Event</button>
       {error && <p className={s.error}>{error}</p>}
     </div>
   );

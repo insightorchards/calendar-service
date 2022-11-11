@@ -27,12 +27,16 @@ describe("POST /seedDatabase", () => {
 
 describe("POST /entry", () => {
   it("adds an item to the database", async () => {
+    const startTime = new Date();
+    const endTime = new Date();
     await supertest(app)
       .post("/entry")
       .send({
         eventId: "123",
         creatorId: "456",
         title: "Happy day",
+        startTimeUtc: startTime,
+        endTimeUtc: endTime,
         description: "and a happy night too",
       })
       .expect(201);
@@ -43,13 +47,15 @@ describe("POST /entry", () => {
 
     expect(mostRecentEntry).toEqual(
       expect.objectContaining({
+        _id: expect.anything(),
         eventId: "123",
         creatorId: "456",
         title: "Happy day",
+        startTimeUtc: startTime,
+        endTimeUtc: endTime,
         description: "and a happy night too",
       }),
     );
-    // grab the most recent entry in the DB and assert that the lastest entry matches to body that we sent
   });
 });
 
