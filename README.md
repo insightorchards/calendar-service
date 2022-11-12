@@ -1,16 +1,10 @@
 # calendar-ui
 
+Welcome to our Typescript/React frontend, express API for a simple calendar. We use the [Full Calendar](https://fullcalendar.io/) component library.
+
+![calendar graphic](./simple-calendar.png)
+
 # Business requirements
 
 - Calendar functionality needs to show day/month/week views
-
-## react-calendar
-
-- It appears the view available are only; "month", "year", "decade" or "century".
-
-## full-calendar
-
-- It shows day/month/week views
 - It also creates events
-
-## big-calendar
