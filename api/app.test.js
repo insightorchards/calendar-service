@@ -54,7 +54,7 @@ describe("POST /entry", () => {
         startTimeUtc: startTime,
         endTimeUtc: endTime,
         description: "and a happy night too",
-      }),
+      })
     );
   });
 });
@@ -83,5 +83,35 @@ describe("GET /entries", () => {
 
     const response = await supertest(app).get("/entries").expect(200);
     expect(response.body.length).toEqual(2);
+  });
+});
+
+describe("GET /entry/:entryId", () => {
+  it("returns the requested entry", async () => {
+    const today = new Date();
+    const newEntry = await CalendarEntry.create({
+      eventId: "634b339218b3b892b312e5ca",
+      creatorId: "424b339218b3b892b312e5cb",
+      title: "Birthday party",
+      description: "Let's celebrate Janie!",
+      isAllDay: false,
+      startTimeUtc: today,
+      endTimeUtc: dayAfter(today),
+    });
+
+    const response = await supertest(app)
+      .get(`/entries/${newEntry.id}`)
+      .expect(200);
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        eventId: "634b339218b3b892b312e5ca",
+        creatorId: "424b339218b3b892b312e5cb",
+        title: "Birthday party",
+        description: "Let's celebrate Janie!",
+        isAllDay: false,
+        startTimeUtc: today.toISOString(),
+        endTimeUtc: dayAfter(today).toISOString(),
+      })
+    );
   });
 });

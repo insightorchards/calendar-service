@@ -14,6 +14,7 @@ describe("App", () => {
     const date = new Date("2022-02-15T04:00");
     jest.setSystemTime(date);
   });
+
   afterAll(() => {
     jest.useRealTimers();
   });
@@ -30,6 +31,7 @@ describe("App", () => {
     expect(await screen.findByText(/Mon/)).toBeVisible();
     expect(app.asFragment()).toMatchSnapshot();
   });
+
   it("shows calander", async () => {
     mockCreateEntry.mockResolvedValue({});
     mockGetEntries.mockResolvedValue([
@@ -48,6 +50,7 @@ describe("App", () => {
     expect(await screen.findByText(/Sat/)).toBeVisible();
     expect(await screen.findByText(/Sun/)).toBeVisible();
   });
+
   describe("events", () => {
     it("defaults to today's date and a one hour time window", () => {
       mockCreateEntry.mockResolvedValue({});
@@ -66,6 +69,7 @@ describe("App", () => {
       expect(screen.getByLabelText("Start Time")).toHaveValue("04:00");
       expect(screen.getByLabelText("End Time")).toHaveValue("05:00");
     });
+
     it("displays event in ui when all inputs are provided valid values", async () => {
       mockCreateEntry.mockResolvedValue({});
       mockGetEntries.mockResolvedValue([
@@ -105,6 +109,7 @@ describe("App", () => {
         title: "Berta goes to the baseball game!",
       });
     });
+
     it("resets inputs correctly to default values when submitted", () => {
       mockCreateEntry.mockResolvedValue({});
       mockGetEntries.mockResolvedValue([
@@ -127,6 +132,7 @@ describe("App", () => {
       expect(screen.getByLabelText("Start Time")).toHaveValue("04:00");
       expect(screen.getByLabelText("End Time")).toHaveValue("05:00");
     });
+
     it("errors when end date is before start date", () => {
       mockCreateEntry.mockResolvedValue({});
       mockGetEntries.mockResolvedValue([
@@ -148,6 +154,7 @@ describe("App", () => {
         screen.getByText("Error: end cannot be before start.")
       ).toBeVisible();
     });
+
     it("errors when end time is before start time on the same day", () => {
       mockCreateEntry.mockResolvedValue({});
       mockGetEntries.mockResolvedValue([
@@ -170,6 +177,24 @@ describe("App", () => {
       expect(
         screen.getByText("Error: end cannot be before start.")
       ).toBeVisible();
+    });
+
+    it("successfully creates an event, and displays it", async () => {
+      render(<App />);
+      userEvent.type(screen.getByLabelText("Start Date"), "02152022");
+      userEvent.type(screen.getByLabelText("Start Time"), "08:10");
+      userEvent.type(screen.getByLabelText("End Date"), "02152022");
+      userEvent.type(screen.getByLabelText("End Time"), "10:10");
+      userEvent.type(screen.getByLabelText("Title"), "Birthyay!");
+      userEvent.click(screen.getByRole("button", { name: "Create Event" }));
+
+      userEvent.click(screen.getByLabelText("Title"));
+      expect(await screen.findByLabelText("Title")).toHaveAttribute(
+        "value",
+        ""
+      );
+      expect(screen.getByText("Birthyay!")).toBeVisible();
+      expect(screen.getByText("8:10a")).toBeVisible();
     });
   });
 });

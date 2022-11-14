@@ -1,10 +1,23 @@
 import React, { MouseEvent, useEffect } from "react";
 import { useState } from "react";
-import FullCalendar, { EventSourceInput } from "@fullcalendar/react";
+import FullCalendar, {
+  EventClickArg,
+  EventSourceInput,
+} from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import listPlugin from "@fullcalendar/list";
 import { getEntries, createEntry } from "./fetchers";
+import {
+  Button,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+} from "@chakra-ui/react";
 import s from "./App.module.css";
 
 const App = () => {
@@ -13,10 +26,10 @@ const App = () => {
   const padNumberWith0Zero: Function = (num: Number): string =>
     num.toString().padStart(2, "0");
   const DEFAULT_START_TIME: string = `${padNumberWith0Zero(
-    currentHour,
+    currentHour
   )}:${padNumberWith0Zero(currentMinute)}`;
   const DEFAULT_END_TIME: string = `${padNumberWith0Zero(
-    currentHour + 1,
+    currentHour + 1
   )}:${padNumberWith0Zero(currentMinute)}`;
 
   const formatDate: Function = (date: Date): string => {
@@ -41,6 +54,10 @@ const App = () => {
       setEvents(entries);
     });
   }, []);
+
+  const [newEvent, setNewEvent] = useState<object>({});
+  const [displayedEventData, setDisplayedEventData] = useState<object>({});
+  const [showOverlay, setShowOverlay] = useState<boolean>(false);
 
   const handleCreateEntry = async () => {
     const startTimeUtc = new Date(`${startDate}T${startTime}`);
@@ -73,8 +90,48 @@ const App = () => {
     setEndTime(DEFAULT_END_TIME);
   };
 
+  const showEventOverlay = (arg: EventClickArg) => {
+    const entryId = arg.event._def.publicId;
+    fetch(`http://localhost:4000/entries/${entryId}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log({ data });
+        setDisplayedEventData(data);
+        console.log("setting overlay to true");
+        setShowOverlay(true);
+      });
+    // get info for given eventId
+    // show overlay
+  };
+
   return (
     <div className="App">
+      <Modal isOpen={showOverlay} onClose={() => console.log("clicked close")}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Modal Title</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <p>this is a modal</p>
+          </ModalBody>
+
+          <ModalFooter>
+            <Button
+              colorScheme="blue"
+              mr={3}
+              onClick={() => console.log("clicked close")}
+            >
+              Close
+            </Button>
+            <Button variant="ghost">Secondary Action</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
       <div>
         <FullCalendar
           plugins={[dayGridPlugin, timeGridPlugin, listPlugin]}
@@ -86,7 +143,8 @@ const App = () => {
           events={events}
           initialView="dayGridMonth"
           // editable={true}
-          // selectable={true}
+          selectable={true}
+          eventClick={showEventOverlay}
           // selectMirror={true}
           // dayMaxEvents={true}
           // weekends={true}
