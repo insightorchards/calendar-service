@@ -4,7 +4,7 @@
   "description": "Calendar API",
   "main": "index.js",
   "engines": {
-    "node": "16.13.0"
+    "node": "18.7.0"
   },
   "scripts": {
     "test": "jest --runInBand --detectOpenHandles --forceExit",
