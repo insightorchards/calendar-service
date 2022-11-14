@@ -2,6 +2,9 @@
   "name": "big-calendar",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": "18.7.0"
+  },
   "dependencies": {
     "@fullcalendar/daygrid": "^5.11.3",
     "@fullcalendar/list": "^5.11.3",
