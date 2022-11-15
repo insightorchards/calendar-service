@@ -18,6 +18,7 @@ import {
   ModalFooter,
   ModalBody,
   ModalCloseButton,
+  ChakraProvider,
 } from "@chakra-ui/react";
 import s from "./App.module.css";
 
@@ -131,28 +132,32 @@ const App = () => {
           />
         </div>
       </Box>
+      <ChakraProvider>
+        <Modal
+          isOpen={showOverlay}
+          onClose={() => console.log("clicked close")}
+        >
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Modal Title</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <p>this is a modal</p>
+            </ModalBody>
 
-      <Modal isOpen={showOverlay} onClose={() => console.log("clicked close")}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Modal Title</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <p>this is a modal</p>
-          </ModalBody>
-
-          <ModalFooter>
-            <Button
-              colorScheme="blue"
-              mr={3}
-              onClick={() => console.log("clicked close")}
-            >
-              Close
-            </Button>
-            <Button variant="ghost">Secondary Action</Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+            <ModalFooter>
+              <Button
+                colorScheme="blue"
+                mr={3}
+                onClick={() => console.log("clicked close")}
+              >
+                Close
+              </Button>
+              <Button variant="ghost">Secondary Action</Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+      </ChakraProvider>
 
       <label htmlFor="title">Title</label>
       <input
