@@ -133,10 +133,7 @@ const App = () => {
         </div>
       </Box>
       <ChakraProvider>
-        <Modal
-          isOpen={showOverlay}
-          onClose={() => console.log("clicked close")}
-        >
+        <Modal isOpen={showOverlay} onClose={() => setShowOverlay(false)}>
           <ModalOverlay />
           <ModalContent>
             <ModalHeader>Modal Title</ModalHeader>
