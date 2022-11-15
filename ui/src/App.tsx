@@ -9,6 +9,7 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import listPlugin from "@fullcalendar/list";
 import { getEntries, createEntry } from "./fetchers";
 import {
+  Box,
   Button,
   Modal,
   ModalOverlay,
@@ -55,7 +56,6 @@ const App = () => {
     });
   }, []);
 
-  const [newEvent, setNewEvent] = useState<object>({});
   const [displayedEventData, setDisplayedEventData] = useState<object>({});
   const [showOverlay, setShowOverlay] = useState<boolean>(false);
 
@@ -111,6 +111,27 @@ const App = () => {
 
   return (
     <div className="App">
+      <Box>
+        <div>
+          <FullCalendar
+            plugins={[dayGridPlugin, timeGridPlugin, listPlugin]}
+            headerToolbar={{
+              left: "prev,next today",
+              center: "title",
+              right: "dayGridMonth,timeGridWeek,timeGridDay",
+            }}
+            events={events}
+            initialView="dayGridMonth"
+            // editable={true}
+            selectable={true}
+            eventClick={showEventOverlay}
+            // selectMirror={true}
+            // dayMaxEvents={true}
+            // weekends={true}
+          />
+        </div>
+      </Box>
+
       <Modal isOpen={showOverlay} onClose={() => console.log("clicked close")}>
         <ModalOverlay />
         <ModalContent>
@@ -132,24 +153,7 @@ const App = () => {
           </ModalFooter>
         </ModalContent>
       </Modal>
-      <div>
-        <FullCalendar
-          plugins={[dayGridPlugin, timeGridPlugin, listPlugin]}
-          headerToolbar={{
-            left: "prev,next today",
-            center: "title",
-            right: "dayGridMonth,timeGridWeek,timeGridDay",
-          }}
-          events={events}
-          initialView="dayGridMonth"
-          // editable={true}
-          selectable={true}
-          eventClick={showEventOverlay}
-          // selectMirror={true}
-          // dayMaxEvents={true}
-          // weekends={true}
-        />
-      </div>
+
       <label htmlFor="title">Title</label>
       <input
         id="title"
