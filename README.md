@@ -20,7 +20,7 @@ Welcome to our Typescript/React frontend and express API for a simple calendar. 
 - For frontend: navigate to `ui` directory and run the following commands: `npm i` and `npm start`
 - For backend: navigate to `api` directory and run the following commands: `npm i` and `npm run serve`
 
-## Developing
+# Developing
 
 Use [nvm](https://github.com/nvm-sh/nvm) to make sure you are on a consistent node version for this project.
 Run `nvm install` and then `nvm use` to download and use the node version specified in `.nvmrc`
