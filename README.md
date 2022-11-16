@@ -13,8 +13,10 @@ Welcome to our Typescript/React frontend and express API for a simple calendar. 
 
 # Business requirements
 
-- Calendar functionality needs to show day/month/week views
-- It also creates events
+- Ability to create events with date and time [Done]
+- Ability to show day/week/month views [Done]
+- Ability to create all-day events
+- Ability to edit and delete event
 
 # Running the app
 - For frontend: navigate to `ui` directory and run the following commands: `npm i` and `npm start`
