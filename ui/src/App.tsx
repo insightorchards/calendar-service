@@ -101,14 +101,12 @@ const App = () => {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log({ data });
-        setDisplayedEventData(data);
-        console.log("setting overlay to true");
+        setDisplayedEventData(data[0]);
         setShowOverlay(true);
       });
-    // get info for given eventId
-    // show overlay
   };
+
+  console.log({ displayedEventData });
 
   return (
     <div className="App">
@@ -123,9 +121,9 @@ const App = () => {
             }}
             events={events}
             initialView="dayGridMonth"
-            // editable={true}
             selectable={true}
             eventClick={showEventOverlay}
+            // editable={true}
             // selectMirror={true}
             // dayMaxEvents={true}
             // weekends={true}
@@ -139,18 +137,14 @@ const App = () => {
             <ModalHeader>Modal Title</ModalHeader>
             <ModalCloseButton />
             <ModalBody>
-              <p>this is a modal</p>
+              <p>Event title: {displayedEventData.title}</p>
+              <p>Description: {displayedEventData.description}</p>
+              <p>Start: {displayedEventData.endTimeUtc}</p>
+              <p>End: {displayedEventData.endTimeUtc}</p>
             </ModalBody>
 
             <ModalFooter>
-              <Button
-                colorScheme="blue"
-                mr={3}
-                onClick={() => console.log("clicked close")}
-              >
-                Close
-              </Button>
-              <Button variant="ghost">Secondary Action</Button>
+              <Button variant="ghost">Delete</Button>
             </ModalFooter>
           </ModalContent>
         </Modal>
