@@ -3,11 +3,12 @@ import { useState } from "react";
 import FullCalendar, {
   EventClickArg,
   EventSourceInput,
+  getEntrySpanEnd,
 } from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import listPlugin from "@fullcalendar/list";
-import { getEntries, createEntry } from "./fetchers";
+import { getEntry, getEntries, createEntry } from "./fetchers";
 import {
   Box,
   Button,
@@ -57,7 +58,7 @@ const App = () => {
     });
   }, []);
 
-  const [displayedEventData, setDisplayedEventData] = useState<object>({});
+  const [displayedEventData, setDisplayedEventData] = useState<any>({});
   const [showOverlay, setShowOverlay] = useState<boolean>(false);
 
   const handleCreateEntry = async () => {
@@ -93,20 +94,11 @@ const App = () => {
 
   const showEventOverlay = (arg: EventClickArg) => {
     const entryId = arg.event._def.publicId;
-    fetch(`http://localhost:4000/entries/${entryId}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setDisplayedEventData(data[0]);
-        setShowOverlay(true);
-      });
+    getEntry(entryId).then((data) => {
+      setDisplayedEventData(data[0]);
+      setShowOverlay(true);
+    });
   };
-
-  console.log({ displayedEventData });
 
   return (
     <div className="App">

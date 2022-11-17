@@ -2,11 +2,12 @@ import { render, screen, waitFor } from "@testing-library/react";
 import React from "react";
 import userEvent from "@testing-library/user-event";
 import App from "./App";
-import { createEntry, getEntries } from "./fetchers";
+import { getEntry, createEntry, getEntries } from "./fetchers";
 jest.mock("./fetchers");
 
 const mockCreateEntry = createEntry as jest.MockedFunction<typeof createEntry>;
 const mockGetEntries = getEntries as jest.MockedFunction<typeof getEntries>;
+const mockGetEntry = getEntry as jest.MockedFunction<typeof getEntry>;
 
 describe("App", () => {
   beforeAll(() => {
@@ -18,6 +19,7 @@ describe("App", () => {
   afterAll(() => {
     jest.useRealTimers();
   });
+
   it("renders correctly", async () => {
     mockCreateEntry.mockResolvedValue({});
     mockGetEntries.mockResolvedValue([
@@ -108,6 +110,39 @@ describe("App", () => {
         endTimeUtc: new Date("2022-02-15T18:10:00.000Z"),
         title: "Berta goes to the baseball game!",
       });
+    });
+
+    it("fetches event details when event is clicked", async () => {
+      mockGetEntries.mockResolvedValue([
+        {
+          _id: "123",
+          end: "2022-02-27T05:43:37.868Z",
+          start: "2022-02-27T05:43:37.868Z",
+          title: "Berta goes to the baseball game!",
+        },
+        {
+          _id: "345",
+          end: "2022-02-24T05:43:37.868Z",
+          start: "2022-02-24T05:43:37.868Z",
+          title: "Dance",
+        },
+      ]);
+
+      mockGetEntry.mockResolvedValue([
+        {
+          _id: "345",
+          end: "2022-02-24T05:43:37.868Z",
+          start: "2022-02-24T05:43:37.868Z",
+          title: "Dance",
+        },
+      ]);
+      render(<App />);
+      expect(mockGetEntries).toHaveBeenCalledTimes(1);
+      const eventText = await screen.findByText("Dance");
+      expect(eventText).toBeInTheDocument();
+      eventText.click();
+      expect(mockGetEntry).toHaveBeenCalledTimes(1);
+      expect(await screen.findByText("Event title: Dance")).toBeVisible();
     });
 
     it("resets inputs correctly to default values when submitted", () => {

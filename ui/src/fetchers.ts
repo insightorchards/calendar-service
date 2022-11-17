@@ -24,6 +24,15 @@ const getEntries = async () => {
     });
 };
 
+const getEntry = async (entryId: string) => {
+  return fetch(`http://localhost:4000/entries/${entryId}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  }).then((response) => response.json());
+};
+
 const createEntry = async ({
   title,
   startTimeUtc,
@@ -47,4 +56,4 @@ const createEntry = async ({
   return result;
 };
 
-export { getEntries, createEntry };
+export { getEntry, getEntries, createEntry };
