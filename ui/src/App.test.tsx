@@ -142,7 +142,7 @@ describe("App", () => {
       expect(eventText).toBeInTheDocument();
       eventText.click();
       expect(mockGetEntry).toHaveBeenCalledTimes(1);
-      expect(await screen.findByText("Event title: Dance")).toBeVisible();
+      expect(await screen.findByText("Event Details")).toBeVisible();
     });
 
     it("resets inputs correctly to default values when submitted", () => {

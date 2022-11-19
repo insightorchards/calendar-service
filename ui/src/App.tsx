@@ -126,7 +126,7 @@ const App = () => {
         <Modal isOpen={showOverlay} onClose={() => setShowOverlay(false)}>
           <ModalOverlay />
           <ModalContent>
-            <ModalHeader>Modal Title</ModalHeader>
+            <ModalHeader>Event Details</ModalHeader>
             <ModalCloseButton />
             <ModalBody>
               <p>Event title: {displayedEventData.title}</p>
