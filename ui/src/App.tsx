@@ -20,7 +20,7 @@ import {
   ModalCloseButton,
   ChakraProvider,
 } from "@chakra-ui/react";
-import { getEntry, getEntries, createEntry } from "./hooks";
+import { getEntry, getEntries, createEntry, deleteEntry } from "./hooks";
 import s from "./App.module.css";
 
 const App = () => {
@@ -29,10 +29,10 @@ const App = () => {
   const padNumberWith0Zero: Function = (num: Number): string =>
     num.toString().padStart(2, "0");
   const DEFAULT_START_TIME: string = `${padNumberWith0Zero(
-    currentHour
+    currentHour,
   )}:${padNumberWith0Zero(currentMinute)}`;
   const DEFAULT_END_TIME: string = `${padNumberWith0Zero(
-    currentHour + 1
+    currentHour + 1,
   )}:${padNumberWith0Zero(currentMinute)}`;
 
   const formatDate: Function = (date: Date): string => {
@@ -51,15 +51,14 @@ const App = () => {
   const [title, setTitle] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const [events, setEvents] = useState<EventSourceInput>([]);
+  const [displayedEventData, setDisplayedEventData] = useState<any>({});
+  const [showOverlay, setShowOverlay] = useState<boolean>(false);
 
   useEffect(() => {
     getEntries().then((entries) => {
       setEvents(entries);
     });
   }, []);
-
-  const [displayedEventData, setDisplayedEventData] = useState<any>({});
-  const [showOverlay, setShowOverlay] = useState<boolean>(false);
 
   const handleCreateEntry = async () => {
     const startTimeUtc = new Date(`${startDate}T${startTime}`);
@@ -100,8 +99,12 @@ const App = () => {
     });
   };
 
-  const handleDeleteEntry = (e: MouseEvent<HTMLButtonElement>) => {
+  const handleDeleteEntry = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    await deleteEntry(displayedEventData._id);
+    const updatedEntries = await getEntries();
+    setEvents(updatedEntries);
+    setShowOverlay(false);
   };
 
   return (
@@ -142,7 +145,9 @@ const App = () => {
             </ModalBody>
 
             <ModalFooter>
-              <Button variant="ghost">Delete</Button>
+              <Button onClick={handleDeleteEntry} variant="ghost">
+                Delete
+              </Button>
             </ModalFooter>
           </ModalContent>
         </Modal>

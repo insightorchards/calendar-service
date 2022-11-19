@@ -57,15 +57,13 @@ const createEntry = async ({
   return result;
 };
 
-const deleteCalendarEntry = async ({ id, eventId }: any) => {
-  return await fetch("http://localhost:4000/entries", {
+const deleteEntry = async (entryId: string) => {
+  return fetch(`http://localhost:4000/entries/${entryId}`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
     },
-  })
-    .then((response) => response.json())
-    .catch((error) => console.log(error));
+  }).catch((error) => console.log(error));
 };
 
-export { getEntry, getEntries, createEntry, deleteCalendarEntry };
+export { getEntry, getEntries, createEntry, deleteEntry };
