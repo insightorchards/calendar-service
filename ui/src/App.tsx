@@ -131,8 +131,10 @@ const App = () => {
             <ModalBody>
               <p>Event title: {displayedEventData.title}</p>
               <p>Description: {displayedEventData.description}</p>
-              <p>Start: {displayedEventData.endTimeUtc}</p>
-              <p>End: {displayedEventData.endTimeUtc}</p>
+              <p>
+                Start: {new Date(displayedEventData.startTimeUtc).toString()}
+              </p>
+              <p>End: {new Date(displayedEventData.endTimeUtc).toString()}</p>
             </ModalBody>
 
             <ModalFooter>
