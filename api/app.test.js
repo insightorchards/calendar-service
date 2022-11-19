@@ -116,34 +116,22 @@ describe("GET /entry/:entryId", () => {
   });
 
   describe("DELETE / entry", () => {
-    beforeEach(async () => {
+    it("deletes the selected entry from the UI and database", async () => {
       const startTime = new Date();
       const endTime = new Date();
-      await supertest(app)
-        .post("/entry")
-        .send({
-          eventId: "123",
-          creatorId: "456",
-          title: "Happy day",
-          startTimeUtc: startTime,
-          endTimeUtc: endTime,
-          description: "and a happy night too",
-        })
-        .expect(201);
-    });
+      const data = await CalendarEntry.create({
+        eventId: "123",
+        creatorId: "456",
+        title: "Happy day",
+        description: "and a happy night too",
+        isAllDay: false,
+        startTimeUtc: startTime,
+        endTimeUtc: endTime,
+      });
 
-    it("deletes the selected entry from the UI and database", async () => {
       const count = await CalendarEntry.countDocuments();
       expect(count).toEqual(1);
-      const data = await CalendarEntry.findOne({});
-
-      await supertest(app)
-        .delete("/entries")
-        .send({
-          id: data._id,
-          eventId: data.eventId,
-        })
-        .expect(200);
+      await supertest(app).delete(`/entries/${data._id}`).expect(200);
 
       const newCount = await CalendarEntry.countDocuments();
       expect(newCount).toEqual(0);

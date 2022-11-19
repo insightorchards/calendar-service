@@ -92,8 +92,7 @@ export const deleteCalendarEntry = async (
   res: Response,
   _next: NextFunction
 ) => {
-  const deleteEntry = await CalendarEntry.deleteOne(
-    req.body as CalendarEntryDeleteInput
-  );
-  res.status(200).json(deleteEntry);
+  const { id } = req.params;
+  await CalendarEntry.deleteOne({ id });
+  res.sendStatus(200);
 };

@@ -20,7 +20,7 @@ const connectionString = "mongodb://127.0.0.1:27017/calendar-app";
 const PORT = process.env.NODE_ENV === "test" ? 4001 : 4000;
 
 app.post("/entry", createCalendarEntry);
-app.delete("/entries", deleteCalendarEntry);
+app.delete("/entries/:id", deleteCalendarEntry);
 app.get("/entries", getCalendarEntries);
 app.get("/entries/:id", getCalendarEntry);
 app.post("/seedDatabase", seedDatabaseWithEntry);
