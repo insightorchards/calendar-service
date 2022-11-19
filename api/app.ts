@@ -6,6 +6,7 @@ import {
   getCalendarEntry,
   seedDatabaseWithEntry,
   createCalendarEntry,
+  deleteCalendarEntry,
 } from "./controllers/calendarEntry.controller";
 import * as dotenv from "dotenv";
 
@@ -19,6 +20,7 @@ const connectionString = "mongodb://127.0.0.1:27017/calendar-app";
 const PORT = process.env.NODE_ENV === "test" ? 4001 : 4000;
 
 app.post("/entry", createCalendarEntry);
+app.delete("/entries", deleteCalendarEntry);
 app.get("/entries", getCalendarEntries);
 app.get("/entries/:id", getCalendarEntry);
 app.post("/seedDatabase", seedDatabaseWithEntry);

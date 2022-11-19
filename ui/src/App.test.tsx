@@ -2,8 +2,8 @@ import { render, screen, waitFor } from "@testing-library/react";
 import React from "react";
 import userEvent from "@testing-library/user-event";
 import App from "./App";
-import { getEntry, createEntry, getEntries } from "./fetchers";
-jest.mock("./fetchers");
+import { getEntry, createEntry, getEntries } from "./hooks";
+jest.mock("./hooks");
 
 const mockCreateEntry = createEntry as jest.MockedFunction<typeof createEntry>;
 const mockGetEntries = getEntries as jest.MockedFunction<typeof getEntries>;

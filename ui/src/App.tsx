@@ -8,7 +8,6 @@ import FullCalendar, {
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import listPlugin from "@fullcalendar/list";
-import { getEntry, getEntries, createEntry } from "./fetchers";
 import {
   Box,
   Button,
@@ -21,6 +20,7 @@ import {
   ModalCloseButton,
   ChakraProvider,
 } from "@chakra-ui/react";
+import { getEntry, getEntries, createEntry } from "./hooks";
 import s from "./App.module.css";
 
 const App = () => {
@@ -98,6 +98,10 @@ const App = () => {
       setDisplayedEventData(data);
       setShowOverlay(true);
     });
+  };
+
+  const handleDeleteEntry = (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
   };
 
   return (
@@ -193,6 +197,9 @@ const App = () => {
         value={endTime}
       />
       <button onClick={(e) => handleSubmit(e)}>Create Event</button>
+      <button onClick={(e) => handleDeleteEntry(e)}>
+        Delete Calendar Entry
+      </button>
       {error && <p className={s.error}>{error}</p>}
     </div>
   );
