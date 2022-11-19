@@ -93,11 +93,13 @@ const App = () => {
 
   const showEventOverlay = (arg: EventClickArg) => {
     const entryId = arg.event._def.extendedProps._id;
+    console.log({ entryId });
     getEntry(entryId).then((data) => {
       setDisplayedEventData(data);
       setShowOverlay(true);
     });
   };
+  console.log({ displayedEventData });
 
   const handleDeleteEntry = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();

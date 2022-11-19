@@ -2,12 +2,13 @@ import { render, screen, waitFor } from "@testing-library/react";
 import React from "react";
 import userEvent from "@testing-library/user-event";
 import App from "./App";
-import { getEntry, createEntry, getEntries } from "./hooks";
+import { createEntry, deleteEntry, getEntries, getEntry } from "./hooks";
 jest.mock("./hooks");
 
 const mockCreateEntry = createEntry as jest.MockedFunction<typeof createEntry>;
 const mockGetEntries = getEntries as jest.MockedFunction<typeof getEntries>;
 const mockGetEntry = getEntry as jest.MockedFunction<typeof getEntry>;
+const mockDeleteEntry = deleteEntry as jest.MockedFunction<typeof deleteEntry>;
 
 describe("App", () => {
   beforeAll(() => {
@@ -86,7 +87,7 @@ describe("App", () => {
       userEvent.click(screen.getByLabelText("Title"));
       userEvent.type(
         screen.getByLabelText("Title"),
-        "Berta goes to the baseball game!"
+        "Berta goes to the baseball game!",
       );
       userEvent.type(screen.getByLabelText("Start Date"), "02152022");
       userEvent.type(screen.getByLabelText("Start Time"), "08:10");
@@ -100,10 +101,10 @@ describe("App", () => {
 
       expect(await screen.findByLabelText("Title")).toHaveAttribute(
         "value",
-        ""
+        "",
       );
       expect(
-        await screen.findByText("Berta goes to the baseball game!")
+        await screen.findByText("Berta goes to the baseball game!"),
       ).toBeVisible();
       expect(mockCreateEntry).toHaveBeenCalledWith({
         startTimeUtc: new Date("2022-02-15T16:10:00.000Z"),
@@ -136,6 +137,7 @@ describe("App", () => {
           title: "Dance",
         },
       ]);
+
       render(<App />);
       expect(mockGetEntries).toHaveBeenCalledTimes(1);
       const eventText = await screen.findByText("Dance");
@@ -143,6 +145,53 @@ describe("App", () => {
       eventText.click();
       expect(mockGetEntry).toHaveBeenCalledTimes(1);
       expect(await screen.findByText("Event Details")).toBeVisible();
+    });
+
+    it.only("deletes entry when delete button is clicked", async () => {
+      mockGetEntries.mockResolvedValueOnce([
+        {
+          _id: "123",
+          end: "2022-02-27T05:43:37.868Z",
+          start: "2022-02-27T05:43:37.868Z",
+          title: "Berta goes to the baseball game!",
+        },
+        {
+          _id: "345",
+          end: "2022-02-24T05:43:37.868Z",
+          start: "2022-02-24T05:43:37.868Z",
+          title: "Dance",
+        },
+      ]);
+
+      mockGetEntry.mockResolvedValue([
+        {
+          _id: "345",
+          end: "2022-02-24T05:43:37.868Z",
+          start: "2022-02-24T05:43:37.868Z",
+          title: "Dance",
+          description: "fun times",
+        },
+      ]);
+
+      mockDeleteEntry.mockResolvedValue();
+
+      mockGetEntries.mockResolvedValueOnce([
+        {
+          _id: "123",
+          end: "2022-02-27T05:43:37.868Z",
+          start: "2022-02-27T05:43:37.868Z",
+          title: "Berta goes to the baseball game!",
+        },
+      ]);
+
+      render(<App />);
+      expect(mockGetEntries).toHaveBeenCalledTimes(1);
+      const eventText = await screen.findByText("Dance");
+      expect(eventText).toBeInTheDocument();
+      eventText.click();
+      expect(mockGetEntry).toHaveBeenCalledTimes(1);
+      expect(await screen.findByText("Event Details")).toBeVisible();
+      expect(await screen.findByText("Event title: Dance")).toBeVisible();
     });
 
     it("resets inputs correctly to default values when submitted", () => {
@@ -186,7 +235,7 @@ describe("App", () => {
         userEvent.click(screen.getByRole("button", { name: "Create Event" }));
       });
       expect(
-        screen.getByText("Error: end cannot be before start.")
+        screen.getByText("Error: end cannot be before start."),
       ).toBeVisible();
     });
 
@@ -210,7 +259,7 @@ describe("App", () => {
         userEvent.click(screen.getByRole("button", { name: "Create Event" }));
       });
       expect(
-        screen.getByText("Error: end cannot be before start.")
+        screen.getByText("Error: end cannot be before start."),
       ).toBeVisible();
     });
   });
