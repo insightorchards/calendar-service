@@ -93,9 +93,9 @@ const App = () => {
   };
 
   const showEventOverlay = (arg: EventClickArg) => {
-    const entryId = arg.event._def.publicId;
+    const entryId = arg.event._def.extendedProps._id;
     getEntry(entryId).then((data) => {
-      setDisplayedEventData(data[0]);
+      setDisplayedEventData(data);
       setShowOverlay(true);
     });
   };

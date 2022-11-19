@@ -15,6 +15,7 @@ const getEntries = async () => {
     .then((data) => {
       const result = data.map((event: any) => {
         return {
+          _id: event._id,
           title: event.title,
           start: event.startTimeUtc,
           end: event.endTimeUtc,
