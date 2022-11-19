@@ -15,6 +15,7 @@ const getEntries = async () => {
     .then((data) => {
       const result = data.map((event: any) => {
         return {
+          _id: event._id,
           title: event.title,
           start: event.startTimeUtc,
           end: event.endTimeUtc,
@@ -22,6 +23,15 @@ const getEntries = async () => {
       });
       return result;
     });
+};
+
+const getEntry = async (entryId: string) => {
+  return fetch(`http://localhost:4000/entries/${entryId}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  }).then((response) => response.json());
 };
 
 const createEntry = async ({
@@ -47,4 +57,4 @@ const createEntry = async ({
   return result;
 };
 
-export { getEntries, createEntry };
+export { getEntry, getEntries, createEntry };

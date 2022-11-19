@@ -1,10 +1,26 @@
 import React, { MouseEvent, useEffect } from "react";
 import { useState } from "react";
-import FullCalendar, { EventSourceInput } from "@fullcalendar/react";
+import FullCalendar, {
+  EventClickArg,
+  EventSourceInput,
+  getEntrySpanEnd,
+} from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import listPlugin from "@fullcalendar/list";
-import { getEntries, createEntry } from "./fetchers";
+import { getEntry, getEntries, createEntry } from "./fetchers";
+import {
+  Box,
+  Button,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  ChakraProvider,
+} from "@chakra-ui/react";
 import s from "./App.module.css";
 
 const App = () => {
@@ -13,10 +29,10 @@ const App = () => {
   const padNumberWith0Zero: Function = (num: Number): string =>
     num.toString().padStart(2, "0");
   const DEFAULT_START_TIME: string = `${padNumberWith0Zero(
-    currentHour,
+    currentHour
   )}:${padNumberWith0Zero(currentMinute)}`;
   const DEFAULT_END_TIME: string = `${padNumberWith0Zero(
-    currentHour + 1,
+    currentHour + 1
   )}:${padNumberWith0Zero(currentMinute)}`;
 
   const formatDate: Function = (date: Date): string => {
@@ -41,6 +57,9 @@ const App = () => {
       setEvents(entries);
     });
   }, []);
+
+  const [displayedEventData, setDisplayedEventData] = useState<any>({});
+  const [showOverlay, setShowOverlay] = useState<boolean>(false);
 
   const handleCreateEntry = async () => {
     const startTimeUtc = new Date(`${startDate}T${startTime}`);
@@ -73,25 +92,58 @@ const App = () => {
     setEndTime(DEFAULT_END_TIME);
   };
 
+  const showEventOverlay = (arg: EventClickArg) => {
+    const entryId = arg.event._def.extendedProps._id;
+    getEntry(entryId).then((data) => {
+      setDisplayedEventData(data);
+      setShowOverlay(true);
+    });
+  };
+
   return (
     <div className="App">
-      <div>
-        <FullCalendar
-          plugins={[dayGridPlugin, timeGridPlugin, listPlugin]}
-          headerToolbar={{
-            left: "prev,next today",
-            center: "title",
-            right: "dayGridMonth,timeGridWeek,timeGridDay",
-          }}
-          events={events}
-          initialView="dayGridMonth"
-          // editable={true}
-          // selectable={true}
-          // selectMirror={true}
-          // dayMaxEvents={true}
-          // weekends={true}
-        />
-      </div>
+      <Box>
+        <div>
+          <FullCalendar
+            plugins={[dayGridPlugin, timeGridPlugin, listPlugin]}
+            headerToolbar={{
+              left: "prev,next today",
+              center: "title",
+              right: "dayGridMonth,timeGridWeek,timeGridDay",
+            }}
+            events={events}
+            initialView="dayGridMonth"
+            selectable={true}
+            eventClick={showEventOverlay}
+            // editable={true}
+            // selectMirror={true}
+            // dayMaxEvents={true}
+            // weekends={true}
+          />
+        </div>
+      </Box>
+      <ChakraProvider>
+        <Modal isOpen={showOverlay} onClose={() => setShowOverlay(false)}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Event Details</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <p>Event title: {displayedEventData.title}</p>
+              <p>Description: {displayedEventData.description}</p>
+              <p>
+                Start: {new Date(displayedEventData.startTimeUtc).toString()}
+              </p>
+              <p>End: {new Date(displayedEventData.endTimeUtc).toString()}</p>
+            </ModalBody>
+
+            <ModalFooter>
+              <Button variant="ghost">Delete</Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+      </ChakraProvider>
+
       <label htmlFor="title">Title</label>
       <input
         id="title"

@@ -2,11 +2,12 @@ import { render, screen, waitFor } from "@testing-library/react";
 import React from "react";
 import userEvent from "@testing-library/user-event";
 import App from "./App";
-import { createEntry, getEntries } from "./fetchers";
+import { getEntry, createEntry, getEntries } from "./fetchers";
 jest.mock("./fetchers");
 
 const mockCreateEntry = createEntry as jest.MockedFunction<typeof createEntry>;
 const mockGetEntries = getEntries as jest.MockedFunction<typeof getEntries>;
+const mockGetEntry = getEntry as jest.MockedFunction<typeof getEntry>;
 
 describe("App", () => {
   beforeAll(() => {
@@ -14,9 +15,11 @@ describe("App", () => {
     const date = new Date("2022-02-15T04:00");
     jest.setSystemTime(date);
   });
+
   afterAll(() => {
     jest.useRealTimers();
   });
+
   it("renders correctly", async () => {
     mockCreateEntry.mockResolvedValue({});
     mockGetEntries.mockResolvedValue([
@@ -30,6 +33,7 @@ describe("App", () => {
     expect(await screen.findByText(/Mon/)).toBeVisible();
     expect(app.asFragment()).toMatchSnapshot();
   });
+
   it("shows calander", async () => {
     mockCreateEntry.mockResolvedValue({});
     mockGetEntries.mockResolvedValue([
@@ -48,6 +52,7 @@ describe("App", () => {
     expect(await screen.findByText(/Sat/)).toBeVisible();
     expect(await screen.findByText(/Sun/)).toBeVisible();
   });
+
   describe("events", () => {
     it("defaults to today's date and a one hour time window", () => {
       mockCreateEntry.mockResolvedValue({});
@@ -66,6 +71,7 @@ describe("App", () => {
       expect(screen.getByLabelText("Start Time")).toHaveValue("04:00");
       expect(screen.getByLabelText("End Time")).toHaveValue("05:00");
     });
+
     it("displays event in ui when all inputs are provided valid values", async () => {
       mockCreateEntry.mockResolvedValue({});
       mockGetEntries.mockResolvedValue([
@@ -105,6 +111,40 @@ describe("App", () => {
         title: "Berta goes to the baseball game!",
       });
     });
+
+    it("fetches event details when event is clicked", async () => {
+      mockGetEntries.mockResolvedValue([
+        {
+          _id: "123",
+          end: "2022-02-27T05:43:37.868Z",
+          start: "2022-02-27T05:43:37.868Z",
+          title: "Berta goes to the baseball game!",
+        },
+        {
+          _id: "345",
+          end: "2022-02-24T05:43:37.868Z",
+          start: "2022-02-24T05:43:37.868Z",
+          title: "Dance",
+        },
+      ]);
+
+      mockGetEntry.mockResolvedValue([
+        {
+          _id: "345",
+          end: "2022-02-24T05:43:37.868Z",
+          start: "2022-02-24T05:43:37.868Z",
+          title: "Dance",
+        },
+      ]);
+      render(<App />);
+      expect(mockGetEntries).toHaveBeenCalledTimes(1);
+      const eventText = await screen.findByText("Dance");
+      expect(eventText).toBeInTheDocument();
+      eventText.click();
+      expect(mockGetEntry).toHaveBeenCalledTimes(1);
+      expect(await screen.findByText("Event Details")).toBeVisible();
+    });
+
     it("resets inputs correctly to default values when submitted", () => {
       mockCreateEntry.mockResolvedValue({});
       mockGetEntries.mockResolvedValue([
@@ -127,6 +167,7 @@ describe("App", () => {
       expect(screen.getByLabelText("Start Time")).toHaveValue("04:00");
       expect(screen.getByLabelText("End Time")).toHaveValue("05:00");
     });
+
     it("errors when end date is before start date", () => {
       mockCreateEntry.mockResolvedValue({});
       mockGetEntries.mockResolvedValue([
@@ -148,6 +189,7 @@ describe("App", () => {
         screen.getByText("Error: end cannot be before start.")
       ).toBeVisible();
     });
+
     it("errors when end time is before start time on the same day", () => {
       mockCreateEntry.mockResolvedValue({});
       mockGetEntries.mockResolvedValue([

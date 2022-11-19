@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import cors from "cors";
 import {
   getCalendarEntries,
+  getCalendarEntry,
   seedDatabaseWithEntry,
   createCalendarEntry,
 } from "./controllers/calendarEntry.controller";
@@ -19,6 +20,7 @@ const PORT = process.env.NODE_ENV === "test" ? 4001 : 4000;
 
 app.post("/entry", createCalendarEntry);
 app.get("/entries", getCalendarEntries);
+app.get("/entries/:id", getCalendarEntry);
 app.post("/seedDatabase", seedDatabaseWithEntry);
 
 const start = async () => {
