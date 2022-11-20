@@ -2,15 +2,6 @@ import { Request, Response, NextFunction } from "express";
 import { CalendarEntry } from "../models/calendarEntry";
 import { dayAfter } from "../lib/dateHelpers";
 
-interface CalendarEntryInput {
-  eventId: string;
-  creatorId: string;
-  title: string;
-  description: string;
-  isAllDay: boolean;
-  startTimeUtc: Date;
-  endTimeUtc: Date;
-}
 interface CalendarEntry {
   id: string;
   eventId: string;
@@ -77,16 +68,26 @@ export const getCalendarEntries = async (
   res: Response,
   _next: NextFunction
 ) => {
-  const entries = await CalendarEntry.find();
+  const entries: CalendarEntry = await CalendarEntry.find();
   res.status(200).json(entries);
 };
 
 export const getCalendarEntry = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  _next: NextFunction
 ) => {
   const { id } = req.params;
   const entry = await CalendarEntry.findById(id);
   res.status(200).json(entry);
+};
+
+export const deleteCalendarEntry = async (
+  req: Request,
+  res: Response,
+  _next: NextFunction
+) => {
+  const { id } = req.params;
+  await CalendarEntry.deleteOne({ _id: id });
+  res.status(200).json();
 };

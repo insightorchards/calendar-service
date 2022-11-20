@@ -8,7 +8,6 @@ import FullCalendar, {
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import listPlugin from "@fullcalendar/list";
-import { getEntry, getEntries, createEntry } from "./fetchers";
 import {
   Box,
   Button,
@@ -21,7 +20,20 @@ import {
   ModalCloseButton,
   ChakraProvider,
 } from "@chakra-ui/react";
+import { getEntry, getEntries, createEntry, deleteEntry } from "./hooks";
 import s from "./App.module.css";
+
+interface DisplayedEventData {
+  _id: string;
+  eventId: string;
+  creatorId: string;
+  title: string;
+  startTimeUtc: string;
+  endTimeUtc: string;
+  description: string;
+  createdAt: string;
+  updatedAt: string;
+}
 
 const App = () => {
   const currentHour: number = new Date().getHours();
@@ -51,15 +63,16 @@ const App = () => {
   const [title, setTitle] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const [events, setEvents] = useState<EventSourceInput>([]);
+  const [displayedEventData, setDisplayedEventData] = useState(
+    {} as DisplayedEventData
+  );
+  const [showOverlay, setShowOverlay] = useState<boolean>(false);
 
   useEffect(() => {
     getEntries().then((entries) => {
       setEvents(entries);
     });
   }, []);
-
-  const [displayedEventData, setDisplayedEventData] = useState<any>({});
-  const [showOverlay, setShowOverlay] = useState<boolean>(false);
 
   const handleCreateEntry = async () => {
     const startTimeUtc = new Date(`${startDate}T${startTime}`);
@@ -97,6 +110,15 @@ const App = () => {
     getEntry(entryId).then((data) => {
       setDisplayedEventData(data);
       setShowOverlay(true);
+    });
+  };
+
+  const handleDeleteEntry = async (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    await deleteEntry(displayedEventData._id!);
+    getEntries().then((entries) => {
+      setEvents(entries);
+      setShowOverlay(false);
     });
   };
 
@@ -138,7 +160,9 @@ const App = () => {
             </ModalBody>
 
             <ModalFooter>
-              <Button variant="ghost">Delete</Button>
+              <Button onClick={handleDeleteEntry} variant="ghost">
+                Delete
+              </Button>
             </ModalFooter>
           </ModalContent>
         </Modal>

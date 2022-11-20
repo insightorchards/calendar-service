@@ -39,7 +39,7 @@ const createEntry = async ({
   startTimeUtc,
   endTimeUtc,
 }: CalendarEntryInput) => {
-  const response = await fetch("http://localhost:4000/entry", {
+  const response = await fetch("http://localhost:4000/entries", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -57,4 +57,13 @@ const createEntry = async ({
   return result;
 };
 
-export { getEntry, getEntries, createEntry };
+const deleteEntry = async (entryId: string) => {
+  return fetch(`http://localhost:4000/entries/${entryId}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  }).catch((error) => console.log(error));
+};
+
+export { getEntry, getEntries, createEntry, deleteEntry };
