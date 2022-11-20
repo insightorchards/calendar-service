@@ -19,7 +19,6 @@ describe("App", () => {
 
   afterAll(() => {
     jest.useRealTimers();
-    jest.clearAllMocks();
   });
 
   it("renders correctly", async () => {
@@ -88,7 +87,7 @@ describe("App", () => {
       userEvent.click(screen.getByLabelText("Title"));
       userEvent.type(
         screen.getByLabelText("Title"),
-        "Berta goes to the baseball game!"
+        "Berta goes to the baseball game!",
       );
       userEvent.type(screen.getByLabelText("Start Date"), "02152022");
       userEvent.type(screen.getByLabelText("Start Time"), "08:10");
@@ -102,10 +101,10 @@ describe("App", () => {
 
       expect(await screen.findByLabelText("Title")).toHaveAttribute(
         "value",
-        ""
+        "",
       );
       expect(
-        await screen.findByText("Berta goes to the baseball game!")
+        await screen.findByText("Berta goes to the baseball game!"),
       ).toBeVisible();
       expect(mockCreateEntry).toHaveBeenCalledWith({
         startTimeUtc: new Date("2022-02-15T16:10:00.000Z"),
@@ -240,7 +239,7 @@ describe("App", () => {
         userEvent.click(screen.getByRole("button", { name: "Create Event" }));
       });
       expect(
-        screen.getByText("Error: end cannot be before start.")
+        screen.getByText("Error: end cannot be before start."),
       ).toBeVisible();
     });
 
@@ -264,7 +263,7 @@ describe("App", () => {
         userEvent.click(screen.getByRole("button", { name: "Create Event" }));
       });
       expect(
-        screen.getByText("Error: end cannot be before start.")
+        screen.getByText("Error: end cannot be before start."),
       ).toBeVisible();
     });
   });
