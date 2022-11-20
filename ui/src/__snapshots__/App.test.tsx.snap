@@ -10,6 +10,71 @@ exports[`App renders correctly 1`] = `
     >
       <div>
         <div
+          class="form"
+        >
+          <label
+            class="formItem"
+            for="title"
+          >
+            Title
+            <input
+              class="formInput"
+              id="title"
+              type="text"
+              value=""
+            />
+          </label>
+          <label
+            class="formItem"
+            for="startDate"
+          >
+            Start Date
+            <input
+              id="startDate"
+              min="2022-02-15"
+              type="date"
+              value="2022-02-15"
+            />
+          </label>
+          <label
+            class="formItem"
+            for="startTime"
+          >
+            Start Time
+            <input
+              id="startTime"
+              type="time"
+              value="04:00"
+            />
+          </label>
+          <label
+            class="formItem"
+            for="endDate"
+          >
+            End Date
+            <input
+              id="endDate"
+              min="2022-02-15"
+              type="date"
+              value="2022-02-15"
+            />
+          </label>
+          <label
+            class="formItem"
+            for="endTime"
+          >
+            End Time
+            <input
+              id="endTime"
+              type="time"
+              value="05:00"
+            />
+          </label>
+          <button>
+            Create Event
+          </button>
+        </div>
+        <div
           class="fc fc-media-screen fc-direction-ltr fc-theme-standard fc-liquid-hack"
         >
           <div
@@ -1703,61 +1768,6 @@ exports[`App renders correctly 1`] = `
       hidden=""
       id="__chakra_env"
     />
-    <label
-      for="title"
-    >
-      Title
-    </label>
-    <input
-      id="title"
-      type="text"
-      value=""
-    />
-    <label
-      for="startDate"
-    >
-      Start Date
-    </label>
-    <input
-      id="startDate"
-      min="2022-02-15"
-      type="date"
-      value="2022-02-15"
-    />
-    <label
-      for="startTime"
-    >
-      Start Time
-    </label>
-    <input
-      id="startTime"
-      type="time"
-      value="04:00"
-    />
-    <label
-      for="endDate"
-    >
-      End Date
-    </label>
-    <input
-      id="endDate"
-      min="2022-02-15"
-      type="date"
-      value="2022-02-15"
-    />
-    <label
-      for="endTime"
-    >
-      End Time
-    </label>
-    <input
-      id="endTime"
-      type="time"
-      value="05:00"
-    />
-    <button>
-      Create Event
-    </button>
   </div>
 </DocumentFragment>
 `;

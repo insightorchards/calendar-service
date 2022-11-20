@@ -1,3 +1,18 @@
+.form {
+  display: flex;
+  justify-content: space-between;
+  padding: 30px;
+}
+
+.formItem {
+  display: flex;
+  flex-direction: column;
+}
+
+.formInput {
+  border: 1px solid gray;
+}
+
 .error {
   border: 2px red solid;
   padding: 5px;

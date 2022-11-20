@@ -3,7 +3,6 @@ import { useState } from "react";
 import FullCalendar, {
   EventClickArg,
   EventSourceInput,
-  getEntrySpanEnd,
 } from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
@@ -104,6 +103,69 @@ const App = () => {
     <div className="App">
       <Box>
         <div>
+          <div className={s.form}>
+            <label htmlFor="title" className={s.formItem}>
+              Title
+              <input
+                className={s.formInput}
+                id="title" // change this name to titleInput instead of title
+                type="text"
+                onChange={(e) => {
+                  setTitle(e.target.value);
+                }}
+                value={title}
+              />
+            </label>
+
+            <label htmlFor="startDate" className={s.formItem}>
+              Start Date
+              <input
+                id="startDate"
+                min={formatDate(new Date())}
+                type="date"
+                onChange={(e) => {
+                  setStartDate(e.target.value);
+                }}
+                value={startDate}
+              />
+            </label>
+            <label htmlFor="startTime" className={s.formItem}>
+              Start Time
+              <input
+                id="startTime"
+                type="time"
+                onChange={(e) => {
+                  setStartTime(e.target.value);
+                }}
+                value={startTime}
+              />
+            </label>
+            <label htmlFor="endDate" className={s.formItem}>
+              End Date
+              <input
+                id="endDate"
+                min={startDate}
+                type="date"
+                onChange={(e) => {
+                  setEndDate(e.target.value);
+                }}
+                value={endDate}
+              />
+            </label>
+            <label htmlFor="endTime" className={s.formItem}>
+              End Time
+              <input
+                id="endTime"
+                type="time"
+                onChange={(e) => {
+                  setEndTime(e.target.value);
+                }}
+                value={endTime}
+              />
+            </label>
+            <button onClick={(e) => handleSubmit(e)}>Create Event</button>
+            {error && <p className={s.error}>{error}</p>}
+          </div>
           <FullCalendar
             plugins={[dayGridPlugin, timeGridPlugin, listPlugin]}
             headerToolbar={{
@@ -143,57 +205,6 @@ const App = () => {
           </ModalContent>
         </Modal>
       </ChakraProvider>
-
-      <label htmlFor="title">Title</label>
-      <input
-        id="title"
-        type="text"
-        onChange={(e) => {
-          setTitle(e.target.value);
-        }}
-        value={title}
-      />
-
-      <label htmlFor="startDate">Start Date</label>
-      <input
-        id="startDate"
-        min={formatDate(new Date())}
-        type="date"
-        onChange={(e) => {
-          setStartDate(e.target.value);
-        }}
-        value={startDate}
-      />
-      <label htmlFor="startTime">Start Time</label>
-      <input
-        id="startTime"
-        type="time"
-        onChange={(e) => {
-          setStartTime(e.target.value);
-        }}
-        value={startTime}
-      />
-      <label htmlFor="endDate">End Date</label>
-      <input
-        id="endDate"
-        min={startDate}
-        type="date"
-        onChange={(e) => {
-          setEndDate(e.target.value);
-        }}
-        value={endDate}
-      />
-      <label htmlFor="endTime">End Time</label>
-      <input
-        id="endTime"
-        type="time"
-        onChange={(e) => {
-          setEndTime(e.target.value);
-        }}
-        value={endTime}
-      />
-      <button onClick={(e) => handleSubmit(e)}>Create Event</button>
-      {error && <p className={s.error}>{error}</p>}
     </div>
   );
 };
