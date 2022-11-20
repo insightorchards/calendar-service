@@ -1,16 +1,34 @@
 .form {
   display: flex;
-  justify-content: space-between;
-  padding: 30px;
+  flex-direction: column;
+  padding: 30px 70px 30px 70px;
 }
 
 .formItem {
   display: flex;
   flex-direction: column;
+  padding: 0 20px 0 20px;
+}
+
+.formInputs {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
 }
 
 .formInput {
   border: 1px solid gray;
+  border-radius: 7px;
+  display: flex;
+}
+
+.formSubmit {
+  background-color: rgb(213, 211, 211);
+  border: 1px solid gray;
+  border-radius: 7px;
+  height: 30px;
+  width: 120px;
+  align-self: center;
 }
 
 .error {

@@ -104,66 +104,77 @@ const App = () => {
       <Box>
         <div>
           <div className={s.form}>
-            <label htmlFor="title" className={s.formItem}>
-              Title
-              <input
-                className={s.formInput}
-                id="title" // change this name to titleInput instead of title
-                type="text"
-                onChange={(e) => {
-                  setTitle(e.target.value);
-                }}
-                value={title}
-              />
-            </label>
-
-            <label htmlFor="startDate" className={s.formItem}>
-              Start Date
-              <input
-                id="startDate"
-                min={formatDate(new Date())}
-                type="date"
-                onChange={(e) => {
-                  setStartDate(e.target.value);
-                }}
-                value={startDate}
-              />
-            </label>
-            <label htmlFor="startTime" className={s.formItem}>
-              Start Time
-              <input
-                id="startTime"
-                type="time"
-                onChange={(e) => {
-                  setStartTime(e.target.value);
-                }}
-                value={startTime}
-              />
-            </label>
-            <label htmlFor="endDate" className={s.formItem}>
-              End Date
-              <input
-                id="endDate"
-                min={startDate}
-                type="date"
-                onChange={(e) => {
-                  setEndDate(e.target.value);
-                }}
-                value={endDate}
-              />
-            </label>
-            <label htmlFor="endTime" className={s.formItem}>
-              End Time
-              <input
-                id="endTime"
-                type="time"
-                onChange={(e) => {
-                  setEndTime(e.target.value);
-                }}
-                value={endTime}
-              />
-            </label>
-            <button onClick={(e) => handleSubmit(e)}>Create Event</button>
+            <div className={s.formInputs}>
+              <label htmlFor="title" className={s.formItem}>
+                Title
+                <input
+                  className={s.formInput}
+                  id="title" // change this name to titleInput instead of title
+                  type="text"
+                  onChange={(e) => {
+                    setTitle(e.target.value);
+                  }}
+                  value={title}
+                />
+              </label>
+              {/* <div className={s.inputGroup}> */}
+              <label htmlFor="startDate" className={s.formItem}>
+                Start Date
+                <input
+                  className={s.formInput}
+                  id="startDate"
+                  min={formatDate(new Date())}
+                  type="date"
+                  onChange={(e) => {
+                    setStartDate(e.target.value);
+                  }}
+                  value={startDate}
+                />
+              </label>
+              <label htmlFor="startTime" className={s.formItem}>
+                Start Time
+                <input
+                  className={s.formInput}
+                  id="startTime"
+                  type="time"
+                  onChange={(e) => {
+                    setStartTime(e.target.value);
+                  }}
+                  value={startTime}
+                />
+              </label>
+              {/* </div> */}
+              {/* <div className={s.inputGroup}> */}
+              <label htmlFor="endDate" className={s.formItem}>
+                End Date
+                <input
+                  className={s.formInput}
+                  id="endDate"
+                  min={startDate}
+                  type="date"
+                  onChange={(e) => {
+                    setEndDate(e.target.value);
+                  }}
+                  value={endDate}
+                />
+              </label>
+              <label htmlFor="endTime" className={s.formItem}>
+                End Time
+                <input
+                  className={s.formInput}
+                  id="endTime"
+                  type="time"
+                  onChange={(e) => {
+                    setEndTime(e.target.value);
+                  }}
+                  value={endTime}
+                />
+              </label>
+              {/* </div> */}
+            </div>
+            <button className={s.formSubmit} onClick={(e) => handleSubmit(e)}>
+              Create Event
+            </button>
             {error && <p className={s.error}>{error}</p>}
           </div>
           <FullCalendar
