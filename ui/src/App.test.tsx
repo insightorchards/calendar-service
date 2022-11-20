@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { act, render, screen, waitFor } from "@testing-library/react";
 import React from "react";
 import userEvent from "@testing-library/user-event";
 import App from "./App";
@@ -19,6 +19,7 @@ describe("App", () => {
 
   afterAll(() => {
     jest.useRealTimers();
+    jest.clearAllMocks();
   });
 
   it("renders correctly", async () => {
@@ -87,7 +88,7 @@ describe("App", () => {
       userEvent.click(screen.getByLabelText("Title"));
       userEvent.type(
         screen.getByLabelText("Title"),
-        "Berta goes to the baseball game!",
+        "Berta goes to the baseball game!"
       );
       userEvent.type(screen.getByLabelText("Start Date"), "02152022");
       userEvent.type(screen.getByLabelText("Start Time"), "08:10");
@@ -101,10 +102,10 @@ describe("App", () => {
 
       expect(await screen.findByLabelText("Title")).toHaveAttribute(
         "value",
-        "",
+        ""
       );
       expect(
-        await screen.findByText("Berta goes to the baseball game!"),
+        await screen.findByText("Berta goes to the baseball game!")
       ).toBeVisible();
       expect(mockCreateEntry).toHaveBeenCalledWith({
         startTimeUtc: new Date("2022-02-15T16:10:00.000Z"),
@@ -147,7 +148,7 @@ describe("App", () => {
       expect(await screen.findByText("Event Details")).toBeVisible();
     });
 
-    it.only("deletes entry when delete button is clicked", async () => {
+    it("deletes entry when delete button is clicked", async () => {
       mockGetEntries.mockResolvedValueOnce([
         {
           _id: "123",
@@ -163,15 +164,13 @@ describe("App", () => {
         },
       ]);
 
-      mockGetEntry.mockResolvedValue([
-        {
-          _id: "345",
-          end: "2022-02-24T05:43:37.868Z",
-          start: "2022-02-24T05:43:37.868Z",
-          title: "Dance",
-          description: "fun times",
-        },
-      ]);
+      mockGetEntry.mockResolvedValue({
+        _id: "345",
+        end: "2022-02-24T05:43:37.868Z",
+        start: "2022-02-24T05:43:37.868Z",
+        title: "Dance",
+        description: "fun times",
+      });
 
       mockDeleteEntry.mockResolvedValue();
 
@@ -192,6 +191,12 @@ describe("App", () => {
       expect(mockGetEntry).toHaveBeenCalledTimes(1);
       expect(await screen.findByText("Event Details")).toBeVisible();
       expect(await screen.findByText("Event title: Dance")).toBeVisible();
+      const deleteButton = await screen.findByText("Delete");
+      expect(deleteButton).toBeVisible();
+      await act(async () => {
+        deleteButton.click();
+        expect(mockDeleteEntry).toHaveBeenCalled();
+      });
     });
 
     it("resets inputs correctly to default values when submitted", () => {
@@ -235,7 +240,7 @@ describe("App", () => {
         userEvent.click(screen.getByRole("button", { name: "Create Event" }));
       });
       expect(
-        screen.getByText("Error: end cannot be before start."),
+        screen.getByText("Error: end cannot be before start.")
       ).toBeVisible();
     });
 
@@ -259,7 +264,7 @@ describe("App", () => {
         userEvent.click(screen.getByRole("button", { name: "Create Event" }));
       });
       expect(
-        screen.getByText("Error: end cannot be before start."),
+        screen.getByText("Error: end cannot be before start.")
       ).toBeVisible();
     });
   });

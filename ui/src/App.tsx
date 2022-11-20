@@ -29,10 +29,10 @@ const App = () => {
   const padNumberWith0Zero: Function = (num: Number): string =>
     num.toString().padStart(2, "0");
   const DEFAULT_START_TIME: string = `${padNumberWith0Zero(
-    currentHour,
+    currentHour
   )}:${padNumberWith0Zero(currentMinute)}`;
   const DEFAULT_END_TIME: string = `${padNumberWith0Zero(
-    currentHour + 1,
+    currentHour + 1
   )}:${padNumberWith0Zero(currentMinute)}`;
 
   const formatDate: Function = (date: Date): string => {
@@ -93,20 +93,19 @@ const App = () => {
 
   const showEventOverlay = (arg: EventClickArg) => {
     const entryId = arg.event._def.extendedProps._id;
-    console.log({ entryId });
     getEntry(entryId).then((data) => {
       setDisplayedEventData(data);
       setShowOverlay(true);
     });
   };
-  console.log({ displayedEventData });
 
   const handleDeleteEntry = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     await deleteEntry(displayedEventData._id);
-    const updatedEntries = await getEntries();
-    setEvents(updatedEntries);
-    setShowOverlay(false);
+    getEntries().then((entries) => {
+      setEvents(entries);
+      setShowOverlay(false);
+    });
   };
 
   return (
@@ -138,12 +137,12 @@ const App = () => {
             <ModalHeader>Event Details</ModalHeader>
             <ModalCloseButton />
             <ModalBody>
-              <p>Event title: {displayedEventData.title}</p>
-              <p>Description: {displayedEventData.description}</p>
+              <p>Event title: {displayedEventData?.title}</p>
+              <p>Description: {displayedEventData?.description}</p>
               <p>
-                Start: {new Date(displayedEventData.startTimeUtc).toString()}
+                Start: {new Date(displayedEventData?.startTimeUtc).toString()}
               </p>
-              <p>End: {new Date(displayedEventData.endTimeUtc).toString()}</p>
+              <p>End: {new Date(displayedEventData?.endTimeUtc).toString()}</p>
             </ModalBody>
 
             <ModalFooter>
