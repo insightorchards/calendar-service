@@ -39,7 +39,7 @@ const createEntry = async ({
   startTimeUtc,
   endTimeUtc,
 }: CalendarEntryInput) => {
-  const response = await fetch("http://localhost:4000/entry", {
+  const response = await fetch("http://localhost:4000/entries", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

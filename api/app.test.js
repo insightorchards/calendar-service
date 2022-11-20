@@ -25,12 +25,12 @@ describe("POST /seedDatabase", () => {
   });
 });
 
-describe("POST /entry", () => {
+describe("POST /entries", () => {
   it("adds an item to the database", async () => {
     const startTime = new Date();
     const endTime = new Date();
     await supertest(app)
-      .post("/entry")
+      .post("/entries")
       .send({
         eventId: "123",
         creatorId: "456",
