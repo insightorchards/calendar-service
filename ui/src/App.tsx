@@ -29,10 +29,10 @@ const App = () => {
   const padNumberWith0Zero: Function = (num: Number): string =>
     num.toString().padStart(2, "0");
   const DEFAULT_START_TIME: string = `${padNumberWith0Zero(
-    currentHour
+    currentHour,
   )}:${padNumberWith0Zero(currentMinute)}`;
   const DEFAULT_END_TIME: string = `${padNumberWith0Zero(
-    currentHour + 1
+    currentHour + 1,
   )}:${padNumberWith0Zero(currentMinute)}`;
 
   const formatDate: Function = (date: Date): string => {
@@ -203,9 +203,6 @@ const App = () => {
         value={endTime}
       />
       <button onClick={(e) => handleSubmit(e)}>Create Event</button>
-      <button onClick={(e) => handleDeleteEntry(e)}>
-        Delete Calendar Entry
-      </button>
       {error && <p className={s.error}>{error}</p>}
     </div>
   );

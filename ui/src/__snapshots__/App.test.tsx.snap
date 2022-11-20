@@ -1758,9 +1758,6 @@ exports[`App renders correctly 1`] = `
     <button>
       Create Event
     </button>
-    <button>
-      Delete Calendar Entry
-    </button>
   </div>
 </DocumentFragment>
 `;
