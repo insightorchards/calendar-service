@@ -193,7 +193,7 @@ describe("App", () => {
       expect(await screen.findByText("Event title: Dance")).toBeVisible();
       const deleteButton = await screen.findByText("Delete");
       expect(deleteButton).toBeVisible();
-      await act(async () => {
+      act(() => {
         deleteButton.click();
         expect(mockDeleteEntry).toHaveBeenCalled();
       });

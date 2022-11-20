@@ -23,16 +23,28 @@ import {
 import { getEntry, getEntries, createEntry, deleteEntry } from "./hooks";
 import s from "./App.module.css";
 
+interface DisplayedEventData {
+  _id: string;
+  eventId: string;
+  creatorId: string;
+  title: string;
+  startTimeUtc: string;
+  endTimeUtc: string;
+  description: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 const App = () => {
   const currentHour: number = new Date().getHours();
   const currentMinute: number = new Date().getMinutes();
   const padNumberWith0Zero: Function = (num: Number): string =>
     num.toString().padStart(2, "0");
   const DEFAULT_START_TIME: string = `${padNumberWith0Zero(
-    currentHour,
+    currentHour
   )}:${padNumberWith0Zero(currentMinute)}`;
   const DEFAULT_END_TIME: string = `${padNumberWith0Zero(
-    currentHour + 1,
+    currentHour + 1
   )}:${padNumberWith0Zero(currentMinute)}`;
 
   const formatDate: Function = (date: Date): string => {
@@ -51,7 +63,9 @@ const App = () => {
   const [title, setTitle] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const [events, setEvents] = useState<EventSourceInput>([]);
-  const [displayedEventData, setDisplayedEventData] = useState<any>({});
+  const [displayedEventData, setDisplayedEventData] = useState(
+    {} as DisplayedEventData
+  );
   const [showOverlay, setShowOverlay] = useState<boolean>(false);
 
   useEffect(() => {
@@ -101,7 +115,7 @@ const App = () => {
 
   const handleDeleteEntry = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    await deleteEntry(displayedEventData._id);
+    await deleteEntry(displayedEventData._id!);
     getEntries().then((entries) => {
       setEvents(entries);
       setShowOverlay(false);
@@ -137,12 +151,12 @@ const App = () => {
             <ModalHeader>Event Details</ModalHeader>
             <ModalCloseButton />
             <ModalBody>
-              <p>Event title: {displayedEventData?.title}</p>
-              <p>Description: {displayedEventData?.description}</p>
+              <p>Event title: {displayedEventData.title}</p>
+              <p>Description: {displayedEventData.description}</p>
               <p>
-                Start: {new Date(displayedEventData?.startTimeUtc).toString()}
+                Start: {new Date(displayedEventData.startTimeUtc).toString()}
               </p>
-              <p>End: {new Date(displayedEventData?.endTimeUtc).toString()}</p>
+              <p>End: {new Date(displayedEventData.endTimeUtc).toString()}</p>
             </ModalBody>
 
             <ModalFooter>
