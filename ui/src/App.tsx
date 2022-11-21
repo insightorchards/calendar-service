@@ -102,7 +102,7 @@ const App = () => {
   return (
     <div className="App">
       <Box>
-        <div>
+        <div className={s.mainContainer}>
           <div className={s.form}>
             <div className={s.formInputs}>
               <label htmlFor="title" className={s.formItem}>
@@ -117,82 +117,85 @@ const App = () => {
                   value={title}
                 />
               </label>
-              {/* <div className={s.inputGroup}> */}
-              <label htmlFor="startDate" className={s.formItem}>
-                Start Date
-                <input
-                  className={s.formInput}
-                  id="startDate"
-                  min={formatDate(new Date())}
-                  type="date"
-                  onChange={(e) => {
-                    setStartDate(e.target.value);
-                  }}
-                  value={startDate}
-                />
-              </label>
-              <label htmlFor="startTime" className={s.formItem}>
-                Start Time
-                <input
-                  className={s.formInput}
-                  id="startTime"
-                  type="time"
-                  onChange={(e) => {
-                    setStartTime(e.target.value);
-                  }}
-                  value={startTime}
-                />
-              </label>
-              {/* </div> */}
-              {/* <div className={s.inputGroup}> */}
-              <label htmlFor="endDate" className={s.formItem}>
-                End Date
-                <input
-                  className={s.formInput}
-                  id="endDate"
-                  min={startDate}
-                  type="date"
-                  onChange={(e) => {
-                    setEndDate(e.target.value);
-                  }}
-                  value={endDate}
-                />
-              </label>
-              <label htmlFor="endTime" className={s.formItem}>
-                End Time
-                <input
-                  className={s.formInput}
-                  id="endTime"
-                  type="time"
-                  onChange={(e) => {
-                    setEndTime(e.target.value);
-                  }}
-                  value={endTime}
-                />
-              </label>
-              {/* </div> */}
+              <div className={s.inputGroup}>
+                <label htmlFor="startDate" className={s.formItem}>
+                  Start Date
+                  <input
+                    className={s.formInput}
+                    id="startDate"
+                    min={formatDate(new Date())}
+                    type="date"
+                    onChange={(e) => {
+                      setStartDate(e.target.value);
+                    }}
+                    value={startDate}
+                  />
+                </label>
+                <label htmlFor="startTime" className={s.formItem}>
+                  Start Time
+                  <input
+                    className={s.formInput}
+                    id="startTime"
+                    type="time"
+                    onChange={(e) => {
+                      setStartTime(e.target.value);
+                    }}
+                    value={startTime}
+                  />
+                </label>
+              </div>
+              <div className={s.inputGroup}>
+                <label htmlFor="endDate" className={s.formItem}>
+                  End Date
+                  <input
+                    className={s.formInput}
+                    id="endDate"
+                    min={startDate}
+                    type="date"
+                    onChange={(e) => {
+                      setEndDate(e.target.value);
+                    }}
+                    value={endDate}
+                  />
+                </label>
+                <label htmlFor="endTime" className={s.formItem}>
+                  End Time
+                  <input
+                    className={s.formInput}
+                    id="endTime"
+                    type="time"
+                    onChange={(e) => {
+                      setEndTime(e.target.value);
+                    }}
+                    value={endTime}
+                  />
+                </label>
+              </div>
             </div>
             <button className={s.formSubmit} onClick={(e) => handleSubmit(e)}>
               Create Event
             </button>
             {error && <p className={s.error}>{error}</p>}
           </div>
-          <FullCalendar
-            plugins={[dayGridPlugin, timeGridPlugin, listPlugin]}
-            headerToolbar={{
-              left: "prev,next today",
-              center: "title",
-              right: "dayGridMonth,timeGridWeek,timeGridDay",
-            }}
-            events={events}
-            initialView="dayGridMonth"
-            selectable={true}
-            eventClick={showEventOverlay}
-            // editable={true}
-            // selectMirror={true}
-            // dayMaxEvents={true}
-            // weekends={true}
-          />
+          <div className={s.fullCalendarUI}>
+            <FullCalendar
+              plugins={[dayGridPlugin, timeGridPlugin, listPlugin]}
+              headerToolbar={{
+                left: "prev,next today",
+                center: "title",
+                right: "dayGridMonth,timeGridWeek,timeGridDay",
+              }}
+              events={events}
+              initialView="dayGridMonth"
+              selectable={true}
+              eventClick={showEventOverlay}
+              // editable={true}
+              // selectMirror={true}
+              // dayMaxEvents={true}
+              // weekends={true}
+              height="100vh"
+            />
+          </div>
         </div>
       </Box>
       <ChakraProvider>
