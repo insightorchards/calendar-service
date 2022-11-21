@@ -104,11 +104,12 @@ const App = () => {
       <Box>
         <div className={s.mainContainer}>
           <div className={s.form}>
+            <header className={s.formHeader}>Create an event</header>
             <div className={s.formInputs}>
               <label htmlFor="title" className={s.formItem}>
                 Title
                 <input
-                  className={s.formInput}
+                  className={s.formTitleInput}
                   id="title" // change this name to titleInput instead of title
                   type="text"
                   onChange={(e) => {
@@ -131,20 +132,6 @@ const App = () => {
                     value={startDate}
                   />
                 </label>
-                <label htmlFor="startTime" className={s.formItem}>
-                  Start Time
-                  <input
-                    className={s.formInput}
-                    id="startTime"
-                    type="time"
-                    onChange={(e) => {
-                      setStartTime(e.target.value);
-                    }}
-                    value={startTime}
-                  />
-                </label>
-              </div>
-              <div className={s.inputGroup}>
                 <label htmlFor="endDate" className={s.formItem}>
                   End Date
                   <input
@@ -156,6 +143,20 @@ const App = () => {
                       setEndDate(e.target.value);
                     }}
                     value={endDate}
+                  />
+                </label>
+              </div>
+              <div className={s.inputGroup}>
+                <label htmlFor="startTime" className={s.formItem}>
+                  Start Time
+                  <input
+                    className={s.formInput}
+                    id="startTime"
+                    type="time"
+                    onChange={(e) => {
+                      setStartTime(e.target.value);
+                    }}
+                    value={startTime}
                   />
                 </label>
                 <label htmlFor="endTime" className={s.formItem}>
@@ -189,11 +190,11 @@ const App = () => {
               initialView="dayGridMonth"
               selectable={true}
               eventClick={showEventOverlay}
+              height="100vh"
               // editable={true}
               // selectMirror={true}
               // dayMaxEvents={true}
               // weekends={true}
-              height="100vh"
             />
           </div>
         </div>

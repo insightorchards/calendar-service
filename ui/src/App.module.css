@@ -1,38 +1,55 @@
 .mainContainer {
   display: flex;
-  justify-content: space-between;
+}
+
+.formHeader {
+  font-size: 20px;
+  margin-bottom: 20px;
 }
 
 .form {
+  align-items: center;
   display: flex;
   flex-direction: column;
-  padding: 30px 70px 30px 70px;
+  padding: 85px 0 0 0;
   width: 20vw;
 }
 
 .formItem {
   display: flex;
   flex-direction: column;
-  padding: 0 20px 0 20px;
+  padding: 0 10px 20px 10px;
+}
+
+.inputGroup {
+  display: flex;
+  justify-content: space-between;
 }
 
 .formInputs {
   margin-bottom: 20px;
 }
 
-.formInput {
+.formTitleInput {
   border: 1px solid gray;
   border-radius: 7px;
   display: flex;
 }
 
+.formInput {
+  border: 1px solid gray;
+  border-radius: 7px;
+  display: flex;
+  width: 120px;
+}
+
 .formSubmit {
+  align-self: center;
   background-color: rgb(213, 211, 211);
   border: 1px solid gray;
   border-radius: 7px;
   height: 30px;
   width: 120px;
-  align-self: center;
 }
 
 .error {
@@ -42,7 +59,7 @@
 }
 
 .fullCalendarUI {
-  width: 80vw;
   height: 100vh;
-  padding: 20px 20px 0 0;
+  padding: 20px 50px 0 0;
+  width: 80vw;
 }
