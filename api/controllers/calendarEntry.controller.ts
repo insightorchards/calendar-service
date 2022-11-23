@@ -91,3 +91,20 @@ export const deleteCalendarEntry = async (
   await CalendarEntry.deleteOne({ _id: id });
   res.status(200).json();
 };
+
+export const updateCalendarEntry = async (
+  req: Request,
+  res: Response,
+  _next: NextFunction
+) => {
+  const { id } = req.params;
+  try {
+    const entry = await CalendarEntry.findByIdAndUpdate(
+      id,
+      req.body as CalendarEntry
+    );
+    res.status(200).json(entry);
+  } catch {
+    res.status(400).json({ error: "Something went wrong" });
+  }
+};
