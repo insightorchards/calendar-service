@@ -190,7 +190,7 @@ describe("PATCH / entry", () => {
         startTimeUtc: newStart,
         endTimeUtc: newEnd,
         description: "by John Denver",
-      })
+      }),
     );
   });
 });
