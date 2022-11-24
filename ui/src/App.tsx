@@ -40,10 +40,10 @@ const App = () => {
   const padNumberWith0Zero: Function = (num: Number): string =>
     num.toString().padStart(2, "0");
   const DEFAULT_START_TIME: string = `${padNumberWith0Zero(
-    currentHour
+    currentHour,
   )}:${padNumberWith0Zero(currentMinute)}`;
   const DEFAULT_END_TIME: string = `${padNumberWith0Zero(
-    currentHour + 1
+    currentHour + 1,
   )}:${padNumberWith0Zero(currentMinute)}`;
 
   const formatDate: Function = (date: Date): string => {
@@ -76,7 +76,7 @@ const App = () => {
   const [error, setError] = useState<string | null>(null);
   const [events, setEvents] = useState<EventSourceInput>([]);
   const [displayedEventData, setDisplayedEventData] = useState(
-    {} as DisplayedEventData
+    {} as DisplayedEventData,
   );
   const [showOverlay, setShowOverlay] = useState<boolean>(false);
   const [inEditMode, setInEditMode] = useState<boolean>(false);
@@ -276,7 +276,7 @@ const App = () => {
                       onChange={(e) => {
                         setTitle(e.target.value);
                       }}
-                      value={title}
+                      value={displayedEventData.title}
                     />
                   </label>
                   <div className={s.inputGroup}>
@@ -290,7 +290,9 @@ const App = () => {
                         onChange={(e) => {
                           setStartDate(e.target.value);
                         }}
-                        value={startDate}
+                        value={formatDate(
+                          new Date(displayedEventData.startTimeUtc),
+                        )}
                       />
                     </label>
                     <label htmlFor="endDate" className={s.formItem}>
@@ -303,7 +305,9 @@ const App = () => {
                         onChange={(e) => {
                           setEndDate(e.target.value);
                         }}
-                        value={endDate}
+                        value={formatDate(
+                          new Date(displayedEventData.endTimeUtc),
+                        )}
                       />
                     </label>
                   </div>
@@ -317,7 +321,13 @@ const App = () => {
                         onChange={(e) => {
                           setStartTime(e.target.value);
                         }}
-                        value={startTime}
+                        value={`${padNumberWith0Zero(
+                          new Date(displayedEventData.startTimeUtc).getHours(),
+                        )}:${padNumberWith0Zero(
+                          new Date(
+                            displayedEventData.startTimeUtc,
+                          ).getMinutes(),
+                        )}`}
                       />
                     </label>
                     <label htmlFor="endTime" className={s.formItem}>
@@ -329,7 +339,11 @@ const App = () => {
                         onChange={(e) => {
                           setEndTime(e.target.value);
                         }}
-                        value={endTime}
+                        value={`${padNumberWith0Zero(
+                          new Date(displayedEventData.endTimeUtc).getHours(),
+                        )}:${padNumberWith0Zero(
+                          new Date(displayedEventData.endTimeUtc).getMinutes(),
+                        )}`}
                       />
                     </label>
                   </div>
