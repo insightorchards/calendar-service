@@ -53,6 +53,19 @@ const App = () => {
       padNumberWith0Zero(date.getDate()),
     ].join("-");
   };
+
+  const modalDateFormat = (selectedEventDate: Date) =>
+    `${selectedEventDate.toLocaleString("default", {
+      weekday: "long",
+    })}, ${selectedEventDate.toLocaleString("default", {
+      month: "long",
+    })} ${selectedEventDate.getDate()}
+    ${selectedEventDate.toLocaleTimeString("default", {
+      hour: "2-digit",
+      minute: "2-digit",
+    })}
+    `;
+
   const DEFAULT_DATE = formatDate(new Date());
 
   const [startDate, setStartDate] = useState<string>(DEFAULT_DATE);
@@ -231,9 +244,12 @@ const App = () => {
               <p>Event title: {displayedEventData.title}</p>
               <p>Description: {displayedEventData.description}</p>
               <p>
-                Start: {new Date(displayedEventData.startTimeUtc).toString()}
+                Start:{" "}
+                {modalDateFormat(new Date(displayedEventData.startTimeUtc))}
               </p>
-              <p>End: {new Date(displayedEventData.endTimeUtc).toString()}</p>
+              <p>
+                End: {modalDateFormat(new Date(displayedEventData.endTimeUtc))}
+              </p>
             </ModalBody>
 
             <ModalFooter>
