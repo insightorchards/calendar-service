@@ -79,6 +79,7 @@ const App = () => {
     {} as DisplayedEventData
   );
   const [showOverlay, setShowOverlay] = useState<boolean>(false);
+  const [inEditMode, setInEditMode] = useState<boolean>(false);
 
   useEffect(() => {
     getEntries().then((entries) => {
@@ -132,6 +133,15 @@ const App = () => {
       setEvents(entries);
       setShowOverlay(false);
     });
+  };
+
+  const handleEditEntry = async (e: MouseEvent<HTMLButtonElement>) => {
+    setInEditMode(true);
+  };
+
+  const closeOverlay = () => {
+    setShowOverlay(false);
+    setInEditMode(false);
   };
 
   return (
@@ -235,24 +245,102 @@ const App = () => {
         </div>
       </Box>
       <ChakraProvider>
-        <Modal isOpen={showOverlay} onClose={() => setShowOverlay(false)}>
+        <Modal isOpen={showOverlay} onClose={closeOverlay}>
           <ModalOverlay />
           <ModalContent>
             <ModalHeader>Event Details</ModalHeader>
             <ModalCloseButton />
-            <ModalBody>
-              <p>Event title: {displayedEventData.title}</p>
-              <p>Description: {displayedEventData.description}</p>
-              <p>
-                Start:{" "}
-                {modalDateFormat(new Date(displayedEventData.startTimeUtc))}
-              </p>
-              <p>
-                End: {modalDateFormat(new Date(displayedEventData.endTimeUtc))}
-              </p>
-            </ModalBody>
+            {!inEditMode && (
+              <ModalBody>
+                <p>Event title: {displayedEventData.title}</p>
+                <p>Description: {displayedEventData.description}</p>
+                <p>
+                  Start:{" "}
+                  {modalDateFormat(new Date(displayedEventData.startTimeUtc))}
+                </p>
+                <p>
+                  End:{" "}
+                  {modalDateFormat(new Date(displayedEventData.endTimeUtc))}
+                </p>
+              </ModalBody>
+            )}
+            {inEditMode && (
+              <ModalBody>
+                <div className={s.formInputs}>
+                  <label htmlFor="title" className={s.formItem}>
+                    Title
+                    <input
+                      className={s.formTitleInput}
+                      id="title" // change this name to titleInput instead of title
+                      type="text"
+                      onChange={(e) => {
+                        setTitle(e.target.value);
+                      }}
+                      value={title}
+                    />
+                  </label>
+                  <div className={s.inputGroup}>
+                    <label htmlFor="startDate" className={s.formItem}>
+                      Start Date
+                      <input
+                        className={s.formInput}
+                        id="startDate"
+                        min={formatDate(new Date())}
+                        type="date"
+                        onChange={(e) => {
+                          setStartDate(e.target.value);
+                        }}
+                        value={startDate}
+                      />
+                    </label>
+                    <label htmlFor="endDate" className={s.formItem}>
+                      End Date
+                      <input
+                        className={s.formInput}
+                        id="endDate"
+                        min={startDate}
+                        type="date"
+                        onChange={(e) => {
+                          setEndDate(e.target.value);
+                        }}
+                        value={endDate}
+                      />
+                    </label>
+                  </div>
+                  <div className={s.inputGroup}>
+                    <label htmlFor="startTime" className={s.formItem}>
+                      Start Time
+                      <input
+                        className={s.formInput}
+                        id="startTime"
+                        type="time"
+                        onChange={(e) => {
+                          setStartTime(e.target.value);
+                        }}
+                        value={startTime}
+                      />
+                    </label>
+                    <label htmlFor="endTime" className={s.formItem}>
+                      End Time
+                      <input
+                        className={s.formInput}
+                        id="endTime"
+                        type="time"
+                        onChange={(e) => {
+                          setEndTime(e.target.value);
+                        }}
+                        value={endTime}
+                      />
+                    </label>
+                  </div>
+                </div>
+              </ModalBody>
+            )}
 
             <ModalFooter>
+              <Button onClick={handleEditEntry} variant="ghost">
+                Edit
+              </Button>
               <Button onClick={handleDeleteEntry} variant="ghost">
                 Delete
               </Button>
