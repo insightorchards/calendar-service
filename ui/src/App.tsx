@@ -144,6 +144,10 @@ const App = () => {
     setInEditMode(false);
   };
 
+  const handleSaveChanges = () => {
+    console.log("update entry");
+  };
+
   return (
     <div className="App">
       <Box>
@@ -352,6 +356,9 @@ const App = () => {
             )}
 
             <ModalFooter>
+              <Button onClick={handleSaveChanges} variant="ghost">
+                Save
+              </Button>
               <Button onClick={handleEditEntry} variant="ghost">
                 Edit
               </Button>
