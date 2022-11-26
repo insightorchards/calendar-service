@@ -1,9 +1,11 @@
 import React, { MouseEvent, useEffect } from "react";
+import EventForm from "./EventForm";
 import { useState } from "react";
 import FullCalendar, {
   EventClickArg,
   EventSourceInput,
 } from "@fullcalendar/react";
+import { formatDate, padNumberWith0Zero } from "./lib";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import listPlugin from "@fullcalendar/list";
@@ -37,23 +39,12 @@ interface DisplayedEventData {
 const App = () => {
   const currentHour: number = new Date().getHours();
   const currentMinute: number = new Date().getMinutes();
-  const padNumberWith0Zero: Function = (num: Number): string =>
-    num.toString().padStart(2, "0");
   const DEFAULT_START_TIME: string = `${padNumberWith0Zero(
     currentHour,
   )}:${padNumberWith0Zero(currentMinute)}`;
   const DEFAULT_END_TIME: string = `${padNumberWith0Zero(
     currentHour + 1,
   )}:${padNumberWith0Zero(currentMinute)}`;
-
-  const formatDate: Function = (date: Date): string => {
-    return [
-      date.getFullYear(),
-      padNumberWith0Zero(date.getMonth() + 1),
-      padNumberWith0Zero(date.getDate()),
-    ].join("-");
-  };
-
   const modalDateFormat = (selectedEventDate: Date) =>
     `${selectedEventDate.toLocaleString("default", {
       weekday: "long",
@@ -270,91 +261,27 @@ const App = () => {
             )}
             {inEditMode && (
               <ModalBody>
-                <div className={s.formInputs}>
-                  <label htmlFor="title" className={s.formItem}>
-                    Title
-                    <input
-                      className={s.formTitleInput}
-                      id="title" // change this name to titleInput instead of title
-                      type="text"
-                      onChange={(e) => {
-                        setTitle(e.target.value);
-                      }}
-                      value={displayedEventData.title}
-                    />
-                  </label>
-                  <div className={s.inputGroup}>
-                    <label htmlFor="startDate" className={s.formItem}>
-                      Start Date
-                      <input
-                        className={s.formInput}
-                        id="startDate"
-                        min={formatDate(new Date())}
-                        type="date"
-                        onChange={(e) => {
-                          setStartDate(e.target.value);
-                        }}
-                        value={formatDate(
-                          new Date(displayedEventData.startTimeUtc),
-                        )}
-                      />
-                    </label>
-                    <label htmlFor="endDate" className={s.formItem}>
-                      End Date
-                      <input
-                        className={s.formInput}
-                        id="endDate"
-                        min={startDate}
-                        type="date"
-                        onChange={(e) => {
-                          setEndDate(e.target.value);
-                        }}
-                        value={formatDate(
-                          new Date(displayedEventData.endTimeUtc),
-                        )}
-                      />
-                    </label>
-                  </div>
-                  <div className={s.inputGroup}>
-                    <label htmlFor="startTime" className={s.formItem}>
-                      Start Time
-                      <input
-                        className={s.formInput}
-                        id="startTime"
-                        type="time"
-                        onChange={(e) => {
-                          setStartTime(e.target.value);
-                        }}
-                        value={`${padNumberWith0Zero(
-                          new Date(displayedEventData.startTimeUtc).getHours(),
-                        )}:${padNumberWith0Zero(
-                          new Date(
-                            displayedEventData.startTimeUtc,
-                          ).getMinutes(),
-                        )}`}
-                      />
-                    </label>
-                    <label htmlFor="endTime" className={s.formItem}>
-                      End Time
-                      <input
-                        className={s.formInput}
-                        id="endTime"
-                        type="time"
-                        onChange={(e) => {
-                          setEndTime(e.target.value);
-                        }}
-                        value={`${padNumberWith0Zero(
-                          new Date(displayedEventData.endTimeUtc).getHours(),
-                        )}:${padNumberWith0Zero(
-                          new Date(displayedEventData.endTimeUtc).getMinutes(),
-                        )}`}
-                      />
-                    </label>
-                  </div>
-                </div>
+                <EventForm
+                  initialTitle={displayedEventData.title}
+                  initialStartDate={formatDate(
+                    new Date(displayedEventData.startTimeUtc),
+                  )}
+                  initialEndDate={formatDate(
+                    new Date(displayedEventData.endTimeUtc),
+                  )}
+                  initialStartTime={`${padNumberWith0Zero(
+                    new Date(displayedEventData.startTimeUtc).getHours(),
+                  )}:${padNumberWith0Zero(
+                    new Date(displayedEventData.startTimeUtc).getMinutes(),
+                  )}`}
+                  initialEndTime={`${padNumberWith0Zero(
+                    new Date(displayedEventData.endTimeUtc).getHours(),
+                  )}:${padNumberWith0Zero(
+                    new Date(displayedEventData.endTimeUtc).getMinutes(),
+                  )}`}
+                />
               </ModalBody>
             )}
-
             <ModalFooter>
               <Button onClick={handleSaveChanges} variant="ghost">
                 Save
