@@ -98,9 +98,11 @@ const EventForm = ({
           />
         </label>
       </div>
-      <Button onClick={handleSave} variant="ghost">
-        Save
-      </Button>
+      <div className={s.saveButton}>
+        <Button colorScheme="telegram" onClick={handleSave} variant="solid">
+          Save
+        </Button>
+      </div>
     </div>
   );
 };

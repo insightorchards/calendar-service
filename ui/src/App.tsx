@@ -55,10 +55,10 @@ const App = () => {
   const currentHour: number = new Date().getHours();
   const currentMinute: number = new Date().getMinutes();
   const DEFAULT_START_TIME: string = `${padNumberWith0Zero(
-    currentHour
+    currentHour,
   )}:${padNumberWith0Zero(currentMinute)}`;
   const DEFAULT_END_TIME: string = `${padNumberWith0Zero(
-    currentHour + 1
+    currentHour + 1,
   )}:${padNumberWith0Zero(currentMinute)}`;
   const modalDateFormat = (selectedEventDate: Date) =>
     `${selectedEventDate.toLocaleString("default", {
@@ -82,7 +82,7 @@ const App = () => {
   const [error, setError] = useState<string | null>(null);
   const [events, setEvents] = useState<EventSourceInput>([]);
   const [displayedEventData, setDisplayedEventData] = useState(
-    {} as DisplayedEventData
+    {} as DisplayedEventData,
   );
   const [showOverlay, setShowOverlay] = useState<boolean>(false);
   const [inEditMode, setInEditMode] = useState<boolean>(false);
@@ -124,12 +124,17 @@ const App = () => {
     setEndTime(DEFAULT_END_TIME);
   };
 
-  const showEventOverlay = (arg: EventClickArg) => {
-    const entryId = arg.event._def.extendedProps._id;
+  const getEntryDetails = (entryId: string) => {
     getEntry(entryId).then((data) => {
       setDisplayedEventData(data);
       setShowOverlay(true);
+      setInEditMode(false);
     });
+  };
+
+  const showEventOverlay = (arg: EventClickArg) => {
+    const entryId = arg.event._def.extendedProps._id;
+    getEntryDetails(entryId);
   };
 
   const handleDeleteEntry = async (e: MouseEvent<HTMLButtonElement>) => {
@@ -150,7 +155,7 @@ const App = () => {
     setInEditMode(false);
   };
 
-  const handleSaveChanges = ({
+  const handleSaveChanges = async ({
     title,
     startDate,
     endDate,
@@ -163,8 +168,9 @@ const App = () => {
       title,
       startTimeUtc,
       endTimeUtc,
+    }).then(() => {
+      getEntryDetails(displayedEventData._id);
     });
-    console.log("update entry");
   };
 
   return (
@@ -274,51 +280,53 @@ const App = () => {
             <ModalHeader>Event Details</ModalHeader>
             <ModalCloseButton />
             {!inEditMode && (
-              <ModalBody>
-                <p>Event title: {displayedEventData.title}</p>
-                <p>Description: {displayedEventData.description}</p>
-                <p>
-                  Start:{" "}
-                  {modalDateFormat(new Date(displayedEventData.startTimeUtc))}
-                </p>
-                <p>
-                  End:{" "}
-                  {modalDateFormat(new Date(displayedEventData.endTimeUtc))}
-                </p>
-              </ModalBody>
+              <>
+                <ModalBody>
+                  <p>Event title: {displayedEventData.title}</p>
+                  <p>Description: {displayedEventData.description}</p>
+                  <p>
+                    Start:{" "}
+                    {modalDateFormat(new Date(displayedEventData.startTimeUtc))}
+                  </p>
+                  <p>
+                    End:{" "}
+                    {modalDateFormat(new Date(displayedEventData.endTimeUtc))}
+                  </p>
+                </ModalBody>
+                <ModalFooter>
+                  <Button onClick={handleEditEntry} variant="ghost">
+                    Edit
+                  </Button>
+                  <Button onClick={handleDeleteEntry} variant="ghost">
+                    Delete
+                  </Button>
+                </ModalFooter>
+              </>
             )}
             {inEditMode && (
               <ModalBody>
                 <EventForm
                   initialTitle={displayedEventData.title}
                   initialStartDate={formatDate(
-                    new Date(displayedEventData.startTimeUtc)
+                    new Date(displayedEventData.startTimeUtc),
                   )}
                   initialEndDate={formatDate(
-                    new Date(displayedEventData.endTimeUtc)
+                    new Date(displayedEventData.endTimeUtc),
                   )}
                   initialStartTime={`${padNumberWith0Zero(
-                    new Date(displayedEventData.startTimeUtc).getHours()
+                    new Date(displayedEventData.startTimeUtc).getHours(),
                   )}:${padNumberWith0Zero(
-                    new Date(displayedEventData.startTimeUtc).getMinutes()
+                    new Date(displayedEventData.startTimeUtc).getMinutes(),
                   )}`}
                   initialEndTime={`${padNumberWith0Zero(
-                    new Date(displayedEventData.endTimeUtc).getHours()
+                    new Date(displayedEventData.endTimeUtc).getHours(),
                   )}:${padNumberWith0Zero(
-                    new Date(displayedEventData.endTimeUtc).getMinutes()
+                    new Date(displayedEventData.endTimeUtc).getMinutes(),
                   )}`}
                   onSave={handleSaveChanges}
                 />
               </ModalBody>
             )}
-            <ModalFooter>
-              <Button onClick={handleEditEntry} variant="ghost">
-                Edit
-              </Button>
-              <Button onClick={handleDeleteEntry} variant="ghost">
-                Delete
-              </Button>
-            </ModalFooter>
           </ModalContent>
         </Modal>
       </ChakraProvider>
