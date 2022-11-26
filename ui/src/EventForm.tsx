@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { formatDate, padNumberWith0Zero } from "./lib";
-
+import { Button } from "@chakra-ui/react";
 import s from "./App.module.css";
 
 interface FormProps {
@@ -9,6 +9,7 @@ interface FormProps {
   initialStartTime: string;
   initialEndTime: string;
   initialTitle: string;
+  onSave: Function;
 }
 
 const EventForm = ({
@@ -17,12 +18,17 @@ const EventForm = ({
   initialStartTime,
   initialEndTime,
   initialTitle,
+  onSave,
 }: FormProps) => {
   const [startDate, setStartDate] = useState<string>(initialStartDate);
   const [endDate, setEndDate] = useState<string>(initialEndDate);
   const [startTime, setStartTime] = useState<string>(initialStartTime);
   const [endTime, setEndTime] = useState<string>(initialEndTime);
   const [title, setTitle] = useState<string>(initialTitle);
+
+  const handleSave = async (_: React.MouseEvent<HTMLButtonElement>) => {
+    onSave({ title, startDate, endDate, startTime, endTime });
+  };
 
   return (
     <div className={s.formInputs}>
@@ -92,6 +98,9 @@ const EventForm = ({
           />
         </label>
       </div>
+      <Button onClick={handleSave} variant="ghost">
+        Save
+      </Button>
     </div>
   );
 };
