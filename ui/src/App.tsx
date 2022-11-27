@@ -55,10 +55,10 @@ const App = () => {
   const currentHour: number = new Date().getHours();
   const currentMinute: number = new Date().getMinutes();
   const DEFAULT_START_TIME: string = `${padNumberWith0Zero(
-    currentHour,
+    currentHour
   )}:${padNumberWith0Zero(currentMinute)}`;
   const DEFAULT_END_TIME: string = `${padNumberWith0Zero(
-    currentHour + 1,
+    currentHour + 1
   )}:${padNumberWith0Zero(currentMinute)}`;
   const modalDateFormat = (selectedEventDate: Date) =>
     `${selectedEventDate.toLocaleString("default", {
@@ -75,7 +75,7 @@ const App = () => {
   const DEFAULT_DATE = formatDate(new Date());
   const [events, setEvents] = useState<EventSourceInput>([]);
   const [displayedEventData, setDisplayedEventData] = useState(
-    {} as DisplayedEventData,
+    {} as DisplayedEventData
   );
   const [showOverlay, setShowOverlay] = useState<boolean>(false);
   const [inEditMode, setInEditMode] = useState<boolean>(false);
@@ -151,6 +151,9 @@ const App = () => {
       endTimeUtc,
     }).then(() => {
       getEntryDetails(displayedEventData._id);
+      getEntries().then((entries) => {
+        setEvents(entries);
+      });
     });
   };
 
@@ -167,6 +170,7 @@ const App = () => {
               initialStartTime={DEFAULT_START_TIME}
               initialEndTime={DEFAULT_END_TIME}
               onSave={handleCreateEntry}
+              isCreate={true}
             />
           </div>
           <div className={s.fullCalendarUI}>
@@ -225,22 +229,23 @@ const App = () => {
                 <EventForm
                   initialTitle={displayedEventData.title}
                   initialStartDate={formatDate(
-                    new Date(displayedEventData.startTimeUtc),
+                    new Date(displayedEventData.startTimeUtc)
                   )}
                   initialEndDate={formatDate(
-                    new Date(displayedEventData.endTimeUtc),
+                    new Date(displayedEventData.endTimeUtc)
                   )}
                   initialStartTime={`${padNumberWith0Zero(
-                    new Date(displayedEventData.startTimeUtc).getHours(),
+                    new Date(displayedEventData.startTimeUtc).getHours()
                   )}:${padNumberWith0Zero(
-                    new Date(displayedEventData.startTimeUtc).getMinutes(),
+                    new Date(displayedEventData.startTimeUtc).getMinutes()
                   )}`}
                   initialEndTime={`${padNumberWith0Zero(
-                    new Date(displayedEventData.endTimeUtc).getHours(),
+                    new Date(displayedEventData.endTimeUtc).getHours()
                   )}:${padNumberWith0Zero(
-                    new Date(displayedEventData.endTimeUtc).getMinutes(),
+                    new Date(displayedEventData.endTimeUtc).getMinutes()
                   )}`}
                   onSave={handleSaveChanges}
+                  isCreate={false}
                 />
               </ModalBody>
             )}

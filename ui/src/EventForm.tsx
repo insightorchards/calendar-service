@@ -9,6 +9,7 @@ interface FormProps {
   initialEndTime: string;
   initialTitle: string;
   onSave: Function;
+  isCreate: boolean;
 }
 
 const EventForm = ({
@@ -18,6 +19,7 @@ const EventForm = ({
   initialEndTime,
   initialTitle,
   onSave,
+  isCreate,
 }: FormProps) => {
   const [startDate, setStartDate] = useState<string>(initialStartDate);
   const [endDate, setEndDate] = useState<string>(initialEndDate);
@@ -34,12 +36,15 @@ const EventForm = ({
       return;
     }
     onSave({ title, startDate, endDate, startTime, endTime });
-    setTitle(initialTitle);
-    setError(null);
-    setStartDate(initialStartDate);
-    setEndDate(initialEndDate);
-    setStartTime(initialStartTime);
-    setEndTime(initialEndTime);
+
+    if (isCreate) {
+      setTitle(initialTitle);
+      setError(null);
+      setStartDate(initialStartDate);
+      setEndDate(initialEndDate);
+      setStartTime(initialStartTime);
+      setEndTime(initialEndTime);
+    }
   };
 
   return (
@@ -112,7 +117,7 @@ const EventForm = ({
       </div>
       <div className={s.saveButton}>
         <button className={s.formSubmit} onClick={handleSave}>
-          Save
+          {isCreate ? "Create event" : "Save"}
         </button>
 
         {error && <p className={s.error}>{error}</p>}
