@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { formatDate, padNumberWith0Zero } from "./lib";
-import { Button } from "@chakra-ui/react";
+import { formatDate } from "./lib";
 import s from "./App.module.css";
 
 interface FormProps {
@@ -24,10 +23,23 @@ const EventForm = ({
   const [endDate, setEndDate] = useState<string>(initialEndDate);
   const [startTime, setStartTime] = useState<string>(initialStartTime);
   const [endTime, setEndTime] = useState<string>(initialEndTime);
+  const [error, setError] = useState<string | null>(null);
   const [title, setTitle] = useState<string>(initialTitle);
 
   const handleSave = async (_: React.MouseEvent<HTMLButtonElement>) => {
+    const startDateAndTime: string = `${startDate}T${startTime}`;
+    const endDateAndTime: string = `${endDate}T${endTime}`;
+    if (startDateAndTime > endDateAndTime) {
+      setError("Error: end cannot be before start.");
+      return;
+    }
     onSave({ title, startDate, endDate, startTime, endTime });
+    setTitle(initialTitle);
+    setError(null);
+    setStartDate(initialStartDate);
+    setEndDate(initialEndDate);
+    setStartTime(initialStartTime);
+    setEndTime(initialEndTime);
   };
 
   return (
@@ -99,9 +111,11 @@ const EventForm = ({
         </label>
       </div>
       <div className={s.saveButton}>
-        <Button colorScheme="telegram" onClick={handleSave} variant="solid">
+        <button className={s.formSubmit} onClick={handleSave}>
           Save
-        </Button>
+        </button>
+
+        {error && <p className={s.error}>{error}</p>}
       </div>
     </div>
   );

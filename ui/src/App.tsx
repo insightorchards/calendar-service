@@ -42,7 +42,7 @@ interface DisplayedEventData {
   updatedAt: string;
 }
 
-interface updateEntryProps {
+interface formEntryProps {
   _id: string;
   title: string;
   startTime: string;
@@ -73,13 +73,6 @@ const App = () => {
     `;
 
   const DEFAULT_DATE = formatDate(new Date());
-
-  const [startDate, setStartDate] = useState<string>(DEFAULT_DATE);
-  const [endDate, setEndDate] = useState<string>(DEFAULT_DATE);
-  const [startTime, setStartTime] = useState<string>(DEFAULT_START_TIME);
-  const [endTime, setEndTime] = useState<string>(DEFAULT_END_TIME);
-  const [title, setTitle] = useState<string>("");
-  const [error, setError] = useState<string | null>(null);
   const [events, setEvents] = useState<EventSourceInput>([]);
   const [displayedEventData, setDisplayedEventData] = useState(
     {} as DisplayedEventData,
@@ -93,35 +86,23 @@ const App = () => {
     });
   }, []);
 
-  const handleCreateEntry = async () => {
+  const handleCreateEntry = async ({
+    title,
+    startDate,
+    endDate,
+    startTime,
+    endTime,
+  }: formEntryProps) => {
     const startTimeUtc = new Date(`${startDate}T${startTime}`);
     const endTimeUtc = new Date(`${endDate}T${endTime}`);
-    createEntry({
+    await createEntry({
       title,
       startTimeUtc,
       endTimeUtc,
     });
-  };
-
-  const handleSubmit = (e: MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    const startDateAndTime: string = `${startDate}T${startTime}`;
-    const endDateAndTime: string = `${endDate}T${endTime}`;
-    if (startDateAndTime > endDateAndTime) {
-      setError("Error: end cannot be before start.");
-      return;
-    }
-    handleCreateEntry();
     getEntries().then((entries) => {
       setEvents(entries);
     });
-
-    setTitle("");
-    setError(null);
-    setStartDate(DEFAULT_DATE);
-    setEndDate(DEFAULT_DATE);
-    setStartTime(DEFAULT_START_TIME);
-    setEndTime(DEFAULT_END_TIME);
   };
 
   const getEntryDetails = (entryId: string) => {
@@ -161,7 +142,7 @@ const App = () => {
     endDate,
     startTime,
     endTime,
-  }: updateEntryProps) => {
+  }: formEntryProps) => {
     const startTimeUtc = new Date(`${startDate}T${startTime}`);
     const endTimeUtc = new Date(`${endDate}T${endTime}`);
     updateEntry(displayedEventData._id, {
@@ -179,78 +160,14 @@ const App = () => {
         <div className={s.mainContainer}>
           <div className={s.form}>
             <header className={s.formHeader}>Create an event</header>
-            <div className={s.formInputs}>
-              <label htmlFor="title" className={s.formItem}>
-                Title
-                <input
-                  className={s.formTitleInput}
-                  id="title" // change this name to titleInput instead of title
-                  type="text"
-                  onChange={(e) => {
-                    setTitle(e.target.value);
-                  }}
-                  value={title}
-                />
-              </label>
-              <div className={s.inputGroup}>
-                <label htmlFor="startDate" className={s.formItem}>
-                  Start Date
-                  <input
-                    className={s.formInput}
-                    id="startDate"
-                    min={formatDate(new Date())}
-                    type="date"
-                    onChange={(e) => {
-                      setStartDate(e.target.value);
-                    }}
-                    value={startDate}
-                  />
-                </label>
-                <label htmlFor="endDate" className={s.formItem}>
-                  End Date
-                  <input
-                    className={s.formInput}
-                    id="endDate"
-                    min={startDate}
-                    type="date"
-                    onChange={(e) => {
-                      setEndDate(e.target.value);
-                    }}
-                    value={endDate}
-                  />
-                </label>
-              </div>
-              <div className={s.inputGroup}>
-                <label htmlFor="startTime" className={s.formItem}>
-                  Start Time
-                  <input
-                    className={s.formInput}
-                    id="startTime"
-                    type="time"
-                    onChange={(e) => {
-                      setStartTime(e.target.value);
-                    }}
-                    value={startTime}
-                  />
-                </label>
-                <label htmlFor="endTime" className={s.formItem}>
-                  End Time
-                  <input
-                    className={s.formInput}
-                    id="endTime"
-                    type="time"
-                    onChange={(e) => {
-                      setEndTime(e.target.value);
-                    }}
-                    value={endTime}
-                  />
-                </label>
-              </div>
-            </div>
-            <button className={s.formSubmit} onClick={(e) => handleSubmit(e)}>
-              Create Event
-            </button>
-            {error && <p className={s.error}>{error}</p>}
+            <EventForm
+              initialTitle=""
+              initialStartDate={DEFAULT_DATE}
+              initialEndDate={DEFAULT_DATE}
+              initialStartTime={DEFAULT_START_TIME}
+              initialEndTime={DEFAULT_END_TIME}
+              onSave={handleCreateEntry}
+            />
           </div>
           <div className={s.fullCalendarUI}>
             <FullCalendar
