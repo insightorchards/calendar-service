@@ -117,7 +117,7 @@ const EventForm = ({
       </div>
       <div className={s.saveButton}>
         <button className={s.formSubmit} onClick={handleSave}>
-          {isCreate ? "Create event" : "Save"}
+          {isCreate ? "Create Event" : "Save"}
         </button>
 
         {error && <p className={s.error}>{error}</p>}
