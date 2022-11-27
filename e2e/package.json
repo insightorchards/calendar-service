@@ -1,7 +1,7 @@
 {
   "name": "e2e",
   "version": "1.0.0",
-  "description": "",
+  "description": "End to end testing with cypress for calendar app",
   "main": "index.js",
   "scripts": {
     "test": "cypress open"
