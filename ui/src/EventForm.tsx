@@ -52,11 +52,11 @@ const EventForm = ({
   };
 
   return (
-    <div className={s.formInputs}>
+    <div className={s.container}>
       <label htmlFor="title" className={s.formItem}>
         Title
         <input
-          className={s.formTitleInput}
+          className={s.formInput}
           id="title"
           type="text"
           onChange={(e) => {
@@ -68,7 +68,7 @@ const EventForm = ({
       <label htmlFor="description" className={s.formItem}>
         Description
         <input
-          className={s.formTitleInput}
+          className={s.formInput}
           id="description"
           type="text"
           onChange={(e) => {
@@ -77,7 +77,7 @@ const EventForm = ({
           value={title}
         />
       </label>
-      <div className={s.inputGroup}>
+      <div className={s.inputRow}>
         <label htmlFor="startDate" className={s.formItem}>
           Start Date
           <input
@@ -105,7 +105,7 @@ const EventForm = ({
           />
         </label>
       </div>
-      <div className={s.inputGroup}>
+      <div className={s.inputRow}>
         <label htmlFor="startTime" className={s.formItem}>
           Start Time
           <input

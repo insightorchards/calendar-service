@@ -11,52 +11,8 @@
   align-items: center;
   display: flex;
   flex-direction: column;
-  padding: 85px 0 0 0;
-  width: 20vw;
-}
-
-.formItem {
-  display: flex;
-  flex-direction: column;
-  padding: 0 10px 20px 10px;
-}
-
-.inputGroup {
-  display: flex;
-  justify-content: space-between;
-}
-
-.formInputs {
-  margin-bottom: 20px;
-}
-
-.formTitleInput {
-  border: 1px solid gray;
-  border-radius: 7px;
-  display: flex;
-}
-
-.formInput {
-  border: 1px solid gray;
-  border-radius: 7px;
-  display: flex;
-  width: 120px;
-}
-
-.formSubmit {
-  align-self: center;
-  background-color: rgb(213, 211, 211);
-  border: 1px solid gray;
-  border-radius: 7px;
-  height: 30px;
-  margin-bottom: 20px;
-  width: 120px;
-}
-
-.error {
-  border: 2px red solid;
-  padding: 5px;
-  text-align: center;
+  padding: 85px 20px 0 20px;
+  width: 25vw;
 }
 
 .fullCalendarUI {
