@@ -28,6 +28,7 @@ describe("App", () => {
         end: "2022-02-27T05:43:37.868Z",
         start: "2022-02-27T05:43:37.868Z",
         title: "Berta goes to the baseball game!",
+        description: "The Padres are going to the playoffs!",
       },
     ]);
     const app: any = render(<App />);
@@ -42,6 +43,7 @@ describe("App", () => {
         end: "2022-02-27T05:43:37.868Z",
         start: "2022-02-27T05:43:37.868Z",
         title: "Berta goes to the baseball game!",
+        description: "The Padres are going to the playoffs!",
       },
     ]);
     render(<App />);
@@ -62,6 +64,7 @@ describe("App", () => {
           end: "2022-02-27T05:43:37.868Z",
           start: "2022-02-27T05:43:37.868Z",
           title: "Berta goes to the baseball game!",
+          description: "The Padres are going to the playoffs!",
         },
       ]);
       waitFor(() => {
@@ -80,6 +83,7 @@ describe("App", () => {
           end: "2022-02-27T05:43:37.868Z",
           start: "2022-02-27T05:43:37.868Z",
           title: "Berta goes to the baseball game!",
+          description: "The Padres are going to the playoffs!",
         },
       ]);
       render(<App />);
@@ -87,7 +91,11 @@ describe("App", () => {
       userEvent.click(screen.getByLabelText("Title"));
       userEvent.type(
         screen.getByLabelText("Title"),
-        "Berta goes to the baseball game!",
+        "Berta goes to the baseball game!"
+      );
+      userEvent.type(
+        screen.getByLabelText("Description"),
+        "The Padres are going to the playoffs!"
       );
       userEvent.type(screen.getByLabelText("Start Date"), "02152022");
       userEvent.type(screen.getByLabelText("Start Time"), "08:10");
@@ -101,15 +109,16 @@ describe("App", () => {
 
       expect(await screen.findByLabelText("Title")).toHaveAttribute(
         "value",
-        "",
+        ""
       );
       expect(
-        await screen.findByText("Berta goes to the baseball game!"),
+        await screen.findByText("Berta goes to the baseball game!")
       ).toBeVisible();
       expect(mockCreateEntry).toHaveBeenCalledWith({
         startTimeUtc: new Date("2022-02-15T16:10:00.000Z"),
         endTimeUtc: new Date("2022-02-15T18:10:00.000Z"),
         title: "Berta goes to the baseball game!",
+        description: "The Padres are going to the playoffs!",
       });
     });
 
@@ -120,12 +129,14 @@ describe("App", () => {
           end: "2022-02-27T05:43:37.868Z",
           start: "2022-02-27T05:43:37.868Z",
           title: "Berta goes to the baseball game!",
+          description: "The Padres are going to the playoffs!",
         },
         {
           _id: "345",
           end: "2022-02-24T05:43:37.868Z",
           start: "2022-02-24T05:43:37.868Z",
           title: "Dance",
+          description: "K-pop Party!",
         },
       ]);
 
@@ -135,6 +146,7 @@ describe("App", () => {
           end: "2022-02-24T05:43:37.868Z",
           start: "2022-02-24T05:43:37.868Z",
           title: "Dance",
+          description: "K-pop Party!",
         },
       ]);
 
@@ -154,12 +166,14 @@ describe("App", () => {
           end: "2022-02-27T05:43:37.868Z",
           start: "2022-02-27T05:43:37.868Z",
           title: "Berta goes to the baseball game!",
+          description: "The Padres are going to the playoffs!",
         },
         {
           _id: "345",
           end: "2022-02-24T05:43:37.868Z",
           start: "2022-02-24T05:43:37.868Z",
           title: "Dance",
+          description: "fun times",
         },
       ]);
 
@@ -179,6 +193,7 @@ describe("App", () => {
           end: "2022-02-27T05:43:37.868Z",
           start: "2022-02-27T05:43:37.868Z",
           title: "Berta goes to the baseball game!",
+          description: "The Padres are going to the playoffs!",
         },
       ]);
 
@@ -205,9 +220,11 @@ describe("App", () => {
           end: "2022-02-27T05:43:37.868Z",
           start: "2022-02-27T05:43:37.868Z",
           title: "Berta goes to the baseball game!",
+          description: "The Padres are going to the playoffs!",
         },
       ]);
       render(<App />);
+      // should this check that title and description are reset to empty strings
       userEvent.type(screen.getByLabelText("Start Date"), "03162022");
       userEvent.type(screen.getByLabelText("Start Time"), "08:10");
       userEvent.type(screen.getByLabelText("End Date"), "03182022");
@@ -239,7 +256,7 @@ describe("App", () => {
         userEvent.click(screen.getByRole("button", { name: "Create Event" }));
       });
       expect(
-        screen.getByText("Error: end cannot be before start."),
+        screen.getByText("Error: end cannot be before start.")
       ).toBeVisible();
     });
 
@@ -263,7 +280,7 @@ describe("App", () => {
         userEvent.click(screen.getByRole("button", { name: "Create Event" }));
       });
       expect(
-        screen.getByText("Error: end cannot be before start."),
+        screen.getByText("Error: end cannot be before start.")
       ).toBeVisible();
     });
   });

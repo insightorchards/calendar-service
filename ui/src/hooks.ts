@@ -1,5 +1,6 @@
 interface CalendarEntryInput {
   title: string;
+  description: string;
   startTimeUtc: Date;
   endTimeUtc: Date;
 }
@@ -36,6 +37,7 @@ const getEntry = async (entryId: string) => {
 
 const createEntry = async ({
   title,
+  description,
   startTimeUtc,
   endTimeUtc,
 }: CalendarEntryInput) => {
@@ -45,8 +47,8 @@ const createEntry = async ({
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      description: "default entry description",
-      title: title,
+      title,
+      description,
       creatorId: "1234",
       eventId: "5678",
       startTimeUtc: startTimeUtc.toISOString(),

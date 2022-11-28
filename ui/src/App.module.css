@@ -11,45 +11,38 @@
   align-items: center;
   display: flex;
   flex-direction: column;
-  padding: 85px 0 0 0;
-  width: 20vw;
+  padding: 85px 20px 0 20px;
+  width: 25vw;
 }
 
 .formItem {
   display: flex;
   flex-direction: column;
-  padding: 0 10px 20px 10px;
-}
-
-.inputGroup {
-  display: flex;
-  justify-content: space-between;
-}
-
-.formInputs {
   margin-bottom: 20px;
+  width: 100%;
 }
 
-.formTitleInput {
-  border: 1px solid gray;
-  border-radius: 7px;
+.inputRow {
   display: flex;
+  gap: 10px;
+  width: 100%;
 }
 
 .formInput {
-  border: 1px solid gray;
   border-radius: 7px;
+  border: 1px solid gray;
   display: flex;
-  width: 120px;
+  flex-grow: 1;
+  padding: 6px 10px;
+  width: 100%;
 }
 
 .formSubmit {
-  align-self: center;
   background-color: rgb(213, 211, 211);
-  border: 1px solid gray;
   border-radius: 7px;
-  height: 30px;
-  margin-bottom: 20px;
+  border: 1px solid gray;
+  margin-top: 20px;
+  padding: 6px 10px;
   width: 120px;
 }
 
