@@ -1,9 +1,11 @@
 import React, { MouseEvent, useEffect } from "react";
+import EventForm from "./EventForm";
 import { useState } from "react";
 import FullCalendar, {
   EventClickArg,
   EventSourceInput,
 } from "@fullcalendar/react";
+import { formatDate, getDateTimeString, padNumberWith0Zero } from "./lib";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import listPlugin from "@fullcalendar/list";
@@ -19,7 +21,13 @@ import {
   ModalCloseButton,
   ChakraProvider,
 } from "@chakra-ui/react";
-import { getEntry, getEntries, createEntry, deleteEntry } from "./hooks";
+import {
+  getEntry,
+  getEntries,
+  createEntry,
+  deleteEntry,
+  updateEntry,
+} from "./hooks";
 import s from "./App.module.css";
 
 interface DisplayedEventData {
@@ -34,26 +42,25 @@ interface DisplayedEventData {
   updatedAt: string;
 }
 
+interface FormEntryProps {
+  _id: string;
+  title: string;
+  startTime: string;
+  endTime: string;
+  startDate: string;
+  endDate: string;
+}
+
 const App = () => {
   const currentHour: number = new Date().getHours();
   const currentMinute: number = new Date().getMinutes();
-  const padNumberWith0Zero: Function = (num: Number): string =>
-    num.toString().padStart(2, "0");
   const DEFAULT_START_TIME: string = `${padNumberWith0Zero(
     currentHour
   )}:${padNumberWith0Zero(currentMinute)}`;
   const DEFAULT_END_TIME: string = `${padNumberWith0Zero(
     currentHour + 1
   )}:${padNumberWith0Zero(currentMinute)}`;
-
-  const formatDate: Function = (date: Date): string => {
-    return [
-      date.getFullYear(),
-      padNumberWith0Zero(date.getMonth() + 1),
-      padNumberWith0Zero(date.getDate()),
-    ].join("-");
-  };
-
+  const DEFAULT_DATE = formatDate(new Date());
   const modalDateFormat = (selectedEventDate: Date) =>
     `${selectedEventDate.toLocaleString("default", {
       weekday: "long",
@@ -66,19 +73,17 @@ const App = () => {
     })}
     `;
 
-  const DEFAULT_DATE = formatDate(new Date());
+  const formatTime = (utcString: string) =>
+    `${padNumberWith0Zero(new Date(utcString).getHours())}:${padNumberWith0Zero(
+      new Date(utcString).getMinutes()
+    )}`;
 
-  const [startDate, setStartDate] = useState<string>(DEFAULT_DATE);
-  const [endDate, setEndDate] = useState<string>(DEFAULT_DATE);
-  const [startTime, setStartTime] = useState<string>(DEFAULT_START_TIME);
-  const [endTime, setEndTime] = useState<string>(DEFAULT_END_TIME);
-  const [title, setTitle] = useState<string>("");
-  const [error, setError] = useState<string | null>(null);
   const [events, setEvents] = useState<EventSourceInput>([]);
   const [displayedEventData, setDisplayedEventData] = useState(
     {} as DisplayedEventData
   );
   const [showOverlay, setShowOverlay] = useState<boolean>(false);
+  const [inEditMode, setInEditMode] = useState<boolean>(false);
 
   useEffect(() => {
     getEntries().then((entries) => {
@@ -86,43 +91,36 @@ const App = () => {
     });
   }, []);
 
-  const handleCreateEntry = async () => {
-    const startTimeUtc = new Date(`${startDate}T${startTime}`);
-    const endTimeUtc = new Date(`${endDate}T${endTime}`);
-    createEntry({
+  const handleCreateEntry = async ({
+    title,
+    startDate,
+    endDate,
+    startTime,
+    endTime,
+  }: FormEntryProps) => {
+    const startTimeUtc = new Date(getDateTimeString(startDate, startTime));
+    const endTimeUtc = new Date(getDateTimeString(endDate, endTime));
+    await createEntry({
       title,
       startTimeUtc,
       endTimeUtc,
     });
-  };
-
-  const handleSubmit = (e: MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    const startDateAndTime: string = `${startDate}T${startTime}`;
-    const endDateAndTime: string = `${endDate}T${endTime}`;
-    if (startDateAndTime > endDateAndTime) {
-      setError("Error: end cannot be before start.");
-      return;
-    }
-    handleCreateEntry();
     getEntries().then((entries) => {
       setEvents(entries);
     });
-
-    setTitle("");
-    setError(null);
-    setStartDate(DEFAULT_DATE);
-    setEndDate(DEFAULT_DATE);
-    setStartTime(DEFAULT_START_TIME);
-    setEndTime(DEFAULT_END_TIME);
   };
 
-  const showEventOverlay = (arg: EventClickArg) => {
-    const entryId = arg.event._def.extendedProps._id;
+  const getEntryDetails = (entryId: string) => {
     getEntry(entryId).then((data) => {
       setDisplayedEventData(data);
       setShowOverlay(true);
+      setInEditMode(false);
     });
+  };
+
+  const openModal = (arg: EventClickArg) => {
+    const entryId = arg.event._def.extendedProps._id;
+    getEntryDetails(entryId);
   };
 
   const handleDeleteEntry = async (e: MouseEvent<HTMLButtonElement>) => {
@@ -134,84 +132,52 @@ const App = () => {
     });
   };
 
+  const handleEditEntry = async (e: MouseEvent<HTMLButtonElement>) => {
+    setInEditMode(true);
+  };
+
+  const closeOverlay = () => {
+    setShowOverlay(false);
+    setInEditMode(false);
+  };
+
+  const handleSaveChanges = async ({
+    title,
+    startDate,
+    endDate,
+    startTime,
+    endTime,
+  }: FormEntryProps) => {
+    const entryId = displayedEventData._id;
+    const startTimeUtc = new Date(getDateTimeString(startDate, startTime));
+    const endTimeUtc = new Date(getDateTimeString(endDate, endTime));
+    updateEntry(entryId, {
+      title,
+      startTimeUtc,
+      endTimeUtc,
+    }).then(() => {
+      getEntryDetails(entryId);
+      getEntries().then((entries) => {
+        setEvents(entries);
+      });
+    });
+  };
+
   return (
     <div className="App">
       <Box>
         <div className={s.mainContainer}>
           <div className={s.form}>
             <header className={s.formHeader}>Create an event</header>
-            <div className={s.formInputs}>
-              <label htmlFor="title" className={s.formItem}>
-                Title
-                <input
-                  className={s.formTitleInput}
-                  id="title" // change this name to titleInput instead of title
-                  type="text"
-                  onChange={(e) => {
-                    setTitle(e.target.value);
-                  }}
-                  value={title}
-                />
-              </label>
-              <div className={s.inputGroup}>
-                <label htmlFor="startDate" className={s.formItem}>
-                  Start Date
-                  <input
-                    className={s.formInput}
-                    id="startDate"
-                    min={formatDate(new Date())}
-                    type="date"
-                    onChange={(e) => {
-                      setStartDate(e.target.value);
-                    }}
-                    value={startDate}
-                  />
-                </label>
-                <label htmlFor="endDate" className={s.formItem}>
-                  End Date
-                  <input
-                    className={s.formInput}
-                    id="endDate"
-                    min={startDate}
-                    type="date"
-                    onChange={(e) => {
-                      setEndDate(e.target.value);
-                    }}
-                    value={endDate}
-                  />
-                </label>
-              </div>
-              <div className={s.inputGroup}>
-                <label htmlFor="startTime" className={s.formItem}>
-                  Start Time
-                  <input
-                    className={s.formInput}
-                    id="startTime"
-                    type="time"
-                    onChange={(e) => {
-                      setStartTime(e.target.value);
-                    }}
-                    value={startTime}
-                  />
-                </label>
-                <label htmlFor="endTime" className={s.formItem}>
-                  End Time
-                  <input
-                    className={s.formInput}
-                    id="endTime"
-                    type="time"
-                    onChange={(e) => {
-                      setEndTime(e.target.value);
-                    }}
-                    value={endTime}
-                  />
-                </label>
-              </div>
-            </div>
-            <button className={s.formSubmit} onClick={(e) => handleSubmit(e)}>
-              Create Event
-            </button>
-            {error && <p className={s.error}>{error}</p>}
+            <EventForm
+              initialTitle=""
+              initialStartDate={DEFAULT_DATE}
+              initialEndDate={DEFAULT_DATE}
+              initialStartTime={DEFAULT_START_TIME}
+              initialEndTime={DEFAULT_END_TIME}
+              onSave={handleCreateEntry}
+              isCreate={true}
+            />
           </div>
           <div className={s.fullCalendarUI}>
             <FullCalendar
@@ -224,7 +190,7 @@ const App = () => {
               events={events}
               initialView="dayGridMonth"
               selectable={true}
-              eventClick={showEventOverlay}
+              eventClick={openModal}
               height="100vh"
               // editable={true}
               // selectMirror={true}
@@ -235,28 +201,52 @@ const App = () => {
         </div>
       </Box>
       <ChakraProvider>
-        <Modal isOpen={showOverlay} onClose={() => setShowOverlay(false)}>
+        <Modal isOpen={showOverlay} onClose={closeOverlay}>
           <ModalOverlay />
           <ModalContent>
             <ModalHeader>Event Details</ModalHeader>
             <ModalCloseButton />
-            <ModalBody>
-              <p>Event title: {displayedEventData.title}</p>
-              <p>Description: {displayedEventData.description}</p>
-              <p>
-                Start:{" "}
-                {modalDateFormat(new Date(displayedEventData.startTimeUtc))}
-              </p>
-              <p>
-                End: {modalDateFormat(new Date(displayedEventData.endTimeUtc))}
-              </p>
-            </ModalBody>
-
-            <ModalFooter>
-              <Button onClick={handleDeleteEntry} variant="ghost">
-                Delete
-              </Button>
-            </ModalFooter>
+            {!inEditMode && (
+              <>
+                <ModalBody>
+                  <p>Event title: {displayedEventData.title}</p>
+                  <p>Description: {displayedEventData.description}</p>
+                  <p>
+                    Start:{" "}
+                    {modalDateFormat(new Date(displayedEventData.startTimeUtc))}
+                  </p>
+                  <p>
+                    End:{" "}
+                    {modalDateFormat(new Date(displayedEventData.endTimeUtc))}
+                  </p>
+                </ModalBody>
+                <ModalFooter>
+                  <Button onClick={handleEditEntry} variant="ghost">
+                    Edit
+                  </Button>
+                  <Button onClick={handleDeleteEntry} variant="ghost">
+                    Delete
+                  </Button>
+                </ModalFooter>
+              </>
+            )}
+            {inEditMode && (
+              <ModalBody>
+                <EventForm
+                  initialTitle={displayedEventData.title}
+                  initialStartDate={formatDate(
+                    new Date(displayedEventData.startTimeUtc)
+                  )}
+                  initialEndDate={formatDate(
+                    new Date(displayedEventData.endTimeUtc)
+                  )}
+                  initialStartTime={formatTime(displayedEventData.startTimeUtc)}
+                  initialEndTime={formatTime(displayedEventData.endTimeUtc)}
+                  onSave={handleSaveChanges}
+                  isCreate={false}
+                />
+              </ModalBody>
+            )}
           </ModalContent>
         </Modal>
       </ChakraProvider>

@@ -92,12 +92,16 @@ exports[`App renders correctly 1`] = `
                 />
               </label>
             </div>
+            <div
+              class="saveButton"
+            >
+              <button
+                class="formSubmit"
+              >
+                Create Event
+              </button>
+            </div>
           </div>
-          <button
-            class="formSubmit"
-          >
-            Create Event
-          </button>
         </div>
         <div
           class="fullCalendarUI"
