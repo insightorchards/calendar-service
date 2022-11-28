@@ -26,5 +26,6 @@ describe("journey test", () => {
     cy.contains("Start: Sunday, November 27 07:35 AM").should("be.visible");
     cy.contains("End: Tuesday, November 29 08:45 AM").should("be.visible");
     cy.contains("button", "Delete").click();
+    cy.contains("Hello Everyone").should("not.exist");
   });
 });

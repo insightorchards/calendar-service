@@ -42,7 +42,7 @@ interface DisplayedEventData {
   updatedAt: string;
 }
 
-interface formEntryProps {
+interface FormEntryProps {
   _id: string;
   title: string;
   startTime: string;
@@ -55,11 +55,12 @@ const App = () => {
   const currentHour: number = new Date().getHours();
   const currentMinute: number = new Date().getMinutes();
   const DEFAULT_START_TIME: string = `${padNumberWith0Zero(
-    currentHour
+    currentHour,
   )}:${padNumberWith0Zero(currentMinute)}`;
   const DEFAULT_END_TIME: string = `${padNumberWith0Zero(
-    currentHour + 1
+    currentHour + 1,
   )}:${padNumberWith0Zero(currentMinute)}`;
+  const DEFAULT_DATE = formatDate(new Date());
   const modalDateFormat = (selectedEventDate: Date) =>
     `${selectedEventDate.toLocaleString("default", {
       weekday: "long",
@@ -72,10 +73,14 @@ const App = () => {
     })}
     `;
 
-  const DEFAULT_DATE = formatDate(new Date());
+  const formatTime = (utcString: string) =>
+    `${padNumberWith0Zero(new Date(utcString).getHours())}:${padNumberWith0Zero(
+      new Date(utcString).getMinutes(),
+    )}`;
+
   const [events, setEvents] = useState<EventSourceInput>([]);
   const [displayedEventData, setDisplayedEventData] = useState(
-    {} as DisplayedEventData
+    {} as DisplayedEventData,
   );
   const [showOverlay, setShowOverlay] = useState<boolean>(false);
   const [inEditMode, setInEditMode] = useState<boolean>(false);
@@ -92,7 +97,7 @@ const App = () => {
     endDate,
     startTime,
     endTime,
-  }: formEntryProps) => {
+  }: FormEntryProps) => {
     const startTimeUtc = new Date(`${startDate}T${startTime}`);
     const endTimeUtc = new Date(`${endDate}T${endTime}`);
     await createEntry({
@@ -113,7 +118,7 @@ const App = () => {
     });
   };
 
-  const showEventOverlay = (arg: EventClickArg) => {
+  const openModal = (arg: EventClickArg) => {
     const entryId = arg.event._def.extendedProps._id;
     getEntryDetails(entryId);
   };
@@ -142,15 +147,16 @@ const App = () => {
     endDate,
     startTime,
     endTime,
-  }: formEntryProps) => {
+  }: FormEntryProps) => {
+    const entryId = displayedEventData._id;
     const startTimeUtc = new Date(`${startDate}T${startTime}`);
     const endTimeUtc = new Date(`${endDate}T${endTime}`);
-    updateEntry(displayedEventData._id, {
+    updateEntry(entryId, {
       title,
       startTimeUtc,
       endTimeUtc,
     }).then(() => {
-      getEntryDetails(displayedEventData._id);
+      getEntryDetails(entryId);
       getEntries().then((entries) => {
         setEvents(entries);
       });
@@ -184,7 +190,7 @@ const App = () => {
               events={events}
               initialView="dayGridMonth"
               selectable={true}
-              eventClick={showEventOverlay}
+              eventClick={openModal}
               height="100vh"
               // editable={true}
               // selectMirror={true}
@@ -229,21 +235,13 @@ const App = () => {
                 <EventForm
                   initialTitle={displayedEventData.title}
                   initialStartDate={formatDate(
-                    new Date(displayedEventData.startTimeUtc)
+                    new Date(displayedEventData.startTimeUtc),
                   )}
                   initialEndDate={formatDate(
-                    new Date(displayedEventData.endTimeUtc)
+                    new Date(displayedEventData.endTimeUtc),
                   )}
-                  initialStartTime={`${padNumberWith0Zero(
-                    new Date(displayedEventData.startTimeUtc).getHours()
-                  )}:${padNumberWith0Zero(
-                    new Date(displayedEventData.startTimeUtc).getMinutes()
-                  )}`}
-                  initialEndTime={`${padNumberWith0Zero(
-                    new Date(displayedEventData.endTimeUtc).getHours()
-                  )}:${padNumberWith0Zero(
-                    new Date(displayedEventData.endTimeUtc).getMinutes()
-                  )}`}
+                  initialStartTime={formatTime(displayedEventData.startTimeUtc)}
+                  initialEndTime={formatTime(displayedEventData.endTimeUtc)}
                   onSave={handleSaveChanges}
                   isCreate={false}
                 />
