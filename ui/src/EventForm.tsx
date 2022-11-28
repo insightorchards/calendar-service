@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { formatDate } from "./lib";
+import { formatDate, getDateTimeString } from "./lib";
 import s from "./App.module.css";
 
 interface FormProps {
@@ -29,8 +29,8 @@ const EventForm = ({
   const [title, setTitle] = useState<string>(initialTitle);
 
   const handleSave = async (_: React.MouseEvent<HTMLButtonElement>) => {
-    const startDateAndTime: string = `${startDate}T${startTime}`;
-    const endDateAndTime: string = `${endDate}T${endTime}`;
+    const startDateAndTime: string = getDateTimeString(startDate, startTime);
+    const endDateAndTime: string = getDateTimeString(endDate, endTime);
     if (startDateAndTime > endDateAndTime) {
       setError("Error: end cannot be before start.");
       return;
@@ -53,7 +53,7 @@ const EventForm = ({
         Title
         <input
           className={s.formTitleInput}
-          id="title" // change this name to titleInput instead of title
+          id="title"
           type="text"
           onChange={(e) => {
             setTitle(e.target.value);

@@ -9,4 +9,6 @@ const formatDate: Function = (date: Date): string => {
   ].join("-");
 };
 
-export { formatDate, padNumberWith0Zero };
+const getDateTimeString = (date: string, time: string) => `${date}T${time}`;
+
+export { formatDate, getDateTimeString, padNumberWith0Zero };
