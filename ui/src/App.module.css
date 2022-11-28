@@ -4,14 +4,13 @@
 
 .formHeader {
   font-size: 20px;
-  margin-bottom: 20px;
+  margin: 85px 0 20px 0;
 }
 
 .form {
   align-items: center;
   display: flex;
   flex-direction: column;
-  padding: 85px 20px 0 20px;
   width: 25vw;
 }
 
@@ -19,8 +18,4 @@
   height: 100vh;
   padding: 20px 50px 0 0;
   width: 80vw;
-}
-
-.saveButton {
-  margin: 10px;
 }

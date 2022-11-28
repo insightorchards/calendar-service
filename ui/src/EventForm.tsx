@@ -74,7 +74,7 @@ const EventForm = ({
           onChange={(e) => {
             setDescription(e.target.value);
           }}
-          value={title}
+          value={description}
         />
       </label>
       <div className={s.inputRow}>
@@ -131,13 +131,10 @@ const EventForm = ({
           />
         </label>
       </div>
-      <div className={s.saveButton}>
-        <button className={s.formSubmit} onClick={handleSave}>
-          {isCreate ? "Create Event" : "Save"}
-        </button>
-
-        {error && <p className={s.error}>{error}</p>}
-      </div>
+      <button className={s.formSubmit} onClick={handleSave}>
+        {isCreate ? "Create Event" : "Save"}
+      </button>
+      {error && <p className={s.error}>{error}</p>}
     </div>
   );
 };
