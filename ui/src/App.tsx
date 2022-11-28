@@ -45,6 +45,7 @@ interface DisplayedEventData {
 interface FormEntryProps {
   _id: string;
   title: string;
+  description: string;
   startTime: string;
   endTime: string;
   startDate: string;
@@ -93,6 +94,7 @@ const App = () => {
 
   const handleCreateEntry = async ({
     title,
+    description,
     startDate,
     endDate,
     startTime,
@@ -102,6 +104,7 @@ const App = () => {
     const endTimeUtc = new Date(getDateTimeString(endDate, endTime));
     await createEntry({
       title,
+      description,
       startTimeUtc,
       endTimeUtc,
     });
@@ -143,6 +146,7 @@ const App = () => {
 
   const handleSaveChanges = async ({
     title,
+    description,
     startDate,
     endDate,
     startTime,
@@ -153,6 +157,7 @@ const App = () => {
     const endTimeUtc = new Date(getDateTimeString(endDate, endTime));
     updateEntry(entryId, {
       title,
+      description,
       startTimeUtc,
       endTimeUtc,
     }).then(() => {
@@ -171,6 +176,7 @@ const App = () => {
             <header className={s.formHeader}>Create an event</header>
             <EventForm
               initialTitle=""
+              initialDescription=""
               initialStartDate={DEFAULT_DATE}
               initialEndDate={DEFAULT_DATE}
               initialStartTime={DEFAULT_START_TIME}
@@ -234,6 +240,7 @@ const App = () => {
               <ModalBody>
                 <EventForm
                   initialTitle={displayedEventData.title}
+                  initialDescription={displayedEventData.description}
                   initialStartDate={formatDate(
                     new Date(displayedEventData.startTimeUtc)
                   )}

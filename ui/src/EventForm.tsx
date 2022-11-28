@@ -8,6 +8,7 @@ interface FormProps {
   initialStartTime: string;
   initialEndTime: string;
   initialTitle: string;
+  initialDescription: string;
   onSave: Function;
   isCreate: boolean;
 }
@@ -18,6 +19,7 @@ const EventForm = ({
   initialStartTime,
   initialEndTime,
   initialTitle,
+  initialDescription,
   onSave,
   isCreate,
 }: FormProps) => {
@@ -27,6 +29,7 @@ const EventForm = ({
   const [endTime, setEndTime] = useState<string>(initialEndTime);
   const [error, setError] = useState<string | null>(null);
   const [title, setTitle] = useState<string>(initialTitle);
+  const [description, setDescription] = useState<string>(initialDescription);
 
   const handleSave = async (_: React.MouseEvent<HTMLButtonElement>) => {
     const startDateAndTime: string = getDateTimeString(startDate, startTime);
@@ -35,10 +38,11 @@ const EventForm = ({
       setError("Error: end cannot be before start.");
       return;
     }
-    onSave({ title, startDate, endDate, startTime, endTime });
+    onSave({ title, description, startDate, endDate, startTime, endTime });
 
     if (isCreate) {
       setTitle(initialTitle);
+      setDescription(initialDescription);
       setError(null);
       setStartDate(initialStartDate);
       setEndDate(initialEndDate);
@@ -57,6 +61,18 @@ const EventForm = ({
           type="text"
           onChange={(e) => {
             setTitle(e.target.value);
+          }}
+          value={title}
+        />
+      </label>
+      <label htmlFor="description" className={s.formItem}>
+        Description
+        <input
+          className={s.formTitleInput}
+          id="description"
+          type="text"
+          onChange={(e) => {
+            setDescription(e.target.value);
           }}
           value={title}
         />
