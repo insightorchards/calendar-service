@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { formatDate, getDateTimeString } from "./lib";
-import s from "./App.module.css";
+import s from "./EventForm.module.css";
 
 interface FormProps {
   initialStartDate: string;
