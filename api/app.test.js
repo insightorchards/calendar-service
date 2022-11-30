@@ -76,7 +76,7 @@ describe("POST /entries", () => {
       })
       .expect(400);
     expect(response.text).toEqual('{"message":"error occurred"}');
-    createMock.mockReset();
+    createMock.mockRestore();
   });
 });
 
