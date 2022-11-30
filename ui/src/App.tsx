@@ -186,6 +186,7 @@ const App = () => {
             />
           </div>
           <div className={s.fullCalendarUI}>
+            <div className={s.addEventButton}>Add Event</div>
             <FullCalendar
               plugins={[dayGridPlugin, timeGridPlugin, listPlugin]}
               headerToolbar={{

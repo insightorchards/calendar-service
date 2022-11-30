@@ -2,6 +2,10 @@
   display: flex;
 }
 
+.addEventButton {
+  display: none;
+}
+
 .formHeader {
   font-size: 20px;
   margin: 85px 0 20px 0;
@@ -15,7 +19,31 @@
 }
 
 .fullCalendarUI {
-  height: 100vh;
   padding: 20px 50px 0 0;
   width: 80vw;
+}
+
+.saveButton {
+  margin: 10px;
+}
+
+@media (max-width: 600px) {
+  .addEventButton {
+    background: green;
+    width: 120px;
+    display: block;
+  }
+
+  .formHeader {
+    display: none;
+  }
+
+  .form {
+    display: none;
+  }
+
+  .fullCalendarUI {
+    padding: 0;
+    width: 100%;
+  }
 }
