@@ -85,6 +85,8 @@ const App = () => {
   );
   const [showOverlay, setShowOverlay] = useState<boolean>(false);
   const [inEditMode, setInEditMode] = useState<boolean>(false);
+  const [showMobileEventForm, setShowMobileEventForm] =
+    useState<boolean>(false);
 
   useEffect(() => {
     getEntries().then((entries) => {
@@ -172,9 +174,10 @@ const App = () => {
     <div className="App">
       <Box>
         <div className={s.mainContainer}>
-          <div className={s.form}>
+          <div className={`${s.form} ${showMobileEventForm ? s.active : ""}`}>
             <header className={s.formHeader}>Create an event</header>
             <EventForm
+              // onCloseMobileEventForm={() => setShowMobileEventForm(false)}
               initialTitle=""
               initialDescription=""
               initialStartDate={DEFAULT_DATE}
@@ -186,7 +189,14 @@ const App = () => {
             />
           </div>
           <div className={s.fullCalendarUI}>
-            <div className={s.addEventButton}>Add Event</div>
+            <button
+              className={s.addEventButton}
+              onClick={() => {
+                setShowMobileEventForm(true);
+              }}
+            >
+              Add Event
+            </button>
             <FullCalendar
               plugins={[dayGridPlugin, timeGridPlugin, listPlugin]}
               headerToolbar={{
