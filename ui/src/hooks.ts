@@ -1,5 +1,6 @@
 interface CalendarEntryInput {
   title: string;
+  description: string;
   startTimeUtc: Date;
   endTimeUtc: Date;
 }
@@ -36,6 +37,7 @@ const getEntry = async (entryId: string) => {
 
 const createEntry = async ({
   title,
+  description,
   startTimeUtc,
   endTimeUtc,
 }: CalendarEntryInput) => {
@@ -45,8 +47,8 @@ const createEntry = async ({
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      description: "default entry description",
-      title: title,
+      description,
+      title,
       creatorId: "1234",
       eventId: "5678",
       startTimeUtc: startTimeUtc.toISOString(),
@@ -59,7 +61,7 @@ const createEntry = async ({
 
 const updateEntry = async (
   entryId: string,
-  { title, startTimeUtc, endTimeUtc }: CalendarEntryInput
+  { title, startTimeUtc, endTimeUtc, description }: CalendarEntryInput,
 ) => {
   const response = await fetch(`http://localhost:4000/entries/${entryId}`, {
     method: "PATCH",
@@ -67,7 +69,7 @@ const updateEntry = async (
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      description: "default entry description",
+      description: description,
       title: title,
       creatorId: "1234",
       eventId: "5678",

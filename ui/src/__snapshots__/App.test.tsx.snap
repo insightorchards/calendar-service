@@ -20,7 +20,7 @@ exports[`App renders correctly 1`] = `
             Create an event
           </header>
           <div
-            class="formInputs"
+            class="container"
           >
             <label
               class="formItem"
@@ -28,14 +28,26 @@ exports[`App renders correctly 1`] = `
             >
               Title
               <input
-                class="formTitleInput"
+                class="formInput"
                 id="title"
                 type="text"
                 value=""
               />
             </label>
+            <label
+              class="formItem"
+              for="description"
+            >
+              Description
+              <input
+                class="formInput"
+                id="description"
+                type="text"
+                value=""
+              />
+            </label>
             <div
-              class="inputGroup"
+              class="inputRow"
             >
               <label
                 class="formItem"
@@ -65,7 +77,7 @@ exports[`App renders correctly 1`] = `
               </label>
             </div>
             <div
-              class="inputGroup"
+              class="inputRow"
             >
               <label
                 class="formItem"
@@ -92,15 +104,11 @@ exports[`App renders correctly 1`] = `
                 />
               </label>
             </div>
-            <div
-              class="saveButton"
+            <button
+              class="formSubmit"
             >
-              <button
-                class="formSubmit"
-              >
-                Create Event
-              </button>
-            </div>
+              Create Event
+            </button>
           </div>
         </div>
         <div

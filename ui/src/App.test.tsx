@@ -80,6 +80,7 @@ describe("App", () => {
           end: "2022-02-27T05:43:37.868Z",
           start: "2022-02-27T05:43:37.868Z",
           title: "Berta goes to the baseball game!",
+          description: "She had some tasty nachos and margarita!",
         },
       ]);
       await act(async () => {
@@ -90,6 +91,10 @@ describe("App", () => {
       userEvent.type(
         screen.getByLabelText("Title"),
         "Berta goes to the baseball game!"
+      );
+      userEvent.type(
+        screen.getByLabelText("Description"),
+        "She had some tasty nachos and margarita!"
       );
       userEvent.type(screen.getByLabelText("Start Date"), "02152022");
       userEvent.type(screen.getByLabelText("Start Time"), "08:10");
@@ -109,6 +114,7 @@ describe("App", () => {
         startTimeUtc: new Date("2022-02-15T16:10:00.000Z"),
         endTimeUtc: new Date("2022-02-15T18:10:00.000Z"),
         title: "Berta goes to the baseball game!",
+        description: "She had some tasty nachos and margarita!",
       });
     });
 

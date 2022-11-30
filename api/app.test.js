@@ -54,7 +54,7 @@ describe("POST /entries", () => {
         startTimeUtc: startTime,
         endTimeUtc: endTime,
         description: "and a happy night too",
-      })
+      }),
     );
   });
 });
@@ -117,7 +117,7 @@ describe("GET /entry/:entryId", () => {
         isAllDay: false,
         startTimeUtc: today.toISOString(),
         endTimeUtc: dayAfter(today).toISOString(),
-      })
+      }),
     );
   });
 });

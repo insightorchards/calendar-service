@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { formatDate, getDateTimeString } from "./lib";
-import s from "./App.module.css";
+import s from "./EventForm.module.css";
 
 interface FormProps {
   initialStartDate: string;
@@ -8,6 +8,7 @@ interface FormProps {
   initialStartTime: string;
   initialEndTime: string;
   initialTitle: string;
+  initialDescription: string;
   onSave: Function;
   isCreate: boolean;
 }
@@ -18,6 +19,7 @@ const EventForm = ({
   initialStartTime,
   initialEndTime,
   initialTitle,
+  initialDescription,
   onSave,
   isCreate,
 }: FormProps) => {
@@ -27,6 +29,7 @@ const EventForm = ({
   const [endTime, setEndTime] = useState<string>(initialEndTime);
   const [error, setError] = useState<string | null>(null);
   const [title, setTitle] = useState<string>(initialTitle);
+  const [description, setDescription] = useState<string>(initialDescription);
 
   const handleSave = async (_: React.MouseEvent<HTMLButtonElement>) => {
     const startDateAndTime: string = getDateTimeString(startDate, startTime);
@@ -35,10 +38,11 @@ const EventForm = ({
       setError("Error: end cannot be before start.");
       return;
     }
-    onSave({ title, startDate, endDate, startTime, endTime });
+    onSave({ title, description, startDate, endDate, startTime, endTime });
 
     if (isCreate) {
       setTitle(initialTitle);
+      setDescription(initialDescription);
       setError(null);
       setStartDate(initialStartDate);
       setEndDate(initialEndDate);
@@ -48,11 +52,11 @@ const EventForm = ({
   };
 
   return (
-    <div className={s.formInputs}>
+    <div className={s.container}>
       <label htmlFor="title" className={s.formItem}>
         Title
         <input
-          className={s.formTitleInput}
+          className={s.formInput}
           id="title"
           type="text"
           onChange={(e) => {
@@ -61,7 +65,19 @@ const EventForm = ({
           value={title}
         />
       </label>
-      <div className={s.inputGroup}>
+      <label htmlFor="description" className={s.formItem}>
+        Description
+        <input
+          className={s.formInput}
+          id="description"
+          type="text"
+          onChange={(e) => {
+            setDescription(e.target.value);
+          }}
+          value={description}
+        />
+      </label>
+      <div className={s.inputRow}>
         <label htmlFor="startDate" className={s.formItem}>
           Start Date
           <input
@@ -89,7 +105,7 @@ const EventForm = ({
           />
         </label>
       </div>
-      <div className={s.inputGroup}>
+      <div className={s.inputRow}>
         <label htmlFor="startTime" className={s.formItem}>
           Start Time
           <input
@@ -115,13 +131,10 @@ const EventForm = ({
           />
         </label>
       </div>
-      <div className={s.saveButton}>
-        <button className={s.formSubmit} onClick={handleSave}>
-          {isCreate ? "Create Event" : "Save"}
-        </button>
-
-        {error && <p className={s.error}>{error}</p>}
-      </div>
+      <button className={s.formSubmit} onClick={handleSave}>
+        {isCreate ? "Create Event" : "Save"}
+      </button>
+      {error && <p className={s.error}>{error}</p>}
     </div>
   );
 };

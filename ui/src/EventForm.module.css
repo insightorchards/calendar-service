@@ -1,0 +1,54 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+  width: 100%;
+  padding: 0 20px 0 20px;
+}
+
+.formTitleInput {
+  border: 1px solid gray;
+  border-radius: 7px;
+  display: flex;
+}
+
+.formInput {
+  border-radius: 7px;
+  border: 1px solid gray;
+  display: flex;
+  flex-grow: 1;
+  padding: 6px 10px;
+  width: 100%;
+}
+
+.formSubmit {
+  background-color: rgb(213, 211, 211);
+  border-radius: 7px;
+  border: 1px solid gray;
+  margin-top: 20px;
+  padding: 6px 10px;
+  width: 120px;
+  margin: 0 auto 20px auto;
+}
+
+.formItem {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.inputRow {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.error {
+  background-color: rgba(255, 0, 0, 0.31);
+  border: 2px rgb(184, 48, 27) solid;
+  border-radius: 7px;
+  padding: 6px 10px;
+  text-align: center;
+}
