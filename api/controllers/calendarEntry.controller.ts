@@ -59,8 +59,13 @@ export const createCalendarEntry = async (
   res: Response,
   _next: NextFunction,
 ) => {
-  const entry = await CalendarEntry.create(req.body as CalendarEntry);
-  res.status(201).json(entry);
+  try {
+    const entry = await CalendarEntry.create(req.body as CalendarEntry);
+    res.status(201).json(entry);
+  } catch (err) {
+    res.status(400);
+    res.send(err);
+  }
 };
 
 export const getCalendarEntries = async (

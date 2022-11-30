@@ -15,10 +15,6 @@ const app = express();
 
 app.use(express.json());
 app.use(cors());
-app.use((err, _req, _res, _next) => {
-  console.log("caught error in middleware");
-  console.log(err);
-});
 
 dotenv.config();
 

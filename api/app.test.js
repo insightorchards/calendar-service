@@ -57,6 +57,27 @@ describe("POST /entries", () => {
       }),
     );
   });
+
+  it("catches and returns an error from CalendarEntry.create", async () => {
+    const createMock = jest
+      .spyOn(CalendarEntry, "create")
+      .mockRejectedValue({ message: "error occurred" });
+    const startTime = new Date();
+    const endTime = new Date();
+    const response = await supertest(app)
+      .post(`/entries`)
+      .send({
+        eventId: "123",
+        creatorId: "456",
+        title: "Happy day",
+        startTimeUtc: startTime,
+        endTimeUtc: endTime,
+        description: "and a happy night too",
+      })
+      .expect(400);
+    expect(response.text).toEqual('{"message":"error occurred"}');
+    createMock.mockReset();
+  });
 });
 
 describe("GET /entries", () => {
