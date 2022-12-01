@@ -130,6 +130,7 @@ const EventForm = ({
               setStartTime(e.target.value);
             }}
             value={startTime}
+            disabled={allDay}
           />
         </label>
         <label htmlFor="endTime" className={s.formItem}>
@@ -142,6 +143,7 @@ const EventForm = ({
               setEndTime(e.target.value);
             }}
             value={endTime}
+            disabled={allDay}
           />
         </label>
       </div>

@@ -26,17 +26,17 @@ describe("EventForm", () => {
         initialStartDate={formatDate(new Date())}
         initialEndDate={formatDate(new Date())}
         initialStartTime={`${padNumberWith0Zero(
-          currentHour,
+          currentHour
         )}:${padNumberWith0Zero(currentMinute)}`}
         initialEndTime={`${padNumberWith0Zero(
-          currentHour + 1,
+          currentHour + 1
         )}:${padNumberWith0Zero(currentMinute)}`}
         initialTitle="Mary's Chicken Feast"
         initialDescription="A time to remember and appreciate chicken nuggets and more"
         initialAllDay={false}
         onSave={() => {}}
         isCreate={true}
-      />,
+      />
     );
 
     expect(screen.getByLabelText("Start Date")).toHaveValue("2022-02-15");
@@ -45,7 +45,7 @@ describe("EventForm", () => {
     expect(screen.getByLabelText("End Time")).toHaveValue("05:00");
     expect(screen.getByLabelText("Title")).toHaveValue("Mary's Chicken Feast");
     expect(screen.getByLabelText("Description")).toHaveValue(
-      "A time to remember and appreciate chicken nuggets and more",
+      "A time to remember and appreciate chicken nuggets and more"
     );
     expect(screen.getByRole("button")).toHaveAccessibleName("Create Event");
   });
@@ -59,17 +59,17 @@ describe("EventForm", () => {
         initialStartDate={formatDate(new Date())}
         initialEndDate={formatDate(new Date())}
         initialStartTime={`${padNumberWith0Zero(
-          currentHour,
+          currentHour
         )}:${padNumberWith0Zero(currentMinute)}`}
         initialEndTime={`${padNumberWith0Zero(
-          currentHour + 1,
+          currentHour + 1
         )}:${padNumberWith0Zero(currentMinute)}`}
         initialTitle="Arty party"
         initialDescription="A time to remember and appreciate classic art and more"
         initialAllDay={false}
         onSave={() => {}}
         isCreate={false}
-      />,
+      />
     );
 
     expect(screen.getByRole("button")).toHaveAccessibleName("Save");
@@ -84,20 +84,25 @@ describe("EventForm", () => {
         initialStartDate={formatDate(new Date())}
         initialEndDate={formatDate(new Date())}
         initialStartTime={`${padNumberWith0Zero(
-          currentHour,
+          currentHour
         )}:${padNumberWith0Zero(currentMinute)}`}
         initialEndTime={`${padNumberWith0Zero(
-          currentHour + 1,
+          currentHour + 1
         )}:${padNumberWith0Zero(currentMinute)}`}
         initialTitle="Arty party"
         initialDescription="A time to remember and appreciate classic art and more"
         initialAllDay={true}
         onSave={() => {}}
         isCreate={false}
-      />,
+      />
     );
     expect(screen.getByLabelText("All Day")).toBeChecked();
-    expect(screen.getByLabelText("Start Time")).toHaveValue("04:00");
-    expect(screen.getByLabelText("End Time")).toHaveValue("05:00");
+    expect(screen.getByLabelText("Start Time")).toBeDisabled();
+    expect(screen.getByLabelText("End Time")).toBeDisabled();
+
+    userEvent.click(screen.getByLabelText("All Day"));
+    expect(screen.getByLabelText("All Day")).not.toBeChecked();
+    expect(screen.getByLabelText("Start Time")).not.toBeDisabled();
+    expect(screen.getByLabelText("End Time")).not.toBeDisabled();
   });
 });
