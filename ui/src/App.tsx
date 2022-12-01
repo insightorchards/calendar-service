@@ -138,9 +138,9 @@ const App = () => {
     });
   };
 
-  const handleEditEntry = async (e: MouseEvent<HTMLButtonElement>) => {
-    setInEditMode(true);
-  };
+  const handleEditEntry = () => setInEditMode(true);
+
+  const handleCancel = () => setShowMobileEventForm(false);
 
   const closeOverlay = () => {
     setShowOverlay(false);
@@ -178,7 +178,6 @@ const App = () => {
           <div className={`${s.form} ${showMobileEventForm ? s.active : ""}`}>
             <header className={s.formHeader}>Create an event</header>
             <EventForm
-              // onCloseMobileEventForm={() => setShowMobileEventForm(false)}
               initialTitle=""
               initialDescription=""
               initialStartDate={DEFAULT_DATE}
@@ -187,6 +186,7 @@ const App = () => {
               initialEndTime={DEFAULT_END_TIME}
               onFormSubmit={handleCreateEntry}
               isCreate={true}
+              onCancel={handleCancel}
             />
           </div>
           <div className={s.fullCalendarUI}>
@@ -251,6 +251,7 @@ const App = () => {
             {inEditMode && (
               <ModalBody>
                 <EventForm
+                  onCancel={() => {}}
                   initialTitle={displayedEventData.title}
                   initialDescription={displayedEventData.description}
                   initialStartDate={formatDate(

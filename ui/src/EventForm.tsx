@@ -11,6 +11,7 @@ interface FormProps {
   initialDescription: string;
   onFormSubmit: Function;
   isCreate: boolean;
+  onCancel: Function;
 }
 
 const EventForm = ({
@@ -22,6 +23,7 @@ const EventForm = ({
   initialDescription,
   onFormSubmit,
   isCreate,
+  onCancel = () => {},
 }: FormProps) => {
   const [startDate, setStartDate] = useState<string>(initialStartDate);
   const [endDate, setEndDate] = useState<string>(initialEndDate);
@@ -60,6 +62,9 @@ const EventForm = ({
 
   return (
     <div className={s.container}>
+      <button onClick={() => onCancel()} className={s.closeButton}>
+        X
+      </button>
       <label htmlFor="title" className={s.formItem}>
         Title
         <input
