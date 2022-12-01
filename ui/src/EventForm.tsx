@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { formatDate, getDateTimeString } from "./lib";
+import { Checkbox } from "@chakra-ui/react";
 import s from "./EventForm.module.css";
 
 interface FormProps {
@@ -9,6 +10,7 @@ interface FormProps {
   initialEndTime: string;
   initialTitle: string;
   initialDescription: string;
+  initialAllDay: boolean;
   onSave: Function;
   isCreate: boolean;
 }
@@ -20,6 +22,7 @@ const EventForm = ({
   initialEndTime,
   initialTitle,
   initialDescription,
+  initialAllDay,
   onSave,
   isCreate,
 }: FormProps) => {
@@ -30,6 +33,7 @@ const EventForm = ({
   const [error, setError] = useState<string | null>(null);
   const [title, setTitle] = useState<string>(initialTitle);
   const [description, setDescription] = useState<string>(initialDescription);
+  const [allDay, setAllDay] = useState<boolean>(initialAllDay);
 
   const handleSave = async (_: React.MouseEvent<HTMLButtonElement>) => {
     const startDateAndTime: string = getDateTimeString(startDate, startTime);
@@ -104,6 +108,16 @@ const EventForm = ({
             value={endDate}
           />
         </label>
+      </div>
+      <div className={s.inputRow}>
+        <Checkbox
+          defaultChecked={allDay}
+          onChange={(e) => {
+            setAllDay(e.target.checked);
+          }}
+        >
+          All Day
+        </Checkbox>
       </div>
       <div className={s.inputRow}>
         <label htmlFor="startTime" className={s.formItem}>

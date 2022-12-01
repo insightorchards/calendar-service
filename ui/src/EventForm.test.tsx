@@ -33,6 +33,7 @@ describe("EventForm", () => {
         )}:${padNumberWith0Zero(currentMinute)}`}
         initialTitle="Mary's Chicken Feast"
         initialDescription="A time to remember and appreciate chicken nuggets and more"
+        initialAllDay={false}
         onSave={() => {}}
         isCreate={true}
       />,
@@ -65,6 +66,7 @@ describe("EventForm", () => {
         )}:${padNumberWith0Zero(currentMinute)}`}
         initialTitle="Arty party"
         initialDescription="A time to remember and appreciate classic art and more"
+        initialAllDay={false}
         onSave={() => {}}
         isCreate={false}
       />,
@@ -72,5 +74,30 @@ describe("EventForm", () => {
 
     expect(screen.getByRole("button")).toHaveAccessibleName("Save");
   });
-  it("mutes out time sections when all day is selected", () => {});
+
+  it("mutes out time sections when all day is selected", () => {
+    const currentHour: number = new Date().getHours();
+    const currentMinute: number = new Date().getMinutes();
+
+    render(
+      <EventForm
+        initialStartDate={formatDate(new Date())}
+        initialEndDate={formatDate(new Date())}
+        initialStartTime={`${padNumberWith0Zero(
+          currentHour,
+        )}:${padNumberWith0Zero(currentMinute)}`}
+        initialEndTime={`${padNumberWith0Zero(
+          currentHour + 1,
+        )}:${padNumberWith0Zero(currentMinute)}`}
+        initialTitle="Arty party"
+        initialDescription="A time to remember and appreciate classic art and more"
+        initialAllDay={true}
+        onSave={() => {}}
+        isCreate={false}
+      />,
+    );
+    expect(screen.getByLabelText("All Day")).toBeChecked();
+    expect(screen.getByLabelText("Start Time")).toHaveValue("04:00");
+    expect(screen.getByLabelText("End Time")).toHaveValue("05:00");
+  });
 });

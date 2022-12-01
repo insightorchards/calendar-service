@@ -181,6 +181,7 @@ const App = () => {
               initialEndDate={DEFAULT_DATE}
               initialStartTime={DEFAULT_START_TIME}
               initialEndTime={DEFAULT_END_TIME}
+              initialAllDay={false}
               onSave={handleCreateEntry}
               isCreate={true}
             />
@@ -249,6 +250,7 @@ const App = () => {
                   )}
                   initialStartTime={formatTime(displayedEventData.startTimeUtc)}
                   initialEndTime={formatTime(displayedEventData.endTimeUtc)}
+                  initialAllDay={false}
                   onSave={handleSaveChanges}
                   isCreate={false}
                 />
