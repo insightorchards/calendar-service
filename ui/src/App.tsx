@@ -5,6 +5,7 @@ import FullCalendar, {
   EventClickArg,
   EventSourceInput,
 } from "@fullcalendar/react";
+import { Checkbox } from "@chakra-ui/react";
 import { formatDate, getDateTimeString, padNumberWith0Zero } from "./lib";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
@@ -35,9 +36,10 @@ interface DisplayedEventData {
   eventId: string;
   creatorId: string;
   title: string;
+  description: string;
   startTimeUtc: string;
   endTimeUtc: string;
-  description: string;
+  allDay: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -50,6 +52,7 @@ interface FormEntryProps {
   endTime: string;
   startDate: string;
   endDate: string;
+  allDay: boolean;
 }
 
 const App = () => {
@@ -99,6 +102,7 @@ const App = () => {
     endDate,
     startTime,
     endTime,
+    allDay,
   }: FormEntryProps) => {
     const startTimeUtc = new Date(getDateTimeString(startDate, startTime));
     const endTimeUtc = new Date(getDateTimeString(endDate, endTime));
@@ -107,6 +111,7 @@ const App = () => {
       description,
       startTimeUtc,
       endTimeUtc,
+      allDay,
     });
     getEntries().then((entries) => {
       setEvents(entries);
@@ -151,6 +156,7 @@ const App = () => {
     endDate,
     startTime,
     endTime,
+    allDay,
   }: FormEntryProps) => {
     const entryId = displayedEventData._id;
     const startTimeUtc = new Date(getDateTimeString(startDate, startTime));
@@ -160,6 +166,7 @@ const App = () => {
       description,
       startTimeUtc,
       endTimeUtc,
+      allDay,
     }).then(() => {
       getEntryDetails(entryId);
       getEntries().then((entries) => {
