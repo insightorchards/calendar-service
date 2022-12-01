@@ -35,7 +35,7 @@ describe("App", () => {
     expect(app.asFragment()).toMatchSnapshot();
   });
 
-  it("shows calander", async () => {
+  it("shows calendar", async () => {
     mockCreateEntry.mockResolvedValue({});
     mockGetEntries.mockResolvedValue([
       {
@@ -254,13 +254,7 @@ describe("App", () => {
 
     it("errors when end time is before start time on the same day", async () => {
       mockCreateEntry.mockResolvedValue({});
-      mockGetEntries.mockResolvedValue([
-        {
-          end: "2022-02-27T05:43:37.868Z",
-          start: "2022-02-27T05:43:37.868Z",
-          title: "Berta goes to the baseball game!",
-        },
-      ]);
+      mockGetEntries.mockResolvedValue([]);
       await act(async () => {
         await render(<App />);
       });

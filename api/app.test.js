@@ -37,6 +37,7 @@ describe("POST /entries", () => {
         title: "Happy day",
         startTimeUtc: startTime,
         endTimeUtc: endTime,
+        allDay: false,
         description: "and a happy night too",
       })
       .expect(201);
@@ -53,8 +54,9 @@ describe("POST /entries", () => {
         title: "Happy day",
         startTimeUtc: startTime,
         endTimeUtc: endTime,
+        allDay: false,
         description: "and a happy night too",
-      }),
+      })
     );
   });
 });
@@ -68,7 +70,7 @@ describe("GET /entries", () => {
       creatorId: "424b339218b3b892b312e5cb",
       title: "Birthday party",
       description: "Let's celebrate Janie!",
-      isAllDay: false,
+      allDay: false,
       startTimeUtc: today,
       endTimeUtc: dayAfter(today),
     });
@@ -77,7 +79,7 @@ describe("GET /entries", () => {
       creatorId: "424b339218b3b892b312e5cb",
       title: "Dog walk",
       description: "Time for Scottie walking",
-      isAllDay: false,
+      allDay: false,
       startTimeUtc: today,
       endTimeUtc: dayAfter(today),
     });
@@ -98,7 +100,7 @@ describe("GET /entry/:entryId", () => {
       creatorId: "424b339218b3b892b312e5cb",
       title: "Birthday party",
       description: "Let's celebrate Janie!",
-      isAllDay: false,
+      allDay: false,
       startTimeUtc: today,
       endTimeUtc: dayAfter(today),
     });
@@ -114,10 +116,10 @@ describe("GET /entry/:entryId", () => {
         creatorId: "424b339218b3b892b312e5cb",
         title: "Birthday party",
         description: "Let's celebrate Janie!",
-        isAllDay: false,
+        allDay: false,
         startTimeUtc: today.toISOString(),
         endTimeUtc: dayAfter(today).toISOString(),
-      }),
+      })
     );
   });
 });
@@ -133,7 +135,7 @@ describe("DELETE / entry", () => {
       creatorId: "456",
       title: "Happy day",
       description: "and a happy night too",
-      isAllDay: false,
+      allDay: false,
       startTimeUtc: startTime,
       endTimeUtc: endTime,
     });
@@ -158,7 +160,7 @@ describe("PATCH / entry", () => {
       creatorId: "456",
       title: "Happy day",
       description: "and a happy night too",
-      isAllDay: false,
+      allDay: false,
       startTimeUtc: startTime,
       endTimeUtc: endTime,
     });
