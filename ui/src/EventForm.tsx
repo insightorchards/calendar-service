@@ -42,7 +42,15 @@ const EventForm = ({
       setError("Error: end cannot be before start.");
       return;
     }
-    onSave({ title, description, startDate, endDate, startTime, endTime });
+    onSave({
+      title,
+      description,
+      startDate,
+      endDate,
+      startTime,
+      endTime,
+      allDay,
+    });
 
     if (isCreate) {
       setTitle(initialTitle);

@@ -75,6 +75,40 @@ describe("EventForm", () => {
     expect(screen.getByRole("button")).toHaveAccessibleName("Save");
   });
 
+  it("calls onSave when form is submitted", () => {
+    const currentHour: number = new Date().getHours();
+    const currentMinute: number = new Date().getMinutes();
+    const onSaveMock = jest.fn();
+    render(
+      <EventForm
+        initialStartDate={formatDate(new Date())}
+        initialEndDate={formatDate(new Date())}
+        initialStartTime={`${padNumberWith0Zero(
+          currentHour
+        )}:${padNumberWith0Zero(currentMinute)}`}
+        initialEndTime={`${padNumberWith0Zero(
+          currentHour + 1
+        )}:${padNumberWith0Zero(currentMinute)}`}
+        initialTitle="Arty party"
+        initialDescription="A time to remember and appreciate classic art and more"
+        initialAllDay={false}
+        onSave={onSaveMock}
+        isCreate={false}
+      />
+    );
+
+    userEvent.click(screen.getByRole("button"));
+    expect(onSaveMock).toHaveBeenCalledWith({
+      description: "A time to remember and appreciate classic art and more",
+      endDate: "2022-02-15",
+      endTime: "05:00",
+      startDate: "2022-02-15",
+      startTime: "04:00",
+      title: "Arty party",
+      allDay: false,
+    });
+  });
+
   it("mutes out time sections when all day is selected", () => {
     const currentHour: number = new Date().getHours();
     const currentMinute: number = new Date().getMinutes();
