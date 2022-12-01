@@ -112,6 +112,7 @@ const App = () => {
     });
     getEntries().then((entries) => {
       setEvents(entries);
+      setShowMobileEventForm(false);
     });
   };
 
@@ -184,7 +185,7 @@ const App = () => {
               initialEndDate={DEFAULT_DATE}
               initialStartTime={DEFAULT_START_TIME}
               initialEndTime={DEFAULT_END_TIME}
-              onSave={handleCreateEntry}
+              onFormSubmit={handleCreateEntry}
               isCreate={true}
             />
           </div>
@@ -260,7 +261,7 @@ const App = () => {
                   )}
                   initialStartTime={formatTime(displayedEventData.startTimeUtc)}
                   initialEndTime={formatTime(displayedEventData.endTimeUtc)}
-                  onSave={handleSaveChanges}
+                  onFormSubmit={handleSaveChanges}
                   isCreate={false}
                 />
               </ModalBody>
