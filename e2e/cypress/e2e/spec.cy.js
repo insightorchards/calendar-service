@@ -29,4 +29,21 @@ describe("journey test", () => {
     cy.contains("button", "Delete").click();
     cy.contains("Hello Everyone").should("not.exist");
   });
+
+  it("shows no time when event is `allDay`", () => {
+    cy.visit("http://localhost:3000");
+    cy.contains("label", "Title").click().type("Bye");
+    cy.contains("label", "Description").click().type("It's a beautiful night");
+    cy.contains("label", "Start Date").click().type("2022-12-14");
+    cy.contains("label", "End Date").click().type("2022-12-14");
+    cy.contains("label", "All Day").click();
+    cy.contains("button", "Create Event").click();
+    cy.contains("Bye").click();
+
+    cy.contains("Event title: Bye").should("be.visible");
+    cy.contains("Description: It's a beautiful night").should("be.visible");
+    cy.contains("Start: Wednesday, December 14").should("be.visible");
+    cy.contains("End: Wednesday, December 14").should("be.visible");
+    cy.contains("button", "Delete").click();
+  });
 });

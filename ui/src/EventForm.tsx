@@ -60,6 +60,7 @@ const EventForm = ({
       setEndDate(initialEndDate);
       setStartTime(initialStartTime);
       setEndTime(initialEndTime);
+      setAllDay(initialAllDay);
     }
   };
 
@@ -119,7 +120,7 @@ const EventForm = ({
       </div>
       <div className={s.inputRow}>
         <Checkbox
-          defaultChecked={allDay}
+          isChecked={allDay}
           onChange={(e) => {
             setAllDay(e.target.checked);
           }}

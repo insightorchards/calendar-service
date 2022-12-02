@@ -225,6 +225,7 @@ describe("App", () => {
       userEvent.type(screen.getByLabelText("Start Time"), "08:10");
       userEvent.type(screen.getByLabelText("End Date"), "03182022");
       userEvent.type(screen.getByLabelText("End Time"), "10:10");
+      userEvent.click(screen.getByLabelText("All Day"));
       waitFor(() => {
         userEvent.click(screen.getByRole("button", { name: "Create Event" }));
       });
@@ -232,6 +233,7 @@ describe("App", () => {
       expect(screen.getByLabelText("End Date")).toHaveValue("2022-02-15");
       expect(screen.getByLabelText("Start Time")).toHaveValue("04:00");
       expect(screen.getByLabelText("End Time")).toHaveValue("05:00");
+      expect(screen.getByLabelText("All Day")).not.toBeChecked();
     });
 
     it("errors when end date is before start date", async () => {
