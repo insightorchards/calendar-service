@@ -46,38 +46,34 @@ exports[`App renders correctly 1`] = `
                 value=""
               />
             </label>
-            <div
-              class="inputRow"
+            <label
+              class="formItem"
+              for="startDate"
             >
-              <label
-                class="formItem"
-                for="startDate"
-              >
-                Start Date
-                <input
-                  class="formInput"
-                  id="startDate"
-                  min="2022-02-15"
-                  type="date"
-                  value="2022-02-15"
-                />
-              </label>
-              <label
-                class="formItem"
-                for="endDate"
-              >
-                End Date
-                <input
-                  class="formInput"
-                  id="endDate"
-                  min="2022-02-15"
-                  type="date"
-                  value="2022-02-15"
-                />
-              </label>
-            </div>
+              Start Date
+              <input
+                class="formInput"
+                id="startDate"
+                min="2022-02-15"
+                type="date"
+                value="2022-02-15"
+              />
+            </label>
+            <label
+              class="formItem"
+              for="endDate"
+            >
+              End Date
+              <input
+                class="formInput"
+                id="endDate"
+                min="2022-02-15"
+                type="date"
+                value="2022-02-15"
+              />
+            </label>
             <div
-              class="inputRow"
+              class="checkbox"
             >
               <label
                 class="chakra-checkbox css-1elxtiq"
@@ -99,34 +95,30 @@ exports[`App renders correctly 1`] = `
                 </span>
               </label>
             </div>
-            <div
-              class="inputRow"
+            <label
+              class="formItem"
+              for="startTime"
             >
-              <label
-                class="formItem"
-                for="startTime"
-              >
-                Start Time
-                <input
-                  class="formInput"
-                  id="startTime"
-                  type="time"
-                  value="04:00"
-                />
-              </label>
-              <label
-                class="formItem"
-                for="endTime"
-              >
-                End Time
-                <input
-                  class="formInput"
-                  id="endTime"
-                  type="time"
-                  value="05:00"
-                />
-              </label>
-            </div>
+              Start Time
+              <input
+                class="formInput"
+                id="startTime"
+                type="time"
+                value="04:00"
+              />
+            </label>
+            <label
+              class="formItem"
+              for="endTime"
+            >
+              End Time
+              <input
+                class="formInput"
+                id="endTime"
+                type="time"
+                value="05:00"
+              />
+            </label>
             <button
               class="formSubmit"
             >

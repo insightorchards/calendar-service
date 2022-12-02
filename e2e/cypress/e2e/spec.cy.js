@@ -42,8 +42,8 @@ describe("journey test", () => {
 
     cy.contains("Event title: Bye").should("be.visible");
     cy.contains("Description: It's a beautiful night").should("be.visible");
-    cy.contains("Start: Wednesday, December 14").should("be.visible");
-    cy.contains("End: Wednesday, December 14").should("be.visible");
+    cy.findByText("Start: Wednesday, December 14").should("exist");
+    cy.findByText("End: Wednesday, December 14").should("exist");
     cy.contains("button", "Delete").click();
   });
 });

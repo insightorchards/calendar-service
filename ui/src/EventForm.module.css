@@ -28,7 +28,7 @@
   margin-top: 20px;
   padding: 6px 10px;
   width: 120px;
-  margin: 0 auto 20px auto;
+  margin: 20px;
 }
 
 .formItem {
@@ -38,11 +38,8 @@
   width: 100%;
 }
 
-.inputRow {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  width: 100%;
+.checkbox {
+  margin: 10px 0px;
 }
 
 .error {

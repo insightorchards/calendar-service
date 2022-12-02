@@ -104,7 +104,7 @@ describe("EventForm", () => {
     });
   });
 
-  it("mutes out time sections when all day is selected", () => {
+  it("hides time sections when all day is selected", () => {
     render(
       <EventForm
         initialStartDate={formatDate(new Date())}
@@ -123,13 +123,13 @@ describe("EventForm", () => {
       />
     );
     expect(screen.getByLabelText("All Day")).toBeChecked();
-    expect(screen.getByLabelText("Start Time")).toBeDisabled();
-    expect(screen.getByLabelText("End Time")).toBeDisabled();
+    expect(screen.queryByLabelText("Start Time")).not.toBeInTheDocument();
+    expect(screen.queryByLabelText("End Time")).not.toBeInTheDocument();
 
     userEvent.click(screen.getByLabelText("All Day"));
     expect(screen.getByLabelText("All Day")).not.toBeChecked();
-    expect(screen.getByLabelText("Start Time")).not.toBeDisabled();
-    expect(screen.getByLabelText("End Time")).not.toBeDisabled();
+    expect(screen.getByLabelText("Start Time")).toBeInTheDocument();
+    expect(screen.getByLabelText("End Time")).toBeInTheDocument();
   });
 
   it("resets inputs correctly to default values when submitted", async () => {
@@ -138,17 +138,17 @@ describe("EventForm", () => {
         initialStartDate={formatDate(new Date())}
         initialEndDate={formatDate(new Date())}
         initialStartTime={`${padNumberWith0Zero(
-          currentHour,
+          currentHour
         )}:${padNumberWith0Zero(currentMinute)}`}
         initialEndTime={`${padNumberWith0Zero(
-          currentHour + 1,
+          currentHour + 1
         )}:${padNumberWith0Zero(currentMinute)}`}
         initialTitle="Arty party"
         initialDescription="A time to remember and appreciate classic art and more"
         initialAllDay={false}
         onSave={() => {}}
         isCreate={true}
-      />,
+      />
     );
     userEvent.type(screen.getByLabelText("Start Date"), "03162022");
     userEvent.type(screen.getByLabelText("Start Time"), "08:10");

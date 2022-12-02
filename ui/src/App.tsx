@@ -5,7 +5,6 @@ import FullCalendar, {
   EventClickArg,
   EventSourceInput,
 } from "@fullcalendar/react";
-import { Checkbox } from "@chakra-ui/react";
 import { formatDate, getDateTimeString, padNumberWith0Zero } from "./lib";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
@@ -76,6 +75,19 @@ const App = () => {
       minute: "2-digit",
     })}
     `;
+
+  const allDayDateFormat = (selectedEventDate: Date) =>
+    `${selectedEventDate.toLocaleString("default", {
+      weekday: "long",
+    })}, ${selectedEventDate.toLocaleString("default", {
+      month: "long",
+    })} ${selectedEventDate.getDate()}
+  `;
+
+  const getModalDate = (allDay: boolean, dateTime: string) => {
+    const date = new Date(dateTime);
+    return allDay ? allDayDateFormat(date) : modalDateFormat(new Date(date));
+  };
 
   const formatTime = (utcString: string) =>
     `${padNumberWith0Zero(new Date(utcString).getHours())}:${padNumberWith0Zero(
@@ -227,11 +239,17 @@ const App = () => {
                   <p>Description: {displayedEventData.description}</p>
                   <p>
                     Start:{" "}
-                    {modalDateFormat(new Date(displayedEventData.startTimeUtc))}
+                    {getModalDate(
+                      displayedEventData.allDay,
+                      displayedEventData.startTimeUtc
+                    )}
                   </p>
                   <p>
                     End:{" "}
-                    {modalDateFormat(new Date(displayedEventData.endTimeUtc))}
+                    {getModalDate(
+                      displayedEventData.allDay,
+                      displayedEventData.endTimeUtc
+                    )}
                   </p>
                 </ModalBody>
                 <ModalFooter>
@@ -257,7 +275,7 @@ const App = () => {
                   )}
                   initialStartTime={formatTime(displayedEventData.startTimeUtc)}
                   initialEndTime={formatTime(displayedEventData.endTimeUtc)}
-                  initialAllDay={false}
+                  initialAllDay={displayedEventData.allDay}
                   onSave={handleSaveChanges}
                   isCreate={false}
                 />

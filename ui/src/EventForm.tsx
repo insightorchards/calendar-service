@@ -90,35 +90,33 @@ const EventForm = ({
           value={description}
         />
       </label>
-      <div className={s.inputRow}>
-        <label htmlFor="startDate" className={s.formItem}>
-          Start Date
-          <input
-            className={s.formInput}
-            id="startDate"
-            min={formatDate(new Date())}
-            type="date"
-            onChange={(e) => {
-              setStartDate(e.target.value);
-            }}
-            value={startDate}
-          />
-        </label>
-        <label htmlFor="endDate" className={s.formItem}>
-          End Date
-          <input
-            className={s.formInput}
-            id="endDate"
-            min={startDate}
-            type="date"
-            onChange={(e) => {
-              setEndDate(e.target.value);
-            }}
-            value={endDate}
-          />
-        </label>
-      </div>
-      <div className={s.inputRow}>
+      <label htmlFor="startDate" className={s.formItem}>
+        Start Date
+        <input
+          className={s.formInput}
+          id="startDate"
+          min={formatDate(new Date())}
+          type="date"
+          onChange={(e) => {
+            setStartDate(e.target.value);
+          }}
+          value={startDate}
+        />
+      </label>
+      <label htmlFor="endDate" className={s.formItem}>
+        End Date
+        <input
+          className={s.formInput}
+          id="endDate"
+          min={startDate}
+          type="date"
+          onChange={(e) => {
+            setEndDate(e.target.value);
+          }}
+          value={endDate}
+        />
+      </label>
+      <div className={s.checkbox}>
         <Checkbox
           isChecked={allDay}
           onChange={(e) => {
@@ -128,34 +126,36 @@ const EventForm = ({
           All Day
         </Checkbox>
       </div>
-      <div className={s.inputRow}>
-        <label htmlFor="startTime" className={s.formItem}>
-          Start Time
-          <input
-            className={s.formInput}
-            id="startTime"
-            type="time"
-            onChange={(e) => {
-              setStartTime(e.target.value);
-            }}
-            value={startTime}
-            disabled={allDay}
-          />
-        </label>
-        <label htmlFor="endTime" className={s.formItem}>
-          End Time
-          <input
-            className={s.formInput}
-            id="endTime"
-            type="time"
-            onChange={(e) => {
-              setEndTime(e.target.value);
-            }}
-            value={endTime}
-            disabled={allDay}
-          />
-        </label>
-      </div>
+      {!allDay && (
+        <>
+          <label htmlFor="startTime" className={s.formItem}>
+            Start Time
+            <input
+              className={s.formInput}
+              id="startTime"
+              type="time"
+              onChange={(e) => {
+                setStartTime(e.target.value);
+              }}
+              value={startTime}
+              disabled={allDay}
+            />
+          </label>
+          <label htmlFor="endTime" className={s.formItem}>
+            End Time
+            <input
+              className={s.formInput}
+              id="endTime"
+              type="time"
+              onChange={(e) => {
+                setEndTime(e.target.value);
+              }}
+              value={endTime}
+              disabled={allDay}
+            />
+          </label>
+        </>
+      )}
       <button className={s.formSubmit} onClick={handleSave}>
         {isCreate ? "Create Event" : "Save"}
       </button>
