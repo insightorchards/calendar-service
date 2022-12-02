@@ -1,16 +1,19 @@
-import { act, render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import React from "react";
 
 import userEvent from "@testing-library/user-event";
-import { createEntry, deleteEntry, getEntries, getEntry } from "./hooks";
 import { formatDate, padNumberWith0Zero } from "./lib";
 import EventForm from "./EventForm";
 
 describe("EventForm", () => {
+  let currentHour: number;
+  let currentMinute: number;
   beforeAll(() => {
     jest.useFakeTimers("modern" as FakeTimersConfig);
     const date = new Date("2022-02-15T04:00");
     jest.setSystemTime(date);
+    currentHour = new Date().getHours();
+    currentMinute = new Date().getMinutes();
   });
 
   afterAll(() => {
@@ -18,9 +21,6 @@ describe("EventForm", () => {
   });
 
   it("displays initial values", () => {
-    const currentHour: number = new Date().getHours();
-    const currentMinute: number = new Date().getMinutes();
-
     render(
       <EventForm
         initialStartDate={formatDate(new Date())}
@@ -51,9 +51,6 @@ describe("EventForm", () => {
   });
 
   it("displays `Save` button when `isCreate` is false", () => {
-    const currentHour: number = new Date().getHours();
-    const currentMinute: number = new Date().getMinutes();
-
     render(
       <EventForm
         initialStartDate={formatDate(new Date())}
@@ -76,8 +73,6 @@ describe("EventForm", () => {
   });
 
   it("calls onSave when form is submitted", () => {
-    const currentHour: number = new Date().getHours();
-    const currentMinute: number = new Date().getMinutes();
     const onSaveMock = jest.fn();
     render(
       <EventForm
@@ -110,9 +105,6 @@ describe("EventForm", () => {
   });
 
   it("mutes out time sections when all day is selected", () => {
-    const currentHour: number = new Date().getHours();
-    const currentMinute: number = new Date().getMinutes();
-
     render(
       <EventForm
         initialStartDate={formatDate(new Date())}
@@ -138,5 +130,38 @@ describe("EventForm", () => {
     expect(screen.getByLabelText("All Day")).not.toBeChecked();
     expect(screen.getByLabelText("Start Time")).not.toBeDisabled();
     expect(screen.getByLabelText("End Time")).not.toBeDisabled();
+  });
+
+  it("resets inputs correctly to default values when submitted", async () => {
+    render(
+      <EventForm
+        initialStartDate={formatDate(new Date())}
+        initialEndDate={formatDate(new Date())}
+        initialStartTime={`${padNumberWith0Zero(
+          currentHour,
+        )}:${padNumberWith0Zero(currentMinute)}`}
+        initialEndTime={`${padNumberWith0Zero(
+          currentHour + 1,
+        )}:${padNumberWith0Zero(currentMinute)}`}
+        initialTitle="Arty party"
+        initialDescription="A time to remember and appreciate classic art and more"
+        initialAllDay={false}
+        onSave={() => {}}
+        isCreate={true}
+      />,
+    );
+    userEvent.type(screen.getByLabelText("Start Date"), "03162022");
+    userEvent.type(screen.getByLabelText("Start Time"), "08:10");
+    userEvent.type(screen.getByLabelText("End Date"), "03182022");
+    userEvent.type(screen.getByLabelText("End Time"), "10:10");
+    userEvent.click(screen.getByLabelText("All Day"));
+    await waitFor(() => {
+      userEvent.click(screen.getByRole("button", { name: "Create Event" }));
+    });
+    expect(screen.getByLabelText("Start Date")).toHaveValue("2022-02-15");
+    expect(screen.getByLabelText("End Date")).toHaveValue("2022-02-15");
+    expect(screen.getByLabelText("Start Time")).toHaveValue("04:00");
+    expect(screen.getByLabelText("End Time")).toHaveValue("05:00");
+    expect(screen.getByLabelText("All Day")).not.toBeChecked();
   });
 });

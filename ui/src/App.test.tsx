@@ -209,33 +209,6 @@ describe("App", () => {
       });
     });
 
-    it("resets inputs correctly to default values when submitted", async () => {
-      mockCreateEntry.mockResolvedValue({});
-      mockGetEntries.mockResolvedValue([
-        {
-          end: "2022-02-27T05:43:37.868Z",
-          start: "2022-02-27T05:43:37.868Z",
-          title: "Berta goes to the baseball game!",
-        },
-      ]);
-      await act(async () => {
-        await render(<App />);
-      });
-      userEvent.type(screen.getByLabelText("Start Date"), "03162022");
-      userEvent.type(screen.getByLabelText("Start Time"), "08:10");
-      userEvent.type(screen.getByLabelText("End Date"), "03182022");
-      userEvent.type(screen.getByLabelText("End Time"), "10:10");
-      userEvent.click(screen.getByLabelText("All Day"));
-      waitFor(() => {
-        userEvent.click(screen.getByRole("button", { name: "Create Event" }));
-      });
-      expect(screen.getByLabelText("Start Date")).toHaveValue("2022-02-15");
-      expect(screen.getByLabelText("End Date")).toHaveValue("2022-02-15");
-      expect(screen.getByLabelText("Start Time")).toHaveValue("04:00");
-      expect(screen.getByLabelText("End Time")).toHaveValue("05:00");
-      expect(screen.getByLabelText("All Day")).not.toBeChecked();
-    });
-
     it("errors when end date is before start date", async () => {
       mockCreateEntry.mockResolvedValue({});
       mockGetEntries.mockResolvedValue([
