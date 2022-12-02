@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { formatDate, getDateTimeString } from "./lib";
+import { CloseButton } from "@chakra-ui/react";
 import s from "./EventForm.module.css";
 
 interface FormProps {
@@ -62,9 +63,12 @@ const EventForm = ({
 
   return (
     <div className={s.container}>
-      <button onClick={() => onCancel()} className={s.closeButton}>
-        X
-      </button>
+      <CloseButton
+        size="md"
+        onClick={() => onCancel()}
+        className={s.closeButton}
+      />
+
       <label htmlFor="title" className={s.formItem}>
         Title
         <input

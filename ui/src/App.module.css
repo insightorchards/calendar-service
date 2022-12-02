@@ -29,9 +29,11 @@
 
 @media (max-width: 600px) {
   .addEventButton {
-    background: green;
     width: 120px;
     display: block;
+    align-self: flex-end;
+    margin-top: 26px;
+    margin-left: 380px;
   }
 
   .formHeader {

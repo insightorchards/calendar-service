@@ -62,10 +62,8 @@
     display: block;
     align-self: flex-end;
     margin-top: 13px;
-    font-size: 24px;
     border-radius: 50%;
-    height: 35px;
-    width: 35px;
-    background-color: lightgrey;
+    margin-right: 20px;
+    margin-top: 20px;
   }
 }

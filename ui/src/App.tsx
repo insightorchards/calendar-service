@@ -9,9 +9,11 @@ import { formatDate, getDateTimeString, padNumberWith0Zero } from "./lib";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import listPlugin from "@fullcalendar/list";
+import { AddIcon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
+  IconButton,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -56,10 +58,10 @@ const App = () => {
   const currentHour: number = new Date().getHours();
   const currentMinute: number = new Date().getMinutes();
   const DEFAULT_START_TIME: string = `${padNumberWith0Zero(
-    currentHour
+    currentHour,
   )}:${padNumberWith0Zero(currentMinute)}`;
   const DEFAULT_END_TIME: string = `${padNumberWith0Zero(
-    currentHour + 1
+    currentHour + 1,
   )}:${padNumberWith0Zero(currentMinute)}`;
   const DEFAULT_DATE = formatDate(new Date());
   const modalDateFormat = (selectedEventDate: Date) =>
@@ -76,12 +78,12 @@ const App = () => {
 
   const formatTime = (utcString: string) =>
     `${padNumberWith0Zero(new Date(utcString).getHours())}:${padNumberWith0Zero(
-      new Date(utcString).getMinutes()
+      new Date(utcString).getMinutes(),
     )}`;
 
   const [events, setEvents] = useState<EventSourceInput>([]);
   const [displayedEventData, setDisplayedEventData] = useState(
-    {} as DisplayedEventData
+    {} as DisplayedEventData,
   );
   const [showOverlay, setShowOverlay] = useState<boolean>(false);
   const [inEditMode, setInEditMode] = useState<boolean>(false);
@@ -190,14 +192,14 @@ const App = () => {
             />
           </div>
           <div className={s.fullCalendarUI}>
-            <button
+            <IconButton
+              aria-label="add event"
+              icon={<AddIcon boxSize={20} w={20} h={20} />}
               className={s.addEventButton}
               onClick={() => {
                 setShowMobileEventForm(true);
               }}
-            >
-              Add Event
-            </button>
+            />
             <FullCalendar
               plugins={[dayGridPlugin, timeGridPlugin, listPlugin]}
               headerToolbar={{
@@ -255,10 +257,10 @@ const App = () => {
                   initialTitle={displayedEventData.title}
                   initialDescription={displayedEventData.description}
                   initialStartDate={formatDate(
-                    new Date(displayedEventData.startTimeUtc)
+                    new Date(displayedEventData.startTimeUtc),
                   )}
                   initialEndDate={formatDate(
-                    new Date(displayedEventData.endTimeUtc)
+                    new Date(displayedEventData.endTimeUtc),
                   )}
                   initialStartTime={formatTime(displayedEventData.startTimeUtc)}
                   initialEndTime={formatTime(displayedEventData.endTimeUtc)}
