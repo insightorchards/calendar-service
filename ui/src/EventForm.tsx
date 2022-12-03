@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { formatDate, getDateTimeString } from "./lib";
-import { CloseButton } from "@chakra-ui/react";
 import s from "./EventForm.module.css";
 
 interface FormProps {
@@ -12,7 +11,6 @@ interface FormProps {
   initialDescription: string;
   onFormSubmit: Function;
   isCreate: boolean;
-  onCancel: Function;
 }
 
 const EventForm = ({
@@ -24,7 +22,6 @@ const EventForm = ({
   initialDescription,
   onFormSubmit,
   isCreate,
-  onCancel = () => {},
 }: FormProps) => {
   const [startDate, setStartDate] = useState<string>(initialStartDate);
   const [endDate, setEndDate] = useState<string>(initialEndDate);
@@ -63,12 +60,6 @@ const EventForm = ({
 
   return (
     <div className={s.container}>
-      <CloseButton
-        size="md"
-        onClick={() => onCancel()}
-        className={s.closeButton}
-      />
-
       <label htmlFor="title" className={s.formItem}>
         Title
         <input

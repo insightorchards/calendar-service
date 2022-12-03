@@ -13,6 +13,7 @@ import { AddIcon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
+  CloseButton,
   IconButton,
   Modal,
   ModalOverlay,
@@ -178,7 +179,10 @@ const App = () => {
       <Box>
         <div className={s.mainContainer}>
           <div className={`${s.form} ${showMobileEventForm ? s.active : ""}`}>
-            <header className={s.formHeader}>Create an event</header>
+            <header>Create an event</header>
+            <div className={s.closeButton}>
+              <CloseButton size="md" onClick={handleCancel} />
+            </div>
             <EventForm
               initialTitle=""
               initialDescription=""
@@ -188,18 +192,18 @@ const App = () => {
               initialEndTime={DEFAULT_END_TIME}
               onFormSubmit={handleCreateEntry}
               isCreate={true}
-              onCancel={handleCancel}
             />
           </div>
           <div className={s.fullCalendarUI}>
-            <IconButton
-              aria-label="add event"
-              icon={<AddIcon boxSize={20} w={20} h={20} />}
-              className={s.addEventButton}
-              onClick={() => {
-                setShowMobileEventForm(true);
-              }}
-            />
+            <div className={s.addEventButton}>
+              <IconButton
+                aria-label="add event"
+                icon={<AddIcon boxSize={20} w={20} h={20} />}
+                onClick={() => {
+                  setShowMobileEventForm(true);
+                }}
+              />
+            </div>
             <FullCalendar
               plugins={[dayGridPlugin, timeGridPlugin, listPlugin]}
               headerToolbar={{
@@ -253,7 +257,6 @@ const App = () => {
             {inEditMode && (
               <ModalBody>
                 <EventForm
-                  onCancel={() => {}}
                   initialTitle={displayedEventData.title}
                   initialDescription={displayedEventData.description}
                   initialStartDate={formatDate(

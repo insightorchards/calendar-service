@@ -6,6 +6,10 @@
   display: none;
 }
 
+.closeButton {
+  display: none;
+}
+
 .formHeader {
   font-size: 20px;
   margin: 85px 0 20px 0;
@@ -31,13 +35,9 @@
   .addEventButton {
     width: 120px;
     display: block;
-    align-self: flex-end;
-    margin-top: 26px;
-    margin-left: 380px;
-  }
-
-  .formHeader {
-    display: none;
+    position: absolute;
+    top: 20px;
+    right: -61px;
   }
 
   .form {
@@ -57,7 +57,14 @@
   }
 
   .fullCalendarUI {
-    padding: 0;
-    width: 100%;
+    padding: 25px;
+    position: relative;
+  }
+
+  .closeButton {
+    display: block;
+    position: absolute;
+    right: 20px;
+    top: 20px;
   }
 }

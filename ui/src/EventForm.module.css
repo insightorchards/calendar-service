@@ -6,10 +6,6 @@
   padding: 0 20px 0 20px;
 }
 
-.closeButton {
-  display: none;
-}
-
 .formTitleInput {
   border: 1px solid gray;
   border-radius: 7px;
@@ -55,15 +51,4 @@
   border-radius: 7px;
   padding: 6px 10px;
   text-align: center;
-}
-
-@media (max-width: 600px) {
-  .closeButton {
-    display: block;
-    align-self: flex-end;
-    margin-top: 13px;
-    border-radius: 50%;
-    margin-right: 20px;
-    margin-top: 20px;
-  }
 }
