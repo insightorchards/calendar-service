@@ -22,13 +22,13 @@
 }
 
 .formSubmit {
+  align-self: center;
   background-color: rgb(213, 211, 211);
   border-radius: 7px;
   border: 1px solid gray;
-  margin-top: 20px;
+  margin: 20px;
   padding: 6px 10px;
   width: 120px;
-  margin: 20px;
 }
 
 .formItem {
