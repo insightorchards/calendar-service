@@ -9,7 +9,7 @@ interface FormProps {
   initialEndTime: string;
   initialTitle: string;
   initialDescription: string;
-  onSave: Function;
+  onFormSubmit: Function;
   isCreate: boolean;
 }
 
@@ -20,7 +20,7 @@ const EventForm = ({
   initialEndTime,
   initialTitle,
   initialDescription,
-  onSave,
+  onFormSubmit,
   isCreate,
 }: FormProps) => {
   const [startDate, setStartDate] = useState<string>(initialStartDate);
@@ -31,14 +31,21 @@ const EventForm = ({
   const [title, setTitle] = useState<string>(initialTitle);
   const [description, setDescription] = useState<string>(initialDescription);
 
-  const handleSave = async (_: React.MouseEvent<HTMLButtonElement>) => {
+  const handleFormSubmit = async (_: React.MouseEvent<HTMLButtonElement>) => {
     const startDateAndTime: string = getDateTimeString(startDate, startTime);
     const endDateAndTime: string = getDateTimeString(endDate, endTime);
     if (startDateAndTime > endDateAndTime) {
       setError("Error: end cannot be before start.");
       return;
     }
-    onSave({ title, description, startDate, endDate, startTime, endTime });
+    onFormSubmit({
+      title,
+      description,
+      startDate,
+      endDate,
+      startTime,
+      endTime,
+    });
 
     if (isCreate) {
       setTitle(initialTitle);
@@ -131,7 +138,7 @@ const EventForm = ({
           />
         </label>
       </div>
-      <button className={s.formSubmit} onClick={handleSave}>
+      <button className={s.formSubmit} onClick={handleFormSubmit}>
         {isCreate ? "Create Event" : "Save"}
       </button>
       {error && <p className={s.error}>{error}</p>}

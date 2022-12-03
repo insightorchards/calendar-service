@@ -9,9 +9,12 @@ import { formatDate, getDateTimeString, padNumberWith0Zero } from "./lib";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import listPlugin from "@fullcalendar/list";
+import { AddIcon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
+  CloseButton,
+  IconButton,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -56,10 +59,10 @@ const App = () => {
   const currentHour: number = new Date().getHours();
   const currentMinute: number = new Date().getMinutes();
   const DEFAULT_START_TIME: string = `${padNumberWith0Zero(
-    currentHour
+    currentHour,
   )}:${padNumberWith0Zero(currentMinute)}`;
   const DEFAULT_END_TIME: string = `${padNumberWith0Zero(
-    currentHour + 1
+    currentHour + 1,
   )}:${padNumberWith0Zero(currentMinute)}`;
   const DEFAULT_DATE = formatDate(new Date());
   const modalDateFormat = (selectedEventDate: Date) =>
@@ -76,15 +79,17 @@ const App = () => {
 
   const formatTime = (utcString: string) =>
     `${padNumberWith0Zero(new Date(utcString).getHours())}:${padNumberWith0Zero(
-      new Date(utcString).getMinutes()
+      new Date(utcString).getMinutes(),
     )}`;
 
   const [events, setEvents] = useState<EventSourceInput>([]);
   const [displayedEventData, setDisplayedEventData] = useState(
-    {} as DisplayedEventData
+    {} as DisplayedEventData,
   );
   const [showOverlay, setShowOverlay] = useState<boolean>(false);
   const [inEditMode, setInEditMode] = useState<boolean>(false);
+  const [showMobileEventForm, setShowMobileEventForm] =
+    useState<boolean>(false);
 
   useEffect(() => {
     getEntries().then((entries) => {
@@ -110,6 +115,7 @@ const App = () => {
     });
     getEntries().then((entries) => {
       setEvents(entries);
+      setShowMobileEventForm(false);
     });
   };
 
@@ -135,9 +141,9 @@ const App = () => {
     });
   };
 
-  const handleEditEntry = async (e: MouseEvent<HTMLButtonElement>) => {
-    setInEditMode(true);
-  };
+  const handleEditEntry = () => setInEditMode(true);
+
+  const handleCancel = () => setShowMobileEventForm(false);
 
   const closeOverlay = () => {
     setShowOverlay(false);
@@ -172,8 +178,11 @@ const App = () => {
     <div className="App">
       <Box>
         <div className={s.mainContainer}>
-          <div className={s.form}>
-            <header className={s.formHeader}>Create an event</header>
+          <div className={`${s.form} ${showMobileEventForm ? s.active : ""}`}>
+            <header>Create an event</header>
+            <div className={s.closeButton}>
+              <CloseButton size="md" onClick={handleCancel} />
+            </div>
             <EventForm
               initialTitle=""
               initialDescription=""
@@ -181,11 +190,20 @@ const App = () => {
               initialEndDate={DEFAULT_DATE}
               initialStartTime={DEFAULT_START_TIME}
               initialEndTime={DEFAULT_END_TIME}
-              onSave={handleCreateEntry}
+              onFormSubmit={handleCreateEntry}
               isCreate={true}
             />
           </div>
           <div className={s.fullCalendarUI}>
+            <div className={s.addEventButton}>
+              <IconButton
+                aria-label="add event"
+                icon={<AddIcon boxSize={20} w={20} h={20} />}
+                onClick={() => {
+                  setShowMobileEventForm(true);
+                }}
+              />
+            </div>
             <FullCalendar
               plugins={[dayGridPlugin, timeGridPlugin, listPlugin]}
               headerToolbar={{
@@ -242,14 +260,14 @@ const App = () => {
                   initialTitle={displayedEventData.title}
                   initialDescription={displayedEventData.description}
                   initialStartDate={formatDate(
-                    new Date(displayedEventData.startTimeUtc)
+                    new Date(displayedEventData.startTimeUtc),
                   )}
                   initialEndDate={formatDate(
-                    new Date(displayedEventData.endTimeUtc)
+                    new Date(displayedEventData.endTimeUtc),
                   )}
                   initialStartTime={formatTime(displayedEventData.startTimeUtc)}
                   initialEndTime={formatTime(displayedEventData.endTimeUtc)}
-                  onSave={handleSaveChanges}
+                  onFormSubmit={handleSaveChanges}
                   isCreate={false}
                 />
               </ModalBody>
