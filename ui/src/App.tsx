@@ -189,44 +189,45 @@ const App = () => {
 
   return (
     <div className="App">
-      <Box>
-        <div className={s.mainContainer}>
-          <div className={s.form}>
-            <header className={s.formHeader}>Create an event</header>
-            <EventForm
-              initialTitle=""
-              initialDescription=""
-              initialStartDate={DEFAULT_DATE}
-              initialEndDate={DEFAULT_DATE}
-              initialStartTime={DEFAULT_START_TIME}
-              initialEndTime={DEFAULT_END_TIME}
-              initialAllDay={false}
-              onSave={handleCreateEntry}
-              isCreate={true}
-            />
-          </div>
-          <div className={s.fullCalendarUI}>
-            <FullCalendar
-              plugins={[dayGridPlugin, timeGridPlugin, listPlugin]}
-              headerToolbar={{
-                left: "prev,next today",
-                center: "title",
-                right: "dayGridMonth,timeGridWeek,timeGridDay",
-              }}
-              events={events}
-              initialView="dayGridMonth"
-              selectable={true}
-              eventClick={openModal}
-              height="100vh"
-              // editable={true}
-              // selectMirror={true}
-              // dayMaxEvents={true}
-              // weekends={true}
-            />
-          </div>
-        </div>
-      </Box>
       <ChakraProvider>
+        <Box>
+          <div className={s.mainContainer}>
+            <div className={s.form}>
+              <header className={s.formHeader}>Create an event</header>
+              <EventForm
+                initialTitle=""
+                initialDescription=""
+                initialStartDate={DEFAULT_DATE}
+                initialEndDate={DEFAULT_DATE}
+                initialStartTime={DEFAULT_START_TIME}
+                initialEndTime={DEFAULT_END_TIME}
+                initialAllDay={false}
+                onSave={handleCreateEntry}
+                isCreate={true}
+              />
+            </div>
+            <div className={s.fullCalendarUI}>
+              <FullCalendar
+                plugins={[dayGridPlugin, timeGridPlugin, listPlugin]}
+                headerToolbar={{
+                  left: "prev,next today",
+                  center: "title",
+                  right: "dayGridMonth,timeGridWeek,timeGridDay",
+                }}
+                events={events}
+                initialView="dayGridMonth"
+                selectable={true}
+                eventClick={openModal}
+                height="100vh"
+                // editable={true}
+                // selectMirror={true}
+                // dayMaxEvents={true}
+                // weekends={true}
+              />
+            </div>
+          </div>
+        </Box>
+
         <Modal isOpen={showOverlay} onClose={closeOverlay}>
           <ModalOverlay />
           <ModalContent>
