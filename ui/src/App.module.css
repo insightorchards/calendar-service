@@ -33,11 +33,11 @@
 
 @media (max-width: 600px) {
   .addEventButton {
-    width: 120px;
     display: block;
     position: absolute;
-    top: 20px;
     right: -61px;
+    top: 20px;
+    width: 120px;
   }
 
   .form {
