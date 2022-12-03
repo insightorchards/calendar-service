@@ -18,7 +18,7 @@ interface CalendarEntry {
 export const seedDatabaseWithEntry = async (
   _req: Request,
   res: Response,
-  _next: NextFunction,
+  _next: NextFunction
 ) => {
   const today = new Date();
   await CalendarEntry.insertMany([
@@ -57,7 +57,7 @@ export const seedDatabaseWithEntry = async (
 export const createCalendarEntry = async (
   req: Request,
   res: Response,
-  _next: NextFunction,
+  _next: NextFunction
 ) => {
   try {
     const entry = await CalendarEntry.create(req.body as CalendarEntry);
@@ -71,7 +71,7 @@ export const createCalendarEntry = async (
 export const getCalendarEntries = async (
   _req: Request,
   res: Response,
-  _next: NextFunction,
+  _next: NextFunction
 ) => {
   try {
     const entries: CalendarEntry = await CalendarEntry.find();
@@ -85,7 +85,7 @@ export const getCalendarEntries = async (
 export const getCalendarEntry = async (
   req: Request,
   res: Response,
-  _next: NextFunction,
+  _next: NextFunction
 ) => {
   const { id } = req.params;
   try {
@@ -100,12 +100,12 @@ export const getCalendarEntry = async (
 export const deleteCalendarEntry = async (
   req: Request,
   res: Response,
-  _next: NextFunction,
+  _next: NextFunction
 ) => {
   const { id } = req.params;
   try {
     await CalendarEntry.deleteOne({ _id: id });
-    res.status(200).json();
+    res.sendStatus(200);
   } catch (err) {
     res.status(400);
     res.send(err);
@@ -115,13 +115,13 @@ export const deleteCalendarEntry = async (
 export const updateCalendarEntry = async (
   req: Request,
   res: Response,
-  _next: NextFunction,
+  _next: NextFunction
 ) => {
   const { id } = req.params;
   try {
     const entry = await CalendarEntry.findByIdAndUpdate(
       id,
-      req.body as CalendarEntry,
+      req.body as CalendarEntry
     );
     res.status(200).json(entry);
   } catch (err) {
