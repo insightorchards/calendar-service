@@ -57,6 +57,27 @@ describe("POST /entries", () => {
       }),
     );
   });
+
+  it("catches and returns an error from CalendarEntry.create", async () => {
+    const createMock = jest
+      .spyOn(CalendarEntry, "create")
+      .mockRejectedValue({ message: "error occurred" });
+    const startTime = new Date();
+    const endTime = new Date();
+    const response = await supertest(app)
+      .post(`/entries`)
+      .send({
+        eventId: "123",
+        creatorId: "456",
+        title: "Happy day",
+        startTimeUtc: startTime,
+        endTimeUtc: endTime,
+        description: "and a happy night too",
+      })
+      .expect(400);
+    expect(response.text).toEqual('{"message":"error occurred"}');
+    createMock.mockRestore();
+  });
 });
 
 describe("GET /entries", () => {
@@ -86,6 +107,16 @@ describe("GET /entries", () => {
   it("returns the entries that exist in the database", async () => {
     const response = await supertest(app).get("/entries").expect(200);
     expect(response.body.length).toEqual(2);
+  });
+
+  it("catches and returns an error from CalendarEntry.find", async () => {
+    const findMock = jest
+      .spyOn(CalendarEntry, "find")
+      .mockRejectedValue({ message: "error occurred" });
+
+    const response = await supertest(app).get(`/entries`).expect(400);
+    expect(response.text).toEqual('{"message":"error occurred"}');
+    findMock.mockRestore();
   });
 });
 
@@ -120,6 +151,18 @@ describe("GET /entry/:entryId", () => {
       }),
     );
   });
+
+  it("catches and returns an error from CalendarEntry.findOne", async () => {
+    const findOneMock = jest
+      .spyOn(CalendarEntry, "findOne")
+      .mockRejectedValue({ message: "error occurred" });
+
+    const response = await supertest(app)
+      .get(`/entries/${newEntry.id}`)
+      .expect(400);
+    expect(response.text).toEqual('{"message":"error occurred"}');
+    findOneMock.mockRestore();
+  });
 });
 
 describe("DELETE / entry", () => {
@@ -144,6 +187,18 @@ describe("DELETE / entry", () => {
 
     const newCount = await CalendarEntry.countDocuments();
     expect(newCount).toEqual(0);
+  });
+
+  it("catches and returns an error from CalendarEntry.deleteOne", async () => {
+    const deleteMock = jest
+      .spyOn(CalendarEntry, "deleteOne")
+      .mockRejectedValue({ message: "error occurred" });
+
+    const response = await supertest(app)
+      .delete(`/entries/${data._id}`)
+      .expect(400);
+    expect(response.text).toEqual('{"message":"error occurred"}');
+    deleteMock.mockRestore();
   });
 });
 
@@ -190,7 +245,29 @@ describe("PATCH / entry", () => {
         startTimeUtc: newStart,
         endTimeUtc: newEnd,
         description: "by John Denver",
-      })
+      }),
     );
+  });
+
+  it("catches and returns an error from CalendarEntry.findByIdAndUpdate", async () => {
+    const updateMock = jest
+      .spyOn(CalendarEntry, "findByIdAndUpdate")
+      .mockRejectedValue({ message: "error occurred" });
+    const newStart = new Date();
+    const newEnd = dayAfter(newStart);
+
+    const response = await supertest(app)
+      .patch(`/entries/${data._id}`)
+      .send({
+        eventId: "345",
+        creatorId: "678",
+        title: "Listen to Sweet Surrender",
+        startTimeUtc: newStart,
+        endTimeUtc: newEnd,
+        description: "by John Denver",
+      })
+      .expect(400);
+    expect(response.text).toEqual('{"message":"error occurred"}');
+    updateMock.mockRestore();
   });
 });

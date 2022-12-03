@@ -18,7 +18,7 @@ interface CalendarEntry {
 export const seedDatabaseWithEntry = async (
   _req: Request,
   res: Response,
-  _next: NextFunction,
+  _next: NextFunction
 ) => {
   const today = new Date();
   await CalendarEntry.insertMany([
@@ -57,54 +57,75 @@ export const seedDatabaseWithEntry = async (
 export const createCalendarEntry = async (
   req: Request,
   res: Response,
-  _next: NextFunction,
+  _next: NextFunction
 ) => {
-  const entry = await CalendarEntry.create(req.body as CalendarEntry);
-  res.status(201).json(entry);
+  try {
+    const entry = await CalendarEntry.create(req.body as CalendarEntry);
+    res.status(201).json(entry);
+  } catch (err) {
+    res.status(400);
+    res.send(err);
+  }
 };
 
 export const getCalendarEntries = async (
   _req: Request,
   res: Response,
-  _next: NextFunction,
+  _next: NextFunction
 ) => {
-  const entries: CalendarEntry = await CalendarEntry.find();
-  res.status(200).json(entries);
+  try {
+    const entries: CalendarEntry = await CalendarEntry.find();
+    res.status(200).json(entries);
+  } catch (err) {
+    res.status(400);
+    res.send(err);
+  }
 };
 
 export const getCalendarEntry = async (
   req: Request,
   res: Response,
-  _next: NextFunction,
+  _next: NextFunction
 ) => {
   const { id } = req.params;
-  const entry = await CalendarEntry.findById(id);
-  res.status(200).json(entry);
+  try {
+    const entry = await CalendarEntry.findById(id);
+    res.status(200).json(entry);
+  } catch (err) {
+    res.status(400);
+    res.send(err);
+  }
 };
 
 export const deleteCalendarEntry = async (
   req: Request,
   res: Response,
-  _next: NextFunction,
+  _next: NextFunction
 ) => {
   const { id } = req.params;
-  await CalendarEntry.deleteOne({ _id: id });
-  res.status(200).json();
+  try {
+    await CalendarEntry.deleteOne({ _id: id });
+    res.sendStatus(200);
+  } catch (err) {
+    res.status(400);
+    res.send(err);
+  }
 };
 
 export const updateCalendarEntry = async (
   req: Request,
   res: Response,
-  _next: NextFunction,
+  _next: NextFunction
 ) => {
   const { id } = req.params;
   try {
     const entry = await CalendarEntry.findByIdAndUpdate(
       id,
-      req.body as CalendarEntry,
+      req.body as CalendarEntry
     );
     res.status(200).json(entry);
-  } catch {
-    res.status(400).json({ error: "Something went wrong" });
+  } catch (err) {
+    res.status(400);
+    res.send(err);
   }
 };
