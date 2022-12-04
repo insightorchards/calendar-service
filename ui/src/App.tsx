@@ -11,18 +11,22 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import listPlugin from "@fullcalendar/list";
 import { AddIcon } from "@chakra-ui/icons";
 import {
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  AlertDescription,
   Box,
   Button,
+  ChakraProvider,
   CloseButton,
   IconButton,
   Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
   ModalBody,
   ModalCloseButton,
-  ChakraProvider,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
 } from "@chakra-ui/react";
 import {
   getEntry,
@@ -198,6 +202,10 @@ const App = () => {
       <ChakraProvider>
         <Box>
           <div className={s.mainContainer}>
+            {/* <Alert status="error">
+              <AlertIcon />
+              <AlertDescription>Oops! Something went wrong.</AlertDescription>
+            </Alert> */}
             <div className={`${s.form} ${showMobileEventForm ? s.active : ""}`}>
               <header>Create an event</header>
               <div className={s.closeButton}>
