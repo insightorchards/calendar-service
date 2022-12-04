@@ -26,17 +26,17 @@ describe("EventForm", () => {
         initialStartDate={formatDate(new Date())}
         initialEndDate={formatDate(new Date())}
         initialStartTime={`${padNumberWith0Zero(
-          currentHour
+          currentHour,
         )}:${padNumberWith0Zero(currentMinute)}`}
         initialEndTime={`${padNumberWith0Zero(
-          currentHour + 1
+          currentHour + 1,
         )}:${padNumberWith0Zero(currentMinute)}`}
         initialTitle="Mary's Chicken Feast"
         initialDescription="A time to remember and appreciate chicken nuggets and more"
         initialAllDay={false}
-        onSave={() => {}}
+        onFormSubmit={() => {}}
         isCreate={true}
-      />
+      />,
     );
 
     expect(screen.getByLabelText("Start Date")).toHaveValue("2022-02-15");
@@ -45,7 +45,7 @@ describe("EventForm", () => {
     expect(screen.getByLabelText("End Time")).toHaveValue("05:00");
     expect(screen.getByLabelText("Title")).toHaveValue("Mary's Chicken Feast");
     expect(screen.getByLabelText("Description")).toHaveValue(
-      "A time to remember and appreciate chicken nuggets and more"
+      "A time to remember and appreciate chicken nuggets and more",
     );
     expect(screen.getByRole("button")).toHaveAccessibleName("Create Event");
   });
@@ -56,44 +56,44 @@ describe("EventForm", () => {
         initialStartDate={formatDate(new Date())}
         initialEndDate={formatDate(new Date())}
         initialStartTime={`${padNumberWith0Zero(
-          currentHour
+          currentHour,
         )}:${padNumberWith0Zero(currentMinute)}`}
         initialEndTime={`${padNumberWith0Zero(
-          currentHour + 1
+          currentHour + 1,
         )}:${padNumberWith0Zero(currentMinute)}`}
         initialTitle="Arty party"
         initialDescription="A time to remember and appreciate classic art and more"
         initialAllDay={false}
-        onSave={() => {}}
+        onFormSubmit={() => {}}
         isCreate={false}
-      />
+      />,
     );
 
     expect(screen.getByRole("button")).toHaveAccessibleName("Save");
   });
 
-  it("calls onSave when form is submitted", () => {
-    const onSaveMock = jest.fn();
+  it("calls onFormSubmit when form is submitted", () => {
+    const onFormSubmitMock = jest.fn();
     render(
       <EventForm
         initialStartDate={formatDate(new Date())}
         initialEndDate={formatDate(new Date())}
         initialStartTime={`${padNumberWith0Zero(
-          currentHour
+          currentHour,
         )}:${padNumberWith0Zero(currentMinute)}`}
         initialEndTime={`${padNumberWith0Zero(
-          currentHour + 1
+          currentHour + 1,
         )}:${padNumberWith0Zero(currentMinute)}`}
         initialTitle="Arty party"
         initialDescription="A time to remember and appreciate classic art and more"
         initialAllDay={false}
-        onSave={onSaveMock}
+        onFormSubmit={onFormSubmitMock}
         isCreate={false}
-      />
+      />,
     );
 
     userEvent.click(screen.getByRole("button"));
-    expect(onSaveMock).toHaveBeenCalledWith({
+    expect(onFormSubmitMock).toHaveBeenCalledWith({
       description: "A time to remember and appreciate classic art and more",
       endDate: "2022-02-15",
       endTime: "05:00",
@@ -110,17 +110,17 @@ describe("EventForm", () => {
         initialStartDate={formatDate(new Date())}
         initialEndDate={formatDate(new Date())}
         initialStartTime={`${padNumberWith0Zero(
-          currentHour
+          currentHour,
         )}:${padNumberWith0Zero(currentMinute)}`}
         initialEndTime={`${padNumberWith0Zero(
-          currentHour + 1
+          currentHour + 1,
         )}:${padNumberWith0Zero(currentMinute)}`}
         initialTitle="Arty party"
         initialDescription="A time to remember and appreciate classic art and more"
         initialAllDay={true}
-        onSave={() => {}}
+        onFormSubmit={() => {}}
         isCreate={false}
-      />
+      />,
     );
     expect(screen.getByLabelText("All Day")).toBeChecked();
     expect(screen.queryByLabelText("Start Time")).not.toBeInTheDocument();
@@ -138,17 +138,17 @@ describe("EventForm", () => {
         initialStartDate={formatDate(new Date())}
         initialEndDate={formatDate(new Date())}
         initialStartTime={`${padNumberWith0Zero(
-          currentHour
+          currentHour,
         )}:${padNumberWith0Zero(currentMinute)}`}
         initialEndTime={`${padNumberWith0Zero(
-          currentHour + 1
+          currentHour + 1,
         )}:${padNumberWith0Zero(currentMinute)}`}
         initialTitle="Arty party"
         initialDescription="A time to remember and appreciate classic art and more"
         initialAllDay={false}
-        onSave={() => {}}
+        onFormSubmit={() => {}}
         isCreate={true}
-      />
+      />,
     );
     userEvent.type(screen.getByLabelText("Start Date"), "03162022");
     userEvent.type(screen.getByLabelText("Start Time"), "08:10");

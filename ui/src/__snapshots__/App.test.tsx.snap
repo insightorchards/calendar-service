@@ -12,13 +12,32 @@ exports[`App renders correctly 1`] = `
         class="mainContainer"
       >
         <div
-          class="form"
+          class="form "
         >
-          <header
-            class="formHeader"
-          >
+          <header>
             Create an event
           </header>
+          <div
+            class="closeButton"
+          >
+            <button
+              aria-label="Close"
+              class="css-4abrhy"
+              type="button"
+            >
+              <svg
+                aria-hidden="true"
+                class="chakra-icon css-onkibi"
+                focusable="false"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M.439,21.44a1.5,1.5,0,0,0,2.122,2.121L11.823,14.3a.25.25,0,0,1,.354,0l9.262,9.263a1.5,1.5,0,1,0,2.122-2.121L14.3,12.177a.25.25,0,0,1,0-.354l9.263-9.262A1.5,1.5,0,0,0,21.439.44L12.177,9.7a.25.25,0,0,1-.354,0L2.561.44A1.5,1.5,0,0,0,.439,2.561L9.7,11.823a.25.25,0,0,1,0,.354Z"
+                  fill="currentColor"
+                />
+              </svg>
+            </button>
+          </div>
           <div
             class="container"
           >
@@ -76,7 +95,7 @@ exports[`App renders correctly 1`] = `
               class="checkbox"
             >
               <label
-                class="chakra-checkbox css-1elxtiq"
+                class="chakra-checkbox css-1577qb8"
               >
                 <input
                   class="chakra-checkbox__input"
@@ -86,10 +105,10 @@ exports[`App renders correctly 1`] = `
                 />
                 <span
                   aria-hidden="true"
-                  class="chakra-checkbox__control css-dnty2r"
+                  class="chakra-checkbox__control css-1ydjfm6"
                 />
                 <span
-                  class="chakra-checkbox__label css-1oeb2oe"
+                  class="chakra-checkbox__label css-6x44c9"
                 >
                   All Day
                 </span>
@@ -129,6 +148,27 @@ exports[`App renders correctly 1`] = `
         <div
           class="fullCalendarUI"
         >
+          <div
+            class="addEventButton"
+          >
+            <button
+              aria-label="add event"
+              class="chakra-button css-eeqq40"
+              type="button"
+            >
+              <svg
+                aria-hidden="true"
+                class="chakra-icon css-k4htha"
+                focusable="false"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M0,12a1.5,1.5,0,0,0,1.5,1.5h8.75a.25.25,0,0,1,.25.25V22.5a1.5,1.5,0,0,0,3,0V13.75a.25.25,0,0,1,.25-.25H22.5a1.5,1.5,0,0,0,0-3H13.75a.25.25,0,0,1-.25-.25V1.5a1.5,1.5,0,0,0-3,0v8.75a.25.25,0,0,1-.25.25H1.5A1.5,1.5,0,0,0,0,12Z"
+                  fill="currentColor"
+                />
+              </svg>
+            </button>
+          </div>
           <div
             class="fc fc-media-screen fc-direction-ltr fc-theme-standard fc-liquid-hack"
             style="height: 100vh;"
