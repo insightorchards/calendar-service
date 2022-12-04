@@ -1,4 +1,4 @@
-import { act, render, screen, waitFor } from "@testing-library/react";
+import { act, render, screen, waitFor, within } from "@testing-library/react";
 import React from "react";
 import userEvent from "@testing-library/user-event";
 import App from "./App";
@@ -35,7 +35,7 @@ describe("App", () => {
     expect(app.asFragment()).toMatchSnapshot();
   });
 
-  it("shows calander", async () => {
+  it("shows calendar", async () => {
     mockCreateEntry.mockResolvedValue({});
     mockGetEntries.mockResolvedValue([
       {
@@ -115,6 +115,7 @@ describe("App", () => {
         endTimeUtc: new Date("2022-02-15T18:10:00.000Z"),
         title: "Berta goes to the baseball game!",
         description: "She had some tasty nachos and margarita!",
+        allDay: false,
       });
     });
 
@@ -125,12 +126,14 @@ describe("App", () => {
           end: "2022-02-27T05:43:37.868Z",
           start: "2022-02-27T05:43:37.868Z",
           title: "Berta goes to the baseball game!",
+          allDay: false,
         },
         {
           _id: "345",
           end: "2022-02-24T05:43:37.868Z",
           start: "2022-02-24T05:43:37.868Z",
           title: "Dance",
+          allDay: false,
         },
       ]);
 
@@ -140,6 +143,7 @@ describe("App", () => {
           end: "2022-02-24T05:43:37.868Z",
           start: "2022-02-24T05:43:37.868Z",
           title: "Dance",
+          allDay: false,
         },
       ]);
 
@@ -149,7 +153,9 @@ describe("App", () => {
       expect(eventText).toBeInTheDocument();
       eventText.click();
       expect(mockGetEntry).toHaveBeenCalledTimes(1);
-      expect(await screen.findByText("Event Details")).toBeVisible();
+      const modal = await screen.findByRole("dialog");
+      expect(modal).toBeVisible();
+      expect(await within(modal).findByText("Event Details")).toBeVisible();
     });
 
     it("deletes entry when delete button is clicked", async () => {
@@ -203,31 +209,6 @@ describe("App", () => {
       });
     });
 
-    it("resets inputs correctly to default values when submitted", async () => {
-      mockCreateEntry.mockResolvedValue({});
-      mockGetEntries.mockResolvedValue([
-        {
-          end: "2022-02-27T05:43:37.868Z",
-          start: "2022-02-27T05:43:37.868Z",
-          title: "Berta goes to the baseball game!",
-        },
-      ]);
-      await act(async () => {
-        await render(<App />);
-      });
-      userEvent.type(screen.getByLabelText("Start Date"), "03162022");
-      userEvent.type(screen.getByLabelText("Start Time"), "08:10");
-      userEvent.type(screen.getByLabelText("End Date"), "03182022");
-      userEvent.type(screen.getByLabelText("End Time"), "10:10");
-      waitFor(() => {
-        userEvent.click(screen.getByRole("button", { name: "Create Event" }));
-      });
-      expect(screen.getByLabelText("Start Date")).toHaveValue("2022-02-15");
-      expect(screen.getByLabelText("End Date")).toHaveValue("2022-02-15");
-      expect(screen.getByLabelText("Start Time")).toHaveValue("04:00");
-      expect(screen.getByLabelText("End Time")).toHaveValue("05:00");
-    });
-
     it("errors when end date is before start date", async () => {
       mockCreateEntry.mockResolvedValue({});
       mockGetEntries.mockResolvedValue([
@@ -254,13 +235,7 @@ describe("App", () => {
 
     it("errors when end time is before start time on the same day", async () => {
       mockCreateEntry.mockResolvedValue({});
-      mockGetEntries.mockResolvedValue([
-        {
-          end: "2022-02-27T05:43:37.868Z",
-          start: "2022-02-27T05:43:37.868Z",
-          title: "Berta goes to the baseball game!",
-        },
-      ]);
+      mockGetEntries.mockResolvedValue([]);
       await act(async () => {
         await render(<App />);
       });

@@ -3,6 +3,7 @@ interface CalendarEntryInput {
   description: string;
   startTimeUtc: Date;
   endTimeUtc: Date;
+  allDay: boolean;
 }
 
 const getEntries = async () => {
@@ -20,6 +21,7 @@ const getEntries = async () => {
           title: event.title,
           start: event.startTimeUtc,
           end: event.endTimeUtc,
+          allDay: event.allDay,
         };
       });
       return result;
@@ -40,6 +42,7 @@ const createEntry = async ({
   description,
   startTimeUtc,
   endTimeUtc,
+  allDay,
 }: CalendarEntryInput) => {
   const response = await fetch("http://localhost:4000/entries", {
     method: "POST",
@@ -53,6 +56,7 @@ const createEntry = async ({
       eventId: "5678",
       startTimeUtc: startTimeUtc.toISOString(),
       endTimeUtc: endTimeUtc.toISOString(),
+      allDay,
     }),
   });
   const result = await response.json();
@@ -61,7 +65,7 @@ const createEntry = async ({
 
 const updateEntry = async (
   entryId: string,
-  { title, startTimeUtc, endTimeUtc, description }: CalendarEntryInput,
+  { title, startTimeUtc, endTimeUtc, description, allDay }: CalendarEntryInput
 ) => {
   const response = await fetch(`http://localhost:4000/entries/${entryId}`, {
     method: "PATCH",
@@ -75,6 +79,7 @@ const updateEntry = async (
       eventId: "5678",
       startTimeUtc: startTimeUtc.toISOString(),
       endTimeUtc: endTimeUtc.toISOString(),
+      allDay,
     }),
   });
   const result = await response.json();

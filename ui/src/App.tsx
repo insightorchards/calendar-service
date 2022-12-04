@@ -38,9 +38,10 @@ interface DisplayedEventData {
   eventId: string;
   creatorId: string;
   title: string;
+  description: string;
   startTimeUtc: string;
   endTimeUtc: string;
-  description: string;
+  allDay: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -53,6 +54,7 @@ interface FormEntryProps {
   endTime: string;
   startDate: string;
   endDate: string;
+  allDay: boolean;
 }
 
 const App = () => {
@@ -76,6 +78,19 @@ const App = () => {
       minute: "2-digit",
     })}
     `;
+
+  const allDayDateFormat = (selectedEventDate: Date) =>
+    `${selectedEventDate.toLocaleString("default", {
+      weekday: "long",
+    })}, ${selectedEventDate.toLocaleString("default", {
+      month: "long",
+    })} ${selectedEventDate.getDate()}
+  `;
+
+  const getModalDate = (allDay: boolean, dateTime: string) => {
+    const date = new Date(dateTime);
+    return allDay ? allDayDateFormat(date) : modalDateFormat(new Date(date));
+  };
 
   const formatTime = (utcString: string) =>
     `${padNumberWith0Zero(new Date(utcString).getHours())}:${padNumberWith0Zero(
@@ -104,6 +119,7 @@ const App = () => {
     endDate,
     startTime,
     endTime,
+    allDay,
   }: FormEntryProps) => {
     const startTimeUtc = new Date(getDateTimeString(startDate, startTime));
     const endTimeUtc = new Date(getDateTimeString(endDate, endTime));
@@ -112,6 +128,7 @@ const App = () => {
       description,
       startTimeUtc,
       endTimeUtc,
+      allDay,
     });
     getEntries().then((entries) => {
       setEvents(entries);
@@ -157,6 +174,7 @@ const App = () => {
     endDate,
     startTime,
     endTime,
+    allDay,
   }: FormEntryProps) => {
     const entryId = displayedEventData._id;
     const startTimeUtc = new Date(getDateTimeString(startDate, startTime));
@@ -166,6 +184,7 @@ const App = () => {
       description,
       startTimeUtc,
       endTimeUtc,
+      allDay,
     }).then(() => {
       getEntryDetails(entryId);
       getEntries().then((entries) => {
@@ -176,55 +195,57 @@ const App = () => {
 
   return (
     <div className="App">
-      <Box>
-        <div className={s.mainContainer}>
-          <div className={`${s.form} ${showMobileEventForm ? s.active : ""}`}>
-            <header>Create an event</header>
-            <div className={s.closeButton}>
-              <CloseButton size="md" onClick={handleCancel} />
-            </div>
-            <EventForm
-              initialTitle=""
-              initialDescription=""
-              initialStartDate={DEFAULT_DATE}
-              initialEndDate={DEFAULT_DATE}
-              initialStartTime={DEFAULT_START_TIME}
-              initialEndTime={DEFAULT_END_TIME}
-              onFormSubmit={handleCreateEntry}
-              isCreate={true}
-            />
-          </div>
-          <div className={s.fullCalendarUI}>
-            <div className={s.addEventButton}>
-              <IconButton
-                aria-label="add event"
-                icon={<AddIcon boxSize={20} w={20} h={20} />}
-                onClick={() => {
-                  setShowMobileEventForm(true);
-                }}
+      <ChakraProvider>
+        <Box>
+          <div className={s.mainContainer}>
+            <div className={`${s.form} ${showMobileEventForm ? s.active : ""}`}>
+              <header>Create an event</header>
+              <div className={s.closeButton}>
+                <CloseButton size="md" onClick={handleCancel} />
+              </div>
+              <EventForm
+                initialTitle=""
+                initialDescription=""
+                initialStartDate={DEFAULT_DATE}
+                initialEndDate={DEFAULT_DATE}
+                initialStartTime={DEFAULT_START_TIME}
+                initialEndTime={DEFAULT_END_TIME}
+                initialAllDay={false}
+                onFormSubmit={handleCreateEntry}
+                isCreate={true}
               />
             </div>
-            <FullCalendar
-              plugins={[dayGridPlugin, timeGridPlugin, listPlugin]}
-              headerToolbar={{
-                left: "prev,next today",
-                center: "title",
-                right: "dayGridMonth,timeGridWeek,timeGridDay",
-              }}
-              events={events}
-              initialView="dayGridMonth"
-              selectable={true}
-              eventClick={openModal}
-              height="100vh"
-              // editable={true}
-              // selectMirror={true}
-              // dayMaxEvents={true}
-              // weekends={true}
-            />
+            <div className={s.fullCalendarUI}>
+              <div className={s.addEventButton}>
+                <IconButton
+                  aria-label="add event"
+                  icon={<AddIcon boxSize={20} w={20} h={20} />}
+                  onClick={() => {
+                    setShowMobileEventForm(true);
+                  }}
+                />
+              </div>
+              <FullCalendar
+                plugins={[dayGridPlugin, timeGridPlugin, listPlugin]}
+                headerToolbar={{
+                  left: "prev,next today",
+                  center: "title",
+                  right: "dayGridMonth,timeGridWeek,timeGridDay",
+                }}
+                events={events}
+                initialView="dayGridMonth"
+                selectable={true}
+                eventClick={openModal}
+                height="100vh"
+                // editable={true}
+                // selectMirror={true}
+                // dayMaxEvents={true}
+                // weekends={true}
+              />
+            </div>
           </div>
-        </div>
-      </Box>
-      <ChakraProvider>
+        </Box>
+
         <Modal isOpen={showOverlay} onClose={closeOverlay}>
           <ModalOverlay />
           <ModalContent>
@@ -237,11 +258,17 @@ const App = () => {
                   <p>Description: {displayedEventData.description}</p>
                   <p>
                     Start:{" "}
-                    {modalDateFormat(new Date(displayedEventData.startTimeUtc))}
+                    {getModalDate(
+                      displayedEventData.allDay,
+                      displayedEventData.startTimeUtc,
+                    )}
                   </p>
                   <p>
                     End:{" "}
-                    {modalDateFormat(new Date(displayedEventData.endTimeUtc))}
+                    {getModalDate(
+                      displayedEventData.allDay,
+                      displayedEventData.endTimeUtc,
+                    )}
                   </p>
                 </ModalBody>
                 <ModalFooter>
@@ -267,6 +294,7 @@ const App = () => {
                   )}
                   initialStartTime={formatTime(displayedEventData.startTimeUtc)}
                   initialEndTime={formatTime(displayedEventData.endTimeUtc)}
+                  initialAllDay={displayedEventData.allDay}
                   onFormSubmit={handleSaveChanges}
                   isCreate={false}
                 />

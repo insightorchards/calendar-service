@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@testing-library/cypress": "^8.0.7",
     "cypress": "^11.2.0"
   }
 }

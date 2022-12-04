@@ -8,7 +8,7 @@ interface CalendarEntry {
   creatorId: string;
   title: string;
   description: string;
-  isAllDay: boolean;
+  allDay: boolean;
   startTimeUtc: Date;
   endTimeUtc: Date;
   createdAt: Date;
@@ -27,7 +27,7 @@ export const seedDatabaseWithEntry = async (
       creatorId: "424b339218b3b892b312e5cb",
       title: "Birthday party",
       description: "Let's celebrate Janie!",
-      isAllDay: false,
+      allDay: false,
       startTimeUtc: today,
       endTimeUtc: dayAfter(today),
     },
@@ -36,7 +36,7 @@ export const seedDatabaseWithEntry = async (
       creatorId: "424b339218b3b892b312e5cb",
       title: "Dog walk",
       description: "Time for Scottie walking",
-      isAllDay: false,
+      allDay: false,
       startTimeUtc: today,
       endTimeUtc: dayAfter(today),
     },
@@ -45,7 +45,7 @@ export const seedDatabaseWithEntry = async (
       creatorId: "424b339218b3b892b312e5cb",
       title: "Dog walk",
       description: "Time for Scottie walking",
-      isAllDay: false,
+      allDay: false,
       startTimeUtc: today,
       endTimeUtc: dayAfter(today),
     },
