@@ -5,7 +5,13 @@ import FullCalendar, {
   EventClickArg,
   EventSourceInput,
 } from "@fullcalendar/react";
-import { formatDate, getDateTimeString, padNumberWith0Zero } from "./lib";
+import {
+  formatDate,
+  getDateTimeString,
+  padNumberWith0Zero,
+  getModalDate,
+  formatTime,
+} from "./lib";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import listPlugin from "@fullcalendar/list";
@@ -67,35 +73,6 @@ const App = () => {
     currentHour + 1,
   )}:${padNumberWith0Zero(currentMinute)}`;
   const DEFAULT_DATE = formatDate(new Date());
-  const modalDateFormat = (selectedEventDate: Date) =>
-    `${selectedEventDate.toLocaleString("default", {
-      weekday: "long",
-    })}, ${selectedEventDate.toLocaleString("default", {
-      month: "long",
-    })} ${selectedEventDate.getDate()}
-    ${selectedEventDate.toLocaleTimeString("default", {
-      hour: "2-digit",
-      minute: "2-digit",
-    })}
-    `;
-
-  const allDayDateFormat = (selectedEventDate: Date) =>
-    `${selectedEventDate.toLocaleString("default", {
-      weekday: "long",
-    })}, ${selectedEventDate.toLocaleString("default", {
-      month: "long",
-    })} ${selectedEventDate.getDate()}
-  `;
-
-  const getModalDate = (allDay: boolean, dateTime: string) => {
-    const date = new Date(dateTime);
-    return allDay ? allDayDateFormat(date) : modalDateFormat(new Date(date));
-  };
-
-  const formatTime = (utcString: string) =>
-    `${padNumberWith0Zero(new Date(utcString).getHours())}:${padNumberWith0Zero(
-      new Date(utcString).getMinutes(),
-    )}`;
 
   const [events, setEvents] = useState<EventSourceInput>([]);
   const [displayedEventData, setDisplayedEventData] = useState(
