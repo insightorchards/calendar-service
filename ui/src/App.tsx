@@ -199,7 +199,7 @@ const App = () => {
         <Box>
           <div className={s.mainContainer}>
             <div className={`${s.form} ${showMobileEventForm ? s.active : ""}`}>
-              <header>Create an event</header>
+              <header className={s.header}>Create an event</header>
               <div className={s.closeButton}>
                 <CloseButton size="md" onClick={handleCancel} />
               </div>
@@ -219,7 +219,7 @@ const App = () => {
               <div className={s.addEventButton}>
                 <IconButton
                   aria-label="add event"
-                  icon={<AddIcon boxSize={20} w={20} h={20} />}
+                  icon={<AddIcon boxSize={5} w={5} h={5} />}
                   onClick={() => {
                     setShowMobileEventForm(true);
                   }}
