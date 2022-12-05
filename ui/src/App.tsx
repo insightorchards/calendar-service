@@ -36,7 +36,7 @@ import {
   createEntry,
   deleteEntry,
   updateEntry,
-} from "./hooks";
+} from "./client";
 import s from "./App.module.css";
 
 interface DisplayedEventData {
