@@ -1,4 +1,10 @@
-import { getEntries, getEntry, createEntry, updateEntry } from "./client";
+import {
+  getEntries,
+  getEntry,
+  createEntry,
+  updateEntry,
+  deleteEntry,
+} from "./client";
 
 describe("client functions", () => {
   describe("getEntries", () => {
@@ -183,6 +189,35 @@ describe("client functions", () => {
         createdAt: "2022-12-05T05:27:52.212Z",
         updatedAt: "2022-12-05T05:27:52.212Z",
         __v: 0,
+      });
+    });
+  });
+
+  describe("deleteEntry", () => {
+    it("succeeds", async () => {
+      const mockResponse = {
+        status: 200,
+        json: () => {
+          return {
+            acknowledged: true,
+            deletedCount: 1,
+          } as any;
+        },
+      } as Response;
+
+      const fetchSpy = jest
+        .spyOn(window, "fetch")
+        .mockResolvedValue(mockResponse);
+
+      const result = await deleteEntry("638d815856e5c70955565b7e");
+      expect(fetchSpy).toHaveBeenCalled();
+      expect(fetchSpy.mock.calls[0][1]).toEqual(
+        expect.objectContaining({ method: "DELETE" }),
+      );
+
+      expect(result).toEqual({
+        acknowledged: true,
+        deletedCount: 1,
       });
     });
   });
