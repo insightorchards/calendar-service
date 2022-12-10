@@ -2,8 +2,8 @@ import { act, render, screen, waitFor, within } from "@testing-library/react";
 import React from "react";
 import userEvent from "@testing-library/user-event";
 import App from "./App";
-import { createEntry, deleteEntry, getEntries, getEntry } from "./hooks";
-jest.mock("./hooks");
+import { createEntry, deleteEntry, getEntries, getEntry } from "./client";
+jest.mock("./client");
 
 const mockCreateEntry = createEntry as jest.MockedFunction<typeof createEntry>;
 const mockGetEntries = getEntries as jest.MockedFunction<typeof getEntries>;
@@ -90,11 +90,11 @@ describe("App", () => {
       userEvent.click(screen.getByLabelText("Title"));
       userEvent.type(
         screen.getByLabelText("Title"),
-        "Berta goes to the baseball game!"
+        "Berta goes to the baseball game!",
       );
       userEvent.type(
         screen.getByLabelText("Description"),
-        "She had some tasty nachos and margarita!"
+        "She had some tasty nachos and margarita!",
       );
       userEvent.type(screen.getByLabelText("Start Date"), "02152022");
       userEvent.type(screen.getByLabelText("Start Time"), "08:10");
@@ -105,10 +105,10 @@ describe("App", () => {
       });
       expect(await screen.findByLabelText("Title")).toHaveAttribute(
         "value",
-        ""
+        "",
       );
       expect(
-        await screen.findByText("Berta goes to the baseball game!")
+        await screen.findByText("Berta goes to the baseball game!"),
       ).toBeVisible();
       expect(mockCreateEntry).toHaveBeenCalledWith({
         startTimeUtc: new Date("2022-02-15T16:10:00.000Z"),
@@ -229,7 +229,7 @@ describe("App", () => {
         userEvent.click(screen.getByRole("button", { name: "Create Event" }));
       });
       expect(
-        screen.getByText("Error: end cannot be before start.")
+        screen.getByText("Error: end cannot be before start."),
       ).toBeVisible();
     });
 
@@ -249,7 +249,7 @@ describe("App", () => {
         userEvent.click(screen.getByRole("button", { name: "Create Event" }));
       });
       expect(
-        screen.getByText("Error: end cannot be before start.")
+        screen.getByText("Error: end cannot be before start."),
       ).toBeVisible();
     });
   });
