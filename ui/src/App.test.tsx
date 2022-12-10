@@ -223,6 +223,7 @@ describe("App", () => {
       });
       userEvent.type(screen.getByLabelText("Start Date"), "2016-12-12");
       expect(screen.getByLabelText("Start Date")).toHaveValue("2016-12-12");
+      expect(screen.getByLabelText("End Date")).toHaveValue("2016-12-12");
       userEvent.type(screen.getByLabelText("End Date"), "2016-11-11");
       expect(screen.getByLabelText("End Date")).toHaveValue("2016-11-11");
       waitFor(() => {
