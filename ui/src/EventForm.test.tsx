@@ -164,31 +164,4 @@ describe("EventForm", () => {
     expect(screen.getByLabelText("End Time")).toHaveValue("05:00");
     expect(screen.getByLabelText("All Day")).not.toBeChecked();
   });
-
-  it.skip("automatically sets end date when start date is selected", () => {
-    render(
-      <EventForm
-        initialStartDate={formatDate(new Date())}
-        initialEndDate={formatDate(new Date())}
-        initialStartTime={`${padNumberWith0Zero(
-          currentHour
-        )}:${padNumberWith0Zero(currentMinute)}`}
-        initialEndTime={`${padNumberWith0Zero(
-          currentHour + 1
-        )}:${padNumberWith0Zero(currentMinute)}`}
-        initialTitle="Arty party"
-        initialDescription="A time to remember and appreciate classic art and more"
-        initialAllDay={false}
-        onFormSubmit={() => {}}
-        isCreate={true}
-      />
-    );
-    fireEvent.change(screen.getByLabelText("Start Date"), {
-      target: { value: "03162022" },
-    });
-    // userEvent.type(screen.getByLabelText("Start Date"), "03162022");
-
-    expect(screen.getByLabelText("Start Date")).toHaveValue("2022-03-16");
-    expect(screen.getByLabelText("End Date")).toHaveValue("2022-03-16");
-  });
 });

@@ -98,7 +98,6 @@ const EventForm = ({
           min={formatDate(new Date())}
           type="date"
           onChange={(e) => {
-            console.log("event is", e.target.value);
             setStartDate(e.target.value);
             setEndDate(e.target.value);
           }}
