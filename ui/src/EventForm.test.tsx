@@ -158,10 +158,10 @@ describe("EventForm", () => {
     await waitFor(() => {
       userEvent.click(screen.getByRole("button", { name: "Create Event" }));
     });
-    expect(screen.getByLabelText("Start Date")).toHaveValue("2022-02-15");
-    expect(screen.getByLabelText("End Date")).toHaveValue("2022-02-15");
-    expect(screen.getByLabelText("Start Time")).toHaveValue("04:00");
-    expect(screen.getByLabelText("End Time")).toHaveValue("05:00");
+    expect(screen.getByLabelText("Start Date")).toHaveValue("");
+    expect(screen.getByLabelText("End Date")).toHaveValue("");
+    expect(screen.getByLabelText("Start Time")).toHaveValue("");
+    expect(screen.getByLabelText("End Time")).toHaveValue("");
     expect(screen.getByLabelText("All Day")).not.toBeChecked();
   });
 });
