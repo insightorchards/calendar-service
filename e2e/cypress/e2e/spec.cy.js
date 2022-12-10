@@ -19,6 +19,7 @@ describe("journey test", () => {
     cy.contains("label", "Title").click().type("Hello");
     cy.contains("label", "Description").click().type("It's a beautiful day");
     cy.contains("label", "Start Date").click().type("2022-11-26");
+    cy.get("#endDate").should("have.value", "2022-11-26");
     cy.contains("label", "End Date").click().type("2022-11-27");
     cy.contains("label", "Start Time").click().type("04:35");
     cy.contains("label", "End Time").click().type("06:45");

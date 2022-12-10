@@ -99,6 +99,7 @@ const EventForm = ({
           type="date"
           onChange={(e) => {
             setStartDate(e.target.value);
+            setEndDate(e.target.value);
           }}
           value={startDate}
         />
