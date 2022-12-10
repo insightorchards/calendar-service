@@ -56,10 +56,10 @@ const EventForm = ({
       setTitle(initialTitle);
       setDescription(initialDescription);
       setError(null);
-      setStartDate(initialStartDate);
-      setEndDate(initialEndDate);
-      setStartTime(initialStartTime);
-      setEndTime(initialEndTime);
+      setStartDate("");
+      setEndDate("");
+      setStartTime("");
+      setEndTime("");
       setAllDay(initialAllDay);
     }
   };
