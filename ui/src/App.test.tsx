@@ -211,13 +211,7 @@ describe("App", () => {
 
     it("automatically sets end date when start date is selected", async () => {
       mockCreateEntry.mockResolvedValue({});
-      mockGetEntries.mockResolvedValue([
-        {
-          end: "2022-02-27T05:43:37.868Z",
-          start: "2022-02-27T05:43:37.868Z",
-          title: "Berta goes to the baseball game!",
-        },
-      ]);
+      mockGetEntries.mockResolvedValue([]);
       await act(async () => {
         await render(<App />);
       });
@@ -228,13 +222,7 @@ describe("App", () => {
 
     it("errors when end date is before start date", async () => {
       mockCreateEntry.mockResolvedValue({});
-      mockGetEntries.mockResolvedValue([
-        {
-          end: "2022-02-27T05:43:37.868Z",
-          start: "2022-02-27T05:43:37.868Z",
-          title: "Berta goes to the baseball game!",
-        },
-      ]);
+      mockGetEntries.mockResolvedValue([]);
       await act(async () => {
         await render(<App />);
       });
