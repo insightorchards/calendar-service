@@ -2,13 +2,13 @@
   display: flex;
   flex-direction: column;
   margin-bottom: 20px;
-  width: 100%;
   padding: 0 20px 0 20px;
+  width: 100%;
 }
 
 .formTitleInput {
-  border: 1px solid gray;
   border-radius: 7px;
+  border: 1px solid gray;
   display: flex;
 }
 
@@ -44,8 +44,8 @@
 
 .error {
   background-color: rgba(255, 0, 0, 0.31);
-  border: 2px rgb(184, 48, 27) solid;
   border-radius: 7px;
+  border: 2px rgb(184, 48, 27) solid;
   padding: 6px 10px;
   text-align: center;
 }
