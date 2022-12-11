@@ -155,7 +155,8 @@ describe("App", () => {
       expect(mockGetEntry).toHaveBeenCalledTimes(1);
       const modal = await screen.findByRole("dialog");
       expect(modal).toBeVisible();
-      expect(await within(modal).findByText("Event Details")).toBeVisible();
+      expect(await within(modal).findByText("Edit")).toBeVisible();
+      expect(await within(modal).findByText("Delete")).toBeVisible();
     });
 
     it("deletes entry when delete button is clicked", async () => {
@@ -181,8 +182,6 @@ describe("App", () => {
         title: "Dance",
         description: "fun times",
       });
-
-      mockDeleteEntry.mockResolvedValue();
 
       mockGetEntries.mockResolvedValueOnce([
         {

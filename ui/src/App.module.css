@@ -1,6 +1,23 @@
 .mainContainer {
   display: flex;
 }
+.allDay {
+  font-style: italic;
+  font-weight: 600;
+  padding-left: 6px;
+  padding-top: 2px;
+}
+
+.title {
+  font-size: 22px;
+  font-weight: 600;
+  padding-left: 18px;
+  padding-top: 22px;
+}
+
+.eventDetails {
+  padding-left: 20px;
+}
 
 .addEventButton {
   display: none;
@@ -34,10 +51,10 @@
 @media (max-width: 600px) {
   .addEventButton {
     display: block;
+    max-width: 0%;
     position: absolute;
     right: 16px;
     top: 9px;
-    max-width: 0%;
   }
 
   .form {
@@ -63,9 +80,9 @@
   }
 
   .fullCalendarUI {
+    display: flex;
     padding: 25px;
     position: relative;
-    display: flex;
     width: 100%;
   }
 
