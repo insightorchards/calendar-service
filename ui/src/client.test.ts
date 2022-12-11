@@ -193,16 +193,10 @@ describe("client functions", () => {
     });
   });
 
-  describe("deleteEntry", () => {
+  describe.only("deleteEntry", () => {
     it("succeeds", async () => {
       const mockResponse = {
         status: 200,
-        json: () => {
-          return {
-            acknowledged: true,
-            deletedCount: 1,
-          } as any;
-        },
       } as Response;
 
       const fetchSpy = jest
@@ -212,12 +206,11 @@ describe("client functions", () => {
       const result = await deleteEntry("638d815856e5c70955565b7e");
       expect(fetchSpy).toHaveBeenCalled();
       expect(fetchSpy.mock.calls[0][1]).toEqual(
-        expect.objectContaining({ method: "DELETE" }),
+        expect.objectContaining({ method: "DELETE" })
       );
 
       expect(result).toEqual({
-        acknowledged: true,
-        deletedCount: 1,
+        status: 200,
       });
     });
   });

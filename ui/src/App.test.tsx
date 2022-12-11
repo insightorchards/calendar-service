@@ -183,8 +183,6 @@ describe("App", () => {
         description: "fun times",
       });
 
-      mockDeleteEntry.mockResolvedValue();
-
       mockGetEntries.mockResolvedValueOnce([
         {
           _id: "123",

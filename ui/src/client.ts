@@ -93,7 +93,7 @@ const deleteEntry = async (entryId: string) => {
       "Content-Type": "application/json",
     },
   });
-  const result = await response.json();
+  const result = await response;
   return result;
 };
 
