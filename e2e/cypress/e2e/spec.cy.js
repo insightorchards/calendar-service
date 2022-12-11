@@ -30,10 +30,11 @@ describe("journey test", () => {
     });
 
     cy.contains("Hello").click();
-    cy.contains("Event title: Hello").should("be.visible");
-    cy.contains("Description: It's a beautiful day").should("be.visible");
-    cy.contains("Start: Saturday, November 26 04:35 AM").should("be.visible");
-    cy.contains("End: Sunday, November 27 06:45 AM").should("be.visible");
+    cy.contains("Hello").should("be.visible");
+    cy.contains("It's a beautiful day").should("be.visible");
+    cy.contains(
+      "Saturday, November 26 04:35 AM - Sunday, November 27 06:45 AM"
+    ).should("be.visible");
     cy.contains("button", "Edit").click();
     cy.get(".chakra-modal__body").within(() => {
       cy.contains("label", "Title").click().type(" Everyone");
@@ -43,10 +44,11 @@ describe("journey test", () => {
       cy.contains("label", "End Time").click().type("08:45");
       cy.contains("button", "Save").click();
     });
-    cy.contains("Event title: Hello Everyone").should("be.visible");
-    cy.contains("Description: It's a beautiful day").should("be.visible");
-    cy.contains("Start: Sunday, November 27 07:35 AM").should("be.visible");
-    cy.contains("End: Tuesday, November 29 08:45 AM").should("be.visible");
+    cy.contains("Hello Everyone").should("be.visible");
+    cy.contains("It's a beautiful day").should("be.visible");
+    cy.contains(
+      "Sunday, November 27 07:35 AM - Tuesday, November 29 08:45 AM"
+    ).should("be.visible");
     cy.contains("button", "Delete").click();
     cy.contains("Hello Everyone").should("not.exist");
   });
@@ -70,9 +72,9 @@ describe("journey test", () => {
     });
 
     cy.contains("Bye").click();
-    cy.contains("Event title: Bye").should("be.visible");
-    cy.contains("Description: It's a beautiful night").should("be.visible");
-    cy.findByText("Start: Wednesday, December 14").should("exist");
-    cy.findByText("End: Wednesday, December 14").should("exist");
+    cy.contains("Bye").should("be.visible");
+    cy.contains("It's a beautiful night").should("be.visible");
+    cy.findByText("Wednesday, December 14").should("exist");
+    cy.findByText("All Day").should("exist");
   });
 });

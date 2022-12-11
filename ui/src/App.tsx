@@ -9,8 +9,8 @@ import {
   formatDate,
   getDateTimeString,
   padNumberWith0Zero,
-  getModalDate,
   formatTime,
+  modalDateFormat,
 } from "./lib";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
@@ -67,16 +67,16 @@ const App = () => {
   const currentHour: number = new Date().getHours();
   const currentMinute: number = new Date().getMinutes();
   const DEFAULT_START_TIME: string = `${padNumberWith0Zero(
-    currentHour,
+    currentHour
   )}:${padNumberWith0Zero(currentMinute)}`;
   const DEFAULT_END_TIME: string = `${padNumberWith0Zero(
-    currentHour + 1,
+    currentHour + 1
   )}:${padNumberWith0Zero(currentMinute)}`;
   const DEFAULT_DATE = formatDate(new Date());
 
   const [events, setEvents] = useState<EventSourceInput>([]);
   const [displayedEventData, setDisplayedEventData] = useState(
-    {} as DisplayedEventData,
+    {} as DisplayedEventData
   );
   const [showOverlay, setShowOverlay] = useState<boolean>(false);
   const [inEditMode, setInEditMode] = useState<boolean>(false);
@@ -226,27 +226,27 @@ const App = () => {
         <Modal isOpen={showOverlay} onClose={closeOverlay}>
           <ModalOverlay />
           <ModalContent>
-            <ModalHeader>Event Details</ModalHeader>
+            <ModalHeader>
+              <p className={s.title}>{displayedEventData.title}</p>
+            </ModalHeader>
             <ModalCloseButton />
             {!inEditMode && (
               <>
                 <ModalBody>
-                  <p>Event title: {displayedEventData.title}</p>
-                  <p>Description: {displayedEventData.description}</p>
-                  <p>
-                    Start:{" "}
-                    {getModalDate(
-                      displayedEventData.allDay,
-                      displayedEventData.startTimeUtc,
-                    )}
-                  </p>
-                  <p>
-                    End:{" "}
-                    {getModalDate(
-                      displayedEventData.allDay,
-                      displayedEventData.endTimeUtc,
-                    )}
-                  </p>
+                  <div className={s.eventDetails}>
+                    <p>{displayedEventData.description}</p>
+                    <p>
+                      {" "}
+                      {modalDateFormat({
+                        startTimeUtc: displayedEventData.startTimeUtc,
+                        endTimeUtc: displayedEventData.endTimeUtc,
+                        allDay: displayedEventData.allDay,
+                      })}
+                    </p>
+                    <div className={s.allDay}>
+                      {displayedEventData.allDay ? "all day" : ""}
+                    </div>
+                  </div>
                 </ModalBody>
                 <ModalFooter>
                   <Button onClick={handleEditEntry} variant="ghost">
@@ -264,10 +264,10 @@ const App = () => {
                   initialTitle={displayedEventData.title}
                   initialDescription={displayedEventData.description}
                   initialStartDate={formatDate(
-                    new Date(displayedEventData.startTimeUtc),
+                    new Date(displayedEventData.startTimeUtc)
                   )}
                   initialEndDate={formatDate(
-                    new Date(displayedEventData.endTimeUtc),
+                    new Date(displayedEventData.endTimeUtc)
                   )}
                   initialStartTime={formatTime(displayedEventData.startTimeUtc)}
                   initialEndTime={formatTime(displayedEventData.endTimeUtc)}

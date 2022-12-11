@@ -1,6 +1,23 @@
 .mainContainer {
   display: flex;
 }
+.allDay {
+  font-style: italic;
+  padding-left: 6px;
+  font-weight: 600;
+  padding-top: 2px;
+}
+
+.title {
+  font-size: 22px;
+  font-weight: 600;
+  padding-top: 22px;
+  padding-left: 18px;
+}
+
+.eventDetails {
+  padding-left: 20px;
+}
 
 .addEventButton {
   display: none;
