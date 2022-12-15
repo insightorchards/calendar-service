@@ -67,6 +67,7 @@ describe("App", () => {
       waitFor(() => {
         render(<App />);
       });
+      userEvent.click(screen.getByLabelText("add event"));
       expect(screen.getByLabelText("Start Date")).toHaveValue("2022-02-15");
       expect(screen.getByLabelText("End Date")).toHaveValue("2022-02-15");
       expect(screen.getByLabelText("Start Time")).toHaveValue("04:00");
@@ -87,6 +88,7 @@ describe("App", () => {
         await render(<App />);
       });
       expect(mockGetEntries).toHaveBeenCalledTimes(1);
+      userEvent.click(screen.getByLabelText("add event"));
       userEvent.click(screen.getByLabelText("Title"));
       userEvent.type(
         screen.getByLabelText("Title"),
@@ -225,6 +227,7 @@ describe("App", () => {
       await act(async () => {
         await render(<App />);
       });
+      userEvent.click(screen.getByLabelText("add event"));
       userEvent.type(screen.getByLabelText("Start Date"), "2016-12-12");
       expect(screen.getByLabelText("Start Date")).toHaveValue("2016-12-12");
       userEvent.type(screen.getByLabelText("End Date"), "2016-11-11");
@@ -243,6 +246,7 @@ describe("App", () => {
       await act(async () => {
         await render(<App />);
       });
+      userEvent.click(screen.getByLabelText("add event"));
       expect(screen.getByLabelText("Start Date")).toHaveValue("2022-02-15");
       expect(screen.getByLabelText("End Date")).toHaveValue("2022-02-15");
       userEvent.type(screen.getByLabelText("Start Time"), "12:00");
