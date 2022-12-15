@@ -222,8 +222,7 @@ const App = () => {
           <ModalOverlay />
           <ModalContent>
             <ModalHeader>
-              <p className={s.title}>{displayedEventData.title}</p>
-              {inCreateMode ? "Create an Event" : "Event Details"}
+              {inCreateMode ? "Create an Event" : displayedEventData.title}
             </ModalHeader>
             <ModalCloseButton />
             {!inEditMode && !inCreateMode && (
