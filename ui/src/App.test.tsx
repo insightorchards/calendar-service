@@ -216,6 +216,7 @@ describe("App", () => {
       await act(async () => {
         await render(<App />);
       });
+      userEvent.click(screen.getByLabelText("add event"));
       userEvent.type(screen.getByLabelText("Start Date"), "2016-12-12");
       expect(screen.getByLabelText("Start Date")).toHaveValue("2016-12-12");
       expect(screen.getByLabelText("End Date")).toHaveValue("2016-12-12");
@@ -236,8 +237,8 @@ describe("App", () => {
         userEvent.click(screen.getByRole("button", { name: "Create Event" }));
       });
       expect(
-        screen.getByText("Error: end cannot be before start."),
-      ).toBeVisible();
+        screen.getByText("Error: end cannot be before start.")
+      ).toBeInTheDocument();
     });
 
     it("errors when end time is before start time on the same day", async () => {
@@ -257,8 +258,8 @@ describe("App", () => {
         userEvent.click(screen.getByRole("button", { name: "Create Event" }));
       });
       expect(
-        screen.getByText("Error: end cannot be before start."),
-      ).toBeVisible();
+        screen.getByText("Error: end cannot be before start.")
+      ).toBeInTheDocument();
     });
   });
 });
