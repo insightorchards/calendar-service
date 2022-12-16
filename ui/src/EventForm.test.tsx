@@ -131,37 +131,4 @@ describe("EventForm", () => {
     expect(screen.getByLabelText("Start Time")).toBeInTheDocument();
     expect(screen.getByLabelText("End Time")).toBeInTheDocument();
   });
-
-  it("resets inputs correctly to default values when submitted", async () => {
-    render(
-      <EventForm
-        initialStartDate={formatDate(new Date())}
-        initialEndDate={formatDate(new Date())}
-        initialStartTime={`${padNumberWith0Zero(
-          currentHour,
-        )}:${padNumberWith0Zero(currentMinute)}`}
-        initialEndTime={`${padNumberWith0Zero(
-          currentHour + 1,
-        )}:${padNumberWith0Zero(currentMinute)}`}
-        initialTitle="Arty party"
-        initialDescription="A time to remember and appreciate classic art and more"
-        initialAllDay={false}
-        onFormSubmit={() => {}}
-        isCreate={true}
-      />,
-    );
-    userEvent.type(screen.getByLabelText("Start Date"), "03162022");
-    userEvent.type(screen.getByLabelText("Start Time"), "08:10");
-    userEvent.type(screen.getByLabelText("End Date"), "03182022");
-    userEvent.type(screen.getByLabelText("End Time"), "10:10");
-    userEvent.click(screen.getByLabelText("All Day"));
-    await waitFor(() => {
-      userEvent.click(screen.getByRole("button", { name: "Create Event" }));
-    });
-    expect(screen.getByLabelText("Start Date")).toHaveValue("");
-    expect(screen.getByLabelText("End Date")).toHaveValue("");
-    expect(screen.getByLabelText("Start Time")).toHaveValue("");
-    expect(screen.getByLabelText("End Time")).toHaveValue("");
-    expect(screen.getByLabelText("All Day")).not.toBeChecked();
-  });
 });
