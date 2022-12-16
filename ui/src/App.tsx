@@ -185,6 +185,8 @@ const App = () => {
                 icon={<AddIcon boxSize={5} w={5} h={5} />}
                 onClick={() => {
                   setModalDate(DEFAULT_DATE);
+                  setModalStartTime(DEFAULT_START_TIME);
+                  setModalEndTime(DEFAULT_END_TIME);
                   setInCreateMode(true);
                   setShowOverlay(true);
                 }}
