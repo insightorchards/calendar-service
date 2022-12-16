@@ -56,6 +56,11 @@ const formatTime = (utcString: string) =>
     new Date(utcString).getMinutes()
   )}`;
 
+const oneHourLater = (utcString: string) =>
+  `${padNumberWith0Zero(
+    new Date(utcString).getHours() + 1
+  )}:${padNumberWith0Zero(new Date(utcString).getMinutes())}`;
+
 export {
   formatDate,
   getDateTimeString,
@@ -64,4 +69,5 @@ export {
   formatTime,
   dateFormat,
   timeFormat,
+  oneHourLater,
 };

@@ -11,6 +11,7 @@ import {
   padNumberWith0Zero,
   formatTime,
   modalDateFormat,
+  oneHourLater,
 } from "./lib";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
@@ -81,6 +82,10 @@ const App = () => {
   const [inEditMode, setInEditMode] = useState<boolean>(false);
   const [inCreateMode, setInCreateMode] = useState<boolean>(false);
   const [modalDate, setModalDate] = useState<string>(DEFAULT_DATE);
+  const [modalStartTime, setModalStartTime] =
+    useState<string>(DEFAULT_START_TIME);
+  const [modalEndTime, setModalEndTime] = useState<string>(DEFAULT_END_TIME);
+  const [modalAllDay, setModalAllDay] = useState<boolean>(false);
 
   useEffect(() => {
     getEntries().then((entries) => {
@@ -204,7 +209,15 @@ const App = () => {
                 eventClick={openModal}
                 height="100vh"
                 dateClick={(DateClickObject) => {
+                  console.log("from date click", DateClickObject);
                   setModalDate(formatDate(DateClickObject.date));
+                  setModalStartTime(
+                    formatTime(DateClickObject.date.toUTCString())
+                  );
+                  setModalEndTime(
+                    oneHourLater(DateClickObject.date.toUTCString())
+                  );
+                  setModalAllDay(DateClickObject.allDay);
                   setInCreateMode(true);
                   setShowOverlay(true);
                 }}
@@ -279,9 +292,9 @@ const App = () => {
                   initialDescription=""
                   initialStartDate={modalDate}
                   initialEndDate={modalDate}
-                  initialStartTime={DEFAULT_START_TIME}
-                  initialEndTime={DEFAULT_END_TIME}
-                  initialAllDay={false}
+                  initialStartTime={modalStartTime}
+                  initialEndTime={modalEndTime}
+                  initialAllDay={modalAllDay}
                   onFormSubmit={handleCreateEntry}
                   isCreate={true}
                 />
