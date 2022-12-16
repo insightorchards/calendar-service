@@ -1,5 +1,6 @@
 import React, { MouseEvent, useEffect } from "react";
 import EventForm from "./EventForm";
+import moment from "moment";
 import { useState } from "react";
 import FullCalendar, {
   EventClickArg,
@@ -222,7 +223,12 @@ const App = () => {
                   setInCreateMode(true);
                   setShowOverlay(true);
                 }}
-
+                eventDataTransform={(event) => {
+                  if (event.allDay) {
+                    event.end = moment(event.end).add(1, "days").toDate();
+                  }
+                  return event;
+                }}
                 // editable={true}
                 // selectMirror={true}
                 // dayMaxEvents={true}
