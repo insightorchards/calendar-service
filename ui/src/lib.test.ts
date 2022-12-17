@@ -42,13 +42,22 @@ describe("lib functions", () => {
   });
 
   describe("addDayToAllDayEvent", () => {
-    it("adds one day to all day end dates", () => {
+    it("adds one day end date of all day events", () => {
       const event = {
         allDay: true,
         end: new Date("2022-02-15T04:00"),
       };
       const updatedEvent = addDayToAllDayEvent(event);
       expect(updatedEvent.end).toEqual(new Date("2022-02-16T04:00"));
+    });
+
+    it("does not modify dates when event is not all day", () => {
+      const event = {
+        allDay: false,
+        end: new Date("2022-02-15T04:00"),
+      };
+      const updatedEvent = addDayToAllDayEvent(event);
+      expect(updatedEvent.end).toEqual(new Date("2022-02-15T04:00"));
     });
   });
 });
