@@ -211,7 +211,6 @@ const App = () => {
                 eventClick={openModal}
                 height="100vh"
                 dateClick={(DateClickObject) => {
-                  console.log("from date click", DateClickObject);
                   setModalDate(formatDate(DateClickObject.date));
                   setModalStartTime(
                     formatTime(DateClickObject.date.toUTCString())
