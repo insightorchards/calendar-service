@@ -12,6 +12,7 @@ import {
   formatTime,
   modalDateFormat,
   oneHourLater,
+  addDayToAllDayEvent,
 } from "./lib";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
@@ -222,7 +223,7 @@ const App = () => {
                   setInCreateMode(true);
                   setShowOverlay(true);
                 }}
-
+                eventDataTransform={addDayToAllDayEvent}
                 // editable={true}
                 // selectMirror={true}
                 // dayMaxEvents={true}
@@ -235,12 +236,10 @@ const App = () => {
         <Modal isOpen={showOverlay} onClose={closeOverlay}>
           <ModalOverlay />
           <ModalContent>
-            <ModalHeader>
-              {inCreateMode ? "Create an Event" : displayedEventData.title}
-            </ModalHeader>
-            <ModalCloseButton />
             {!inEditMode && !inCreateMode && (
               <>
+                <ModalHeader>{displayedEventData.title}</ModalHeader>
+                <ModalCloseButton />
                 <ModalBody>
                   <div className={s.eventDetails}>
                     <p>{displayedEventData.description}</p>
@@ -268,38 +267,48 @@ const App = () => {
               </>
             )}
             {inEditMode && (
-              <ModalBody>
-                <EventForm
-                  initialTitle={displayedEventData.title}
-                  initialDescription={displayedEventData.description}
-                  initialStartDate={formatDate(
-                    new Date(displayedEventData.startTimeUtc)
-                  )}
-                  initialEndDate={formatDate(
-                    new Date(displayedEventData.endTimeUtc)
-                  )}
-                  initialStartTime={formatTime(displayedEventData.startTimeUtc)}
-                  initialEndTime={formatTime(displayedEventData.endTimeUtc)}
-                  initialAllDay={displayedEventData.allDay}
-                  onFormSubmit={handleSaveChanges}
-                  isCreate={false}
-                />
-              </ModalBody>
+              <>
+                <ModalHeader>Edit event</ModalHeader>
+                <ModalCloseButton />
+                <ModalBody>
+                  <EventForm
+                    initialTitle={displayedEventData.title}
+                    initialDescription={displayedEventData.description}
+                    initialStartDate={formatDate(
+                      new Date(displayedEventData.startTimeUtc)
+                    )}
+                    initialEndDate={formatDate(
+                      new Date(displayedEventData.endTimeUtc)
+                    )}
+                    initialStartTime={formatTime(
+                      displayedEventData.startTimeUtc
+                    )}
+                    initialEndTime={formatTime(displayedEventData.endTimeUtc)}
+                    initialAllDay={displayedEventData.allDay}
+                    onFormSubmit={handleSaveChanges}
+                    isCreate={false}
+                  />
+                </ModalBody>
+              </>
             )}
             {inCreateMode && (
-              <ModalBody>
-                <EventForm
-                  initialTitle=""
-                  initialDescription=""
-                  initialStartDate={modalDate}
-                  initialEndDate={modalDate}
-                  initialStartTime={modalStartTime}
-                  initialEndTime={modalEndTime}
-                  initialAllDay={modalAllDay}
-                  onFormSubmit={handleCreateEntry}
-                  isCreate={true}
-                />
-              </ModalBody>
+              <>
+                <ModalHeader>Create event</ModalHeader>
+                <ModalCloseButton />
+                <ModalBody>
+                  <EventForm
+                    initialTitle=""
+                    initialDescription=""
+                    initialStartDate={modalDate}
+                    initialEndDate={modalDate}
+                    initialStartTime={modalStartTime}
+                    initialEndTime={modalEndTime}
+                    initialAllDay={modalAllDay}
+                    onFormSubmit={handleCreateEntry}
+                    isCreate={true}
+                  />
+                </ModalBody>
+              </>
             )}
           </ModalContent>
         </Modal>
