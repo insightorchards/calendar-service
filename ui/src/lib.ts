@@ -1,3 +1,6 @@
+import moment from "moment";
+import { EventInputTransformer, EventInput } from "@fullcalendar/react";
+
 const padNumberWith0Zero: Function = (num: Number): string =>
   num.toString().padStart(2, "0");
 
@@ -61,7 +64,15 @@ const oneHourLater = (utcString: string) =>
     new Date(utcString).getHours() + 1
   )}:${padNumberWith0Zero(new Date(utcString).getMinutes())}`;
 
+const addDayToAllDayEvent: EventInputTransformer = (event: EventInput) => {
+  if (event.allDay) {
+    event.end = moment(event.end).add(1, "days").toDate();
+  }
+  return event;
+};
+
 export {
+  addDayToAllDayEvent,
   formatDate,
   getDateTimeString,
   padNumberWith0Zero,
