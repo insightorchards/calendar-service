@@ -11,15 +11,16 @@ import {
   padNumberWith0Zero,
   formatTime,
   modalDateFormat,
+  oneHourLater,
 } from "./lib";
 import dayGridPlugin from "@fullcalendar/daygrid";
+import interactionPlugin from "@fullcalendar/interaction";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import listPlugin from "@fullcalendar/list";
 import { AddIcon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
-  CloseButton,
   IconButton,
   Modal,
   ModalOverlay,
@@ -73,15 +74,18 @@ const App = () => {
     currentHour + 1
   )}:${padNumberWith0Zero(currentMinute)}`;
   const DEFAULT_DATE = formatDate(new Date());
-
   const [events, setEvents] = useState<EventSourceInput>([]);
   const [displayedEventData, setDisplayedEventData] = useState(
     {} as DisplayedEventData
   );
   const [showOverlay, setShowOverlay] = useState<boolean>(false);
   const [inEditMode, setInEditMode] = useState<boolean>(false);
-  const [showMobileEventForm, setShowMobileEventForm] =
-    useState<boolean>(false);
+  const [inCreateMode, setInCreateMode] = useState<boolean>(false);
+  const [modalDate, setModalDate] = useState<string>(DEFAULT_DATE);
+  const [modalStartTime, setModalStartTime] =
+    useState<string>(DEFAULT_START_TIME);
+  const [modalEndTime, setModalEndTime] = useState<string>(DEFAULT_END_TIME);
+  const [modalAllDay, setModalAllDay] = useState<boolean>(false);
 
   useEffect(() => {
     getEntries().then((entries) => {
@@ -109,7 +113,8 @@ const App = () => {
     });
     getEntries().then((entries) => {
       setEvents(entries);
-      setShowMobileEventForm(false);
+      setShowOverlay(false);
+      setInCreateMode(false);
     });
   };
 
@@ -137,11 +142,10 @@ const App = () => {
 
   const handleEditEntry = () => setInEditMode(true);
 
-  const handleCancel = () => setShowMobileEventForm(false);
-
   const closeOverlay = () => {
     setShowOverlay(false);
     setInEditMode(false);
+    setInCreateMode(false);
   };
 
   const handleSaveChanges = async ({
@@ -175,35 +179,27 @@ const App = () => {
       <ChakraProvider>
         <Box>
           <div className={s.mainContainer}>
-            <div className={`${s.form} ${showMobileEventForm ? s.active : ""}`}>
-              <header className={s.header}>Create an event</header>
-              <div className={s.closeButton}>
-                <CloseButton size="md" onClick={handleCancel} />
-              </div>
-              <EventForm
-                initialTitle=""
-                initialDescription=""
-                initialStartDate={DEFAULT_DATE}
-                initialEndDate={DEFAULT_DATE}
-                initialStartTime={DEFAULT_START_TIME}
-                initialEndTime={DEFAULT_END_TIME}
-                initialAllDay={false}
-                onFormSubmit={handleCreateEntry}
-                isCreate={true}
+            <div className={s.leftSidePanel}>
+              <IconButton
+                aria-label="add event"
+                icon={<AddIcon boxSize={5} w={5} h={5} />}
+                onClick={() => {
+                  setModalDate(DEFAULT_DATE);
+                  setModalStartTime(DEFAULT_START_TIME);
+                  setModalEndTime(DEFAULT_END_TIME);
+                  setInCreateMode(true);
+                  setShowOverlay(true);
+                }}
               />
             </div>
             <div className={s.fullCalendarUI}>
-              <div className={s.addEventButton}>
-                <IconButton
-                  aria-label="add event"
-                  icon={<AddIcon boxSize={5} w={5} h={5} />}
-                  onClick={() => {
-                    setShowMobileEventForm(true);
-                  }}
-                />
-              </div>
               <FullCalendar
-                plugins={[dayGridPlugin, timeGridPlugin, listPlugin]}
+                plugins={[
+                  dayGridPlugin,
+                  timeGridPlugin,
+                  listPlugin,
+                  interactionPlugin,
+                ]}
                 headerToolbar={{
                   left: "prev,next today",
                   center: "title",
@@ -214,6 +210,19 @@ const App = () => {
                 selectable={true}
                 eventClick={openModal}
                 height="100vh"
+                dateClick={(DateClickObject) => {
+                  setModalDate(formatDate(DateClickObject.date));
+                  setModalStartTime(
+                    formatTime(DateClickObject.date.toUTCString())
+                  );
+                  setModalEndTime(
+                    oneHourLater(DateClickObject.date.toUTCString())
+                  );
+                  setModalAllDay(DateClickObject.allDay);
+                  setInCreateMode(true);
+                  setShowOverlay(true);
+                }}
+
                 // editable={true}
                 // selectMirror={true}
                 // dayMaxEvents={true}
@@ -227,10 +236,10 @@ const App = () => {
           <ModalOverlay />
           <ModalContent>
             <ModalHeader>
-              <p className={s.title}>{displayedEventData.title}</p>
+              {inCreateMode ? "Create an Event" : displayedEventData.title}
             </ModalHeader>
             <ModalCloseButton />
-            {!inEditMode && (
+            {!inEditMode && !inCreateMode && (
               <>
                 <ModalBody>
                   <div className={s.eventDetails}>
@@ -274,6 +283,21 @@ const App = () => {
                   initialAllDay={displayedEventData.allDay}
                   onFormSubmit={handleSaveChanges}
                   isCreate={false}
+                />
+              </ModalBody>
+            )}
+            {inCreateMode && (
+              <ModalBody>
+                <EventForm
+                  initialTitle=""
+                  initialDescription=""
+                  initialStartDate={modalDate}
+                  initialEndDate={modalDate}
+                  initialStartTime={modalStartTime}
+                  initialEndTime={modalEndTime}
+                  initialAllDay={modalAllDay}
+                  onFormSubmit={handleCreateEntry}
+                  isCreate={true}
                 />
               </ModalBody>
             )}

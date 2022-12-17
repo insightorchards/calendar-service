@@ -16,6 +16,7 @@ describe("journey test", () => {
       hostname: "localhost",
     }).as("createEntry");
 
+    cy.get(`[aria-label="add event"]`).click();
     cy.contains("label", "Title").click().type("Hello");
     cy.contains("label", "Description").click().type("It's a beautiful day");
     cy.contains("label", "Start Date").click().type("2022-11-26");
@@ -60,6 +61,7 @@ describe("journey test", () => {
       url: "/entries",
       hostname: "localhost",
     }).as("createEntry");
+    cy.get(`[aria-label="add event"]`).click();
     cy.contains("label", "Title").click().type("Bye");
     cy.contains("label", "Description").click().type("It's a beautiful night");
     cy.contains("label", "Start Date").click().type("2022-12-14");
@@ -75,6 +77,29 @@ describe("journey test", () => {
     cy.contains("Bye").should("be.visible");
     cy.contains("It's a beautiful night").should("be.visible");
     cy.findByText("Wednesday, December 14").should("exist");
-    cy.findByText("All Day").should("exist");
+    cy.findByText("all day").should("exist");
+  });
+
+  it("opens create event modal with date, time, and all day pre-selected when field is clicked", () => {
+    cy.visit("http://localhost:3000");
+    cy.get(`[data-date="2022-12-14"]`).click();
+    cy.get(".chakra-modal__body").within(() => {
+      cy.get(`[id="startDate"]`).should("have.value", "2022-12-14");
+      cy.get(`[id="endDate"]`).should("have.value", "2022-12-14");
+    });
+    cy.get(`[aria-label="Close"]`).click();
+    cy.findByText("week").click();
+    cy.get(`[data-date="2022-12-15"]`).eq(1).click();
+    cy.get(".chakra-modal__body").within(() => {
+      cy.get(`[id="startDate"]`).should("have.value", "2022-12-15");
+      cy.get(`[id="endDate"]`).should("have.value", "2022-12-15");
+      cy.get('[type="checkbox"]').should("be.checked");
+    });
+    cy.get(`[aria-label="Close"]`).click();
+    cy.get(`[data-time="06:30:00"]`).eq(1).click();
+    cy.get(".chakra-modal__body").within(() => {
+      cy.get(`[id="startTime"]`).should("have.value", "06:30");
+      cy.get(`[id="endTime"]`).should("have.value", "07:30");
+    });
   });
 });

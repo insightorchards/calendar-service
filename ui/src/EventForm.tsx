@@ -51,17 +51,6 @@ const EventForm = ({
       endTime,
       allDay,
     });
-
-    if (isCreate) {
-      setTitle(initialTitle);
-      setDescription(initialDescription);
-      setError(null);
-      setStartDate("");
-      setEndDate("");
-      setStartTime("");
-      setEndTime("");
-      setAllDay(initialAllDay);
-    }
   };
 
   return (
