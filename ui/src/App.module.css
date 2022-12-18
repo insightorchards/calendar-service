@@ -4,7 +4,7 @@
 .allDay {
   font-style: italic;
   font-weight: 600;
-  padding-left: 6px;
+  padding-left: 20px;
   padding-top: 2px;
 }
 
@@ -17,6 +17,12 @@
 
 .eventDetails {
   padding-left: 20px;
+}
+
+.eventDetailsTime {
+  display: block;
+  padding-left: 20px;
+  text-indent: -20px;
 }
 
 .leftSidePanel {

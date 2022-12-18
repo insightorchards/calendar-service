@@ -243,8 +243,7 @@ const App = () => {
                 <ModalBody>
                   <div className={s.eventDetails}>
                     <p>{displayedEventData.description}</p>
-                    <p>
-                      {" "}
+                    <p className={s.eventDetailsTime}>
                       {modalDateFormat({
                         startTimeUtc: displayedEventData.startTimeUtc,
                         endTimeUtc: displayedEventData.endTimeUtc,
