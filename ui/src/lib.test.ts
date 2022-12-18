@@ -36,7 +36,7 @@ describe("lib functions", () => {
         allDay: false,
       });
       expect(result).toEqual(
-        "Sunday, December 11 06:43 AM - Wednesday, December 14 08:45 AM",
+        "Sunday, December 11, 06:43 AM - Wednesday, December 14 08:45 AM",
       );
     });
   });

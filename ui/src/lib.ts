@@ -48,7 +48,7 @@ const modalDateFormat: Function = ({
   } else if (allDay) {
     return `${startDate} - ${endDate}`;
   } else {
-    return `${startDate} ${timeFormat(start)} - ${endDate} ${timeFormat(end)}`;
+    return `${startDate}, ${timeFormat(start)} - ${endDate} ${timeFormat(end)}`;
   }
 };
 
