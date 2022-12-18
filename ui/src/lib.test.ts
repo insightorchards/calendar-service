@@ -26,7 +26,7 @@ describe("lib functions", () => {
         endTimeUtc: "2022-12-11T16:45:37.868Z",
         allDay: false,
       });
-      expect(result).toEqual("Sunday, December 11 06:43 AM - 08:45 AM");
+      expect(result).toEqual("Sunday, December 11 · 06:43 AM - 08:45 AM");
     });
 
     it("returns days and times with dash in between for different day events", () => {
@@ -36,7 +36,7 @@ describe("lib functions", () => {
         allDay: false,
       });
       expect(result).toEqual(
-        "Sunday, December 11 06:43 AM - Wednesday, December 14 08:45 AM"
+        "Sunday, December 11 06:43 AM - Wednesday, December 14 08:45 AM",
       );
     });
   });
