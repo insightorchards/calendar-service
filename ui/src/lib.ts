@@ -14,9 +14,9 @@ const formatDate: Function = (date: Date): string => {
 
 const dateFormat = (selectedEventDate: Date) =>
   `${selectedEventDate.toLocaleString("default", {
-    weekday: "long",
+    weekday: "short",
   })}, ${selectedEventDate.toLocaleString("default", {
-    month: "long",
+    month: "short",
   })} ${selectedEventDate.getDate()}`;
 
 const timeFormat = (selectedEventDate: Date) =>
