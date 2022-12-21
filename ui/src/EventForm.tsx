@@ -38,6 +38,10 @@ const EventForm = ({
   const handleFormSubmit = async (_: React.MouseEvent<HTMLButtonElement>) => {
     const startDateAndTime: string = getDateTimeString(startDate, startTime);
     const endDateAndTime: string = getDateTimeString(endDate, endTime);
+    if (title === "") {
+      setError("Error: title cannot be empty.");
+      return;
+    }
     if (startDateAndTime > endDateAndTime) {
       setError("Error: end cannot be before start.");
       return;
