@@ -82,6 +82,9 @@ const updateEntry = async (
       allDay,
     }),
   });
+  if (!response.ok) {
+    throw new Error("Update request failed");
+  }
   const result = await response.json();
   return result;
 };

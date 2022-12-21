@@ -191,6 +191,30 @@ describe("client functions", () => {
         __v: 0,
       });
     });
+
+    it.only("throws an error on failure", async () => {
+      const mockResponse = {
+        status: 400,
+        json: () => {
+          return {} as any;
+        },
+      } as Response;
+
+      const fetchSpy = jest
+        .spyOn(window, "fetch")
+        .mockResolvedValue(mockResponse);
+
+      expect(() =>
+        updateEntry("638d815856e5c70955565b7e", {
+          title: "Barbies's Bat Mitzvah",
+          description: "Barbie is turning 13!",
+          startTimeUtc: new Date("2024-06-06T01:07:00.000Z"),
+          endTimeUtc: new Date("2024-06-06T01:07:00.000Z"),
+          allDay: true,
+        })
+      ).toThrowError();
+      // ).toThrow(new Error("Update request failed"));
+    });
   });
 
   describe.only("deleteEntry", () => {

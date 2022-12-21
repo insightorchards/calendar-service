@@ -20,6 +20,10 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import listPlugin from "@fullcalendar/list";
 import { AddIcon } from "@chakra-ui/icons";
 import {
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  AlertDescription,
   Box,
   Button,
   IconButton,
@@ -87,6 +91,7 @@ const App = () => {
     useState<string>(DEFAULT_START_TIME);
   const [modalEndTime, setModalEndTime] = useState<string>(DEFAULT_END_TIME);
   const [modalAllDay, setModalAllDay] = useState<boolean>(false);
+  const [apiError, setApiError] = useState<boolean>(true);
 
   useEffect(() => {
     getEntries().then((entries) => {
@@ -179,6 +184,12 @@ const App = () => {
     <div className="App">
       <ChakraProvider>
         <Box>
+          {apiError && (
+            <Alert status="error" justifyContent="center">
+              <AlertIcon />
+              <AlertDescription>Oops! Something went wrong.</AlertDescription>
+            </Alert>
+          )}
           <div className={s.mainContainer}>
             <div className={s.leftSidePanel}>
               <IconButton
