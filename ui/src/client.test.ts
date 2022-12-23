@@ -8,6 +8,11 @@ import {
 
 describe("client functions", () => {
   describe("getEntries", () => {
+    afterEach(() => {
+      jest.restoreAllMocks();
+      jest.clearAllMocks();
+    });
+
     it("succeeds", async () => {
       const mockResponse = {
         status: 200,
@@ -46,9 +51,28 @@ describe("client functions", () => {
         },
       ]);
     });
+
+    it("throws an error on failure", () => {
+      const mockResponse = {
+        status: 400,
+        json: () => {
+          return [{}] as any;
+        },
+      } as Response;
+
+      jest.spyOn(window, "fetch").mockResolvedValue(mockResponse);
+      expect(() => getEntries()).rejects.toThrowError(
+        new Error("Get entries request failed")
+      );
+    });
   });
 
   describe("getEntry", () => {
+    afterEach(() => {
+      jest.restoreAllMocks();
+      jest.clearAllMocks();
+    });
+
     it("succeeds", async () => {
       const mockResponse = {
         status: 200,
@@ -89,9 +113,28 @@ describe("client functions", () => {
         __v: 0,
       });
     });
+
+    it("throws an error on failure", () => {
+      const mockResponse = {
+        status: 400,
+        json: () => {
+          return [{}] as any;
+        },
+      } as Response;
+
+      jest.spyOn(window, "fetch").mockResolvedValue(mockResponse);
+      expect(() => getEntry("638d815856e5c70955565b7e")).rejects.toThrowError(
+        new Error("Get entry request failed")
+      );
+    });
   });
 
   describe("createEntry", () => {
+    afterEach(() => {
+      jest.restoreAllMocks();
+      jest.clearAllMocks();
+    });
+
     it("succeeds", async () => {
       const mockResponse = {
         status: 200,
@@ -138,9 +181,34 @@ describe("client functions", () => {
         __v: 0,
       });
     });
+
+    it("throws an error on failure", () => {
+      const mockResponse = {
+        status: 400,
+        json: () => {
+          return [{}] as any;
+        },
+      } as Response;
+
+      jest.spyOn(window, "fetch").mockResolvedValue(mockResponse);
+      expect(() =>
+        createEntry({
+          title: "Ange's Bat Mitzvah",
+          description: "Ange is turning 13!",
+          startTimeUtc: new Date("2024-06-06T01:07:00.000Z"),
+          endTimeUtc: new Date("2024-06-06T01:07:00.000Z"),
+          allDay: true,
+        })
+      ).rejects.toThrowError(new Error("Create entry request failed"));
+    });
   });
 
   describe("updateEntry", () => {
+    afterEach(() => {
+      jest.restoreAllMocks();
+      jest.clearAllMocks();
+    });
+
     it("succeeds", async () => {
       const mockResponse = {
         status: 200,
@@ -174,7 +242,7 @@ describe("client functions", () => {
       });
       expect(fetchSpy).toHaveBeenCalled();
       expect(fetchSpy.mock.calls[0][1]).toEqual(
-        expect.objectContaining({ method: "PATCH" }),
+        expect.objectContaining({ method: "PATCH" })
       );
 
       expect(result).toEqual({
@@ -192,7 +260,7 @@ describe("client functions", () => {
       });
     });
 
-    it.only("throws an error on failure", async () => {
+    it("throws an error on failure", async () => {
       const mockResponse = {
         status: 400,
         json: () => {
@@ -200,9 +268,7 @@ describe("client functions", () => {
         },
       } as Response;
 
-      const fetchSpy = jest
-        .spyOn(window, "fetch")
-        .mockResolvedValue(mockResponse);
+      jest.spyOn(window, "fetch").mockResolvedValue(mockResponse);
 
       expect(() =>
         updateEntry("638d815856e5c70955565b7e", {
@@ -212,12 +278,16 @@ describe("client functions", () => {
           endTimeUtc: new Date("2024-06-06T01:07:00.000Z"),
           allDay: true,
         })
-      ).toThrowError();
-      // ).toThrow(new Error("Update request failed"));
+      ).rejects.toThrow(new Error("Update entry request failed"));
     });
   });
 
-  describe.only("deleteEntry", () => {
+  describe("deleteEntry", () => {
+    afterEach(() => {
+      jest.restoreAllMocks();
+      jest.clearAllMocks();
+    });
+
     it("succeeds", async () => {
       const mockResponse = {
         status: 200,
@@ -236,6 +306,21 @@ describe("client functions", () => {
       expect(result).toEqual({
         status: 200,
       });
+    });
+
+    it("throws an error on failure", async () => {
+      const mockResponse = {
+        status: 400,
+        json: () => {
+          return {} as any;
+        },
+      } as Response;
+
+      jest.spyOn(window, "fetch").mockResolvedValue(mockResponse);
+
+      expect(() => deleteEntry("638d815856e5c70955565b7e")).rejects.toThrow(
+        new Error("Delete entry request failed")
+      );
     });
   });
 });
