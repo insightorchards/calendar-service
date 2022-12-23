@@ -107,7 +107,7 @@ describe("App", () => {
       });
       expect(await screen.findByLabelText("Title")).toHaveAttribute(
         "value",
-        "",
+        "Berta goes to the baseball game!",
       );
       expect(
         await screen.findByText("Berta goes to the baseball game!"),
@@ -237,7 +237,7 @@ describe("App", () => {
         userEvent.click(screen.getByRole("button", { name: "Create Event" }));
       });
       expect(
-        screen.getByText("Error: end cannot be before start.")
+        screen.getByText("Error: end cannot be before start."),
       ).toBeInTheDocument();
     });
 

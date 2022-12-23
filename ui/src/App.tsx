@@ -73,15 +73,15 @@ const App = () => {
   const currentHour: number = new Date().getHours();
   const currentMinute: number = new Date().getMinutes();
   const DEFAULT_START_TIME: string = `${padNumberWith0Zero(
-    currentHour
+    currentHour,
   )}:${padNumberWith0Zero(currentMinute)}`;
   const DEFAULT_END_TIME: string = `${padNumberWith0Zero(
-    currentHour + 1
+    currentHour + 1,
   )}:${padNumberWith0Zero(currentMinute)}`;
   const DEFAULT_DATE = formatDate(new Date());
   const [events, setEvents] = useState<EventSourceInput>([]);
   const [displayedEventData, setDisplayedEventData] = useState(
-    {} as DisplayedEventData
+    {} as DisplayedEventData,
   );
   const [showOverlay, setShowOverlay] = useState<boolean>(false);
   const [inEditMode, setInEditMode] = useState<boolean>(false);
@@ -91,7 +91,7 @@ const App = () => {
     useState<string>(DEFAULT_START_TIME);
   const [modalEndTime, setModalEndTime] = useState<string>(DEFAULT_END_TIME);
   const [modalAllDay, setModalAllDay] = useState<boolean>(false);
-  const [apiError, setApiError] = useState<boolean>(true);
+  const [apiError, setApiError] = useState<boolean>(false);
 
   useEffect(() => {
     getEntries().then((entries) => {
@@ -225,10 +225,10 @@ const App = () => {
                 dateClick={(DateClickObject) => {
                   setModalDate(formatDate(DateClickObject.date));
                   setModalStartTime(
-                    formatTime(DateClickObject.date.toUTCString())
+                    formatTime(DateClickObject.date.toUTCString()),
                   );
                   setModalEndTime(
-                    oneHourLater(DateClickObject.date.toUTCString())
+                    oneHourLater(DateClickObject.date.toUTCString()),
                   );
                   setModalAllDay(DateClickObject.allDay);
                   setInCreateMode(true);
@@ -286,13 +286,13 @@ const App = () => {
                     initialTitle={displayedEventData.title}
                     initialDescription={displayedEventData.description}
                     initialStartDate={formatDate(
-                      new Date(displayedEventData.startTimeUtc)
+                      new Date(displayedEventData.startTimeUtc),
                     )}
                     initialEndDate={formatDate(
-                      new Date(displayedEventData.endTimeUtc)
+                      new Date(displayedEventData.endTimeUtc),
                     )}
                     initialStartTime={formatTime(
-                      displayedEventData.startTimeUtc
+                      displayedEventData.startTimeUtc,
                     )}
                     initialEndTime={formatTime(displayedEventData.endTimeUtc)}
                     initialAllDay={displayedEventData.allDay}
