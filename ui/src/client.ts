@@ -11,7 +11,6 @@ const notOk = (status: number) => {
 };
 
 const getEntries = async () => {
-  console.log("inside get entries");
   return fetch("http://localhost:4000/entries", {
     method: "GET",
     headers: {

@@ -7,12 +7,12 @@ import {
 } from "./client";
 
 describe("client functions", () => {
-  describe("getEntries", () => {
-    afterEach(() => {
-      jest.restoreAllMocks();
-      jest.clearAllMocks();
-    });
+  afterEach(() => {
+    jest.restoreAllMocks();
+    jest.clearAllMocks();
+  });
 
+  describe("getEntries", () => {
     it("succeeds", async () => {
       const mockResponse = {
         status: 200,
@@ -68,11 +68,6 @@ describe("client functions", () => {
   });
 
   describe("getEntry", () => {
-    afterEach(() => {
-      jest.restoreAllMocks();
-      jest.clearAllMocks();
-    });
-
     it("succeeds", async () => {
       const mockResponse = {
         status: 200,
@@ -130,11 +125,6 @@ describe("client functions", () => {
   });
 
   describe("createEntry", () => {
-    afterEach(() => {
-      jest.restoreAllMocks();
-      jest.clearAllMocks();
-    });
-
     it("succeeds", async () => {
       const mockResponse = {
         status: 200,
@@ -204,11 +194,6 @@ describe("client functions", () => {
   });
 
   describe("updateEntry", () => {
-    afterEach(() => {
-      jest.restoreAllMocks();
-      jest.clearAllMocks();
-    });
-
     it("succeeds", async () => {
       const mockResponse = {
         status: 200,
@@ -283,11 +268,6 @@ describe("client functions", () => {
   });
 
   describe("deleteEntry", () => {
-    afterEach(() => {
-      jest.restoreAllMocks();
-      jest.clearAllMocks();
-    });
-
     it("succeeds", async () => {
       const mockResponse = {
         status: 200,
