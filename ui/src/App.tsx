@@ -26,7 +26,6 @@ import {
   AlertDescription,
   Box,
   Button,
-  CloseButton,
   IconButton,
   Modal,
   ModalOverlay,
@@ -36,7 +35,6 @@ import {
   ModalBody,
   ModalCloseButton,
   ChakraProvider,
-  useDisclosure,
 } from "@chakra-ui/react";
 import {
   getEntry,
@@ -101,7 +99,6 @@ const App = () => {
         setEvents(entries);
       })
       .catch(() => {
-        console.log("errorrr");
         setApiError(true);
       });
   }, []);
@@ -187,27 +184,14 @@ const App = () => {
     });
   };
 
-  const {
-    isOpen: isVisible,
-    onClose,
-    onOpen,
-  } = useDisclosure({ defaultIsOpen: false });
-
   return (
     <div className="App">
       <ChakraProvider>
         <Box>
-          {isVisible && (
+          {apiError && (
             <Alert status="error" justifyContent="center">
               <AlertIcon />
               <AlertDescription>Oops! Something went wrong.</AlertDescription>
-              <CloseButton
-                alignSelf="flex-start"
-                position="relative"
-                right={-1}
-                top={-1}
-                onClick={onClose}
-              />
             </Alert>
           )}
 

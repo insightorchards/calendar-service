@@ -264,14 +264,14 @@ describe("App", () => {
   });
 
   describe("errors", () => {
-    it("getEntries error displays error message", () => {
+    it("getEntries error displays error message", async () => {
       mockGetEntries.mockRejectedValue("Error in getEntry");
       waitFor(() => {
         act(() => {
           render(<App />);
         });
       });
-      expect(screen.getByRole("alert")).toBeVisible();
+      expect(await screen.findByRole("alert")).toBeVisible();
     });
   });
 });
