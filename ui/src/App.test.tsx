@@ -258,8 +258,20 @@ describe("App", () => {
         userEvent.click(screen.getByRole("button", { name: "Create Event" }));
       });
       expect(
-        screen.getByText("Error: end cannot be before start.")
+        screen.getByText("Error: end cannot be before start."),
       ).toBeInTheDocument();
+    });
+  });
+
+  describe("errors", () => {
+    it("getEntries error displays error message", () => {
+      mockGetEntries.mockRejectedValue("Error in getEntry");
+      waitFor(() => {
+        act(() => {
+          render(<App />);
+        });
+      });
+      expect(screen.getByRole("alert")).toBeVisible();
     });
   });
 });

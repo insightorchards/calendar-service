@@ -19,13 +19,14 @@ import interactionPlugin from "@fullcalendar/interaction";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import listPlugin from "@fullcalendar/list";
 import { AddIcon } from "@chakra-ui/icons";
+
 import {
   Alert,
   AlertIcon,
-  AlertTitle,
   AlertDescription,
   Box,
   Button,
+  CloseButton,
   IconButton,
   Modal,
   ModalOverlay,
@@ -35,6 +36,7 @@ import {
   ModalBody,
   ModalCloseButton,
   ChakraProvider,
+  useDisclosure,
 } from "@chakra-ui/react";
 import {
   getEntry,
@@ -94,9 +96,14 @@ const App = () => {
   const [apiError, setApiError] = useState<boolean>(false);
 
   useEffect(() => {
-    getEntries().then((entries) => {
-      setEvents(entries);
-    });
+    getEntries()
+      .then((entries) => {
+        setEvents(entries);
+      })
+      .catch(() => {
+        console.log("errorrr");
+        setApiError(true);
+      });
   }, []);
 
   const handleCreateEntry = async ({
@@ -180,16 +187,30 @@ const App = () => {
     });
   };
 
+  const {
+    isOpen: isVisible,
+    onClose,
+    onOpen,
+  } = useDisclosure({ defaultIsOpen: false });
+
   return (
     <div className="App">
       <ChakraProvider>
         <Box>
-          {apiError && (
+          {isVisible && (
             <Alert status="error" justifyContent="center">
               <AlertIcon />
               <AlertDescription>Oops! Something went wrong.</AlertDescription>
+              <CloseButton
+                alignSelf="flex-start"
+                position="relative"
+                right={-1}
+                top={-1}
+                onClick={onClose}
+              />
             </Alert>
           )}
+
           <div className={s.mainContainer}>
             <div className={s.leftSidePanel}>
               <IconButton
