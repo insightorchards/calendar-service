@@ -102,8 +102,10 @@ describe("App", () => {
       userEvent.type(screen.getByLabelText("Start Time"), "08:10");
       userEvent.type(screen.getByLabelText("End Date"), "02152022");
       userEvent.type(screen.getByLabelText("End Time"), "10:10");
-      await waitFor(() => {
-        userEvent.click(screen.getByRole("button", { name: "Create Event" }));
+      await act(async () => {
+        await waitFor(() => {
+          userEvent.click(screen.getByRole("button", { name: "Create Event" }));
+        });
       });
       expect(await screen.findByLabelText("Title")).toHaveAttribute(
         "value",
