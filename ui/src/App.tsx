@@ -120,6 +120,8 @@ const App = () => {
       startTimeUtc,
       endTimeUtc,
       allDay,
+    }).catch(() => {
+      setApiError(true);
     });
     getEntries().then((entries) => {
       setEvents(entries);

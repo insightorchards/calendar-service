@@ -23,13 +23,7 @@ describe("App", () => {
 
   it("renders correctly", async () => {
     mockCreateEntry.mockResolvedValue({});
-    mockGetEntries.mockResolvedValue([
-      {
-        end: "2022-02-27T05:43:37.868Z",
-        start: "2022-02-27T05:43:37.868Z",
-        title: "Berta goes to the baseball game!",
-      },
-    ]);
+    mockGetEntries.mockResolvedValue([]);
     const app: any = render(<App />);
     expect(await screen.findByText(/Mon/)).toBeVisible();
     expect(app.asFragment()).toMatchSnapshot();
@@ -268,11 +262,36 @@ describe("App", () => {
   describe("errors", () => {
     it("getEntries error displays error message", async () => {
       mockGetEntries.mockRejectedValue("Error in getEntry");
-      waitFor(() => {
-        act(() => {
-          render(<App />);
-        });
+      await act(async () => {
+        await render(<App />);
       });
+      expect(await screen.findByRole("alert")).toBeVisible();
+    });
+
+    it("createEntry error displays error message", async () => {
+      mockGetEntries.mockResolvedValue([]);
+      mockCreateEntry.mockRejectedValue("Error in createEntry");
+      await act(async () => {
+        await render(<App />);
+      });
+      userEvent.click(screen.getByLabelText("add event"));
+      userEvent.click(screen.getByLabelText("Title"));
+      userEvent.type(
+        screen.getByLabelText("Title"),
+        "Berta goes to the baseball game!",
+      );
+      userEvent.type(
+        screen.getByLabelText("Description"),
+        "She had some tasty nachos and margaritas!",
+      );
+      userEvent.type(screen.getByLabelText("Start Date"), "02152022");
+      userEvent.type(screen.getByLabelText("Start Time"), "08:10");
+      userEvent.type(screen.getByLabelText("End Date"), "02152022");
+      userEvent.type(screen.getByLabelText("End Time"), "10:10");
+      await act(async () => {
+        userEvent.click(screen.getByRole("button", { name: "Create Event" }));
+      });
+
       expect(await screen.findByRole("alert")).toBeVisible();
     });
   });
