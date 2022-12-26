@@ -327,7 +327,7 @@ describe("App", () => {
       expect(await screen.findByRole("alert")).toBeVisible();
     });
 
-    it.skip("updateEntry displays an error message", async () => {
+    it("updateEntry displays an error message", async () => {
       mockGetEntries.mockResolvedValueOnce([
         {
           _id: "123",
@@ -356,24 +356,11 @@ describe("App", () => {
         await eventText.click();
       });
 
-      const editText = await screen.findByText("Edit");
-      expect(editText).toBeInTheDocument();
-
-      // userEvent.click(screen.getByText("Edit"));
-
-      const editButton = await screen.findByText("Edit");
-      await act(async () => {
-        await editButton.click();
-      });
-
-      expect(screen.getByLabelText("Description")).toBeVisible();
+      userEvent.click(screen.getByText("Edit"));
       userEvent.type(
         screen.getByLabelText("Description"),
         "party in the evening"
       );
-
-      const descriptionText = await screen.findByText("party in the evening");
-      expect(descriptionText).toBeInTheDocument();
 
       userEvent.click(screen.getByText("Save"));
       expect(await screen.findByRole("alert")).toBeVisible();

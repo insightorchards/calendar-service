@@ -147,6 +147,7 @@ const App = () => {
         setInEditMode(false);
       })
       .catch(() => {
+        setShowOverlay(false);
         flashApiErrorMessage();
       });
   };
