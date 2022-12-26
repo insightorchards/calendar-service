@@ -6,6 +6,10 @@ interface CalendarEntryInput {
   allDay: boolean;
 }
 
+const notOk = (status: number) => {
+  return !status.toString().match(/2\d+/);
+};
+
 const getEntries = async () => {
   return fetch("http://localhost:4000/entries", {
     method: "GET",
@@ -13,7 +17,12 @@ const getEntries = async () => {
       "Content-Type": "application/json",
     },
   })
-    .then((response) => response.json())
+    .then((response) => {
+      if (notOk(response.status)) {
+        throw new Error("Get entries request failed");
+      }
+      return response.json();
+    })
     .then((data) => {
       const result = data.map((event: any) => {
         return {
@@ -34,7 +43,12 @@ const getEntry = async (entryId: string) => {
     headers: {
       "Content-Type": "application/json",
     },
-  }).then((response) => response.json());
+  }).then((response) => {
+    if (notOk(response.status)) {
+      throw new Error("Get entry request failed");
+    }
+    return response.json();
+  });
 };
 
 const createEntry = async ({
@@ -59,13 +73,16 @@ const createEntry = async ({
       allDay,
     }),
   });
+  if (notOk(response.status)) {
+    throw new Error("Create entry request failed");
+  }
   const result = await response.json();
   return result;
 };
 
 const updateEntry = async (
   entryId: string,
-  { title, startTimeUtc, endTimeUtc, description, allDay }: CalendarEntryInput,
+  { title, startTimeUtc, endTimeUtc, description, allDay }: CalendarEntryInput
 ) => {
   const response = await fetch(`http://localhost:4000/entries/${entryId}`, {
     method: "PATCH",
@@ -82,6 +99,9 @@ const updateEntry = async (
       allDay,
     }),
   });
+  if (notOk(response.status)) {
+    throw new Error("Update entry request failed");
+  }
   const result = await response.json();
   return result;
 };
@@ -94,6 +114,9 @@ const deleteEntry = async (entryId: string) => {
     },
   });
   const result = await response;
+  if (notOk(response.status)) {
+    throw new Error("Delete entry request failed");
+  }
   return result;
 };
 

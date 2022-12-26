@@ -19,7 +19,11 @@ import interactionPlugin from "@fullcalendar/interaction";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import listPlugin from "@fullcalendar/list";
 import { AddIcon } from "@chakra-ui/icons";
+
 import {
+  Alert,
+  AlertIcon,
+  AlertDescription,
   Box,
   Button,
   IconButton,
@@ -87,11 +91,21 @@ const App = () => {
     useState<string>(DEFAULT_START_TIME);
   const [modalEndTime, setModalEndTime] = useState<string>(DEFAULT_END_TIME);
   const [modalAllDay, setModalAllDay] = useState<boolean>(false);
+  const [apiError, setApiError] = useState<boolean>(false);
+
+  const flashApiErrorMessage = () => {
+    setApiError(true);
+    setTimeout(() => setApiError(false), 4000);
+  };
 
   useEffect(() => {
-    getEntries().then((entries) => {
-      setEvents(entries);
-    });
+    getEntries()
+      .then((entries) => {
+        setEvents(entries);
+      })
+      .catch(() => {
+        flashApiErrorMessage();
+      });
   }, []);
 
   const handleCreateEntry = async ({
@@ -111,20 +125,31 @@ const App = () => {
       startTimeUtc,
       endTimeUtc,
       allDay,
+    }).catch(() => {
+      flashApiErrorMessage();
     });
-    getEntries().then((entries) => {
-      setEvents(entries);
-      setShowOverlay(false);
-      setInCreateMode(false);
-    });
+    getEntries()
+      .then((entries) => {
+        setEvents(entries);
+        setShowOverlay(false);
+        setInCreateMode(false);
+      })
+      .catch(() => {
+        flashApiErrorMessage();
+      });
   };
 
   const getEntryDetails = (entryId: string) => {
-    getEntry(entryId).then((data) => {
-      setDisplayedEventData(data);
-      setShowOverlay(true);
-      setInEditMode(false);
-    });
+    getEntry(entryId)
+      .then((data) => {
+        setDisplayedEventData(data);
+        setShowOverlay(true);
+        setInEditMode(false);
+      })
+      .catch(() => {
+        setShowOverlay(false);
+        flashApiErrorMessage();
+      });
   };
 
   const openModal = (arg: EventClickArg) => {
@@ -134,11 +159,17 @@ const App = () => {
 
   const handleDeleteEntry = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    await deleteEntry(displayedEventData._id!);
-    getEntries().then((entries) => {
-      setEvents(entries);
-      setShowOverlay(false);
-    });
+    deleteEntry(displayedEventData._id!)
+      .then(() => {
+        getEntries().then((entries) => {
+          setEvents(entries);
+          setShowOverlay(false);
+        });
+      })
+      .catch(() => {
+        setShowOverlay(false);
+        flashApiErrorMessage();
+      });
   };
 
   const handleEditEntry = () => setInEditMode(true);
@@ -161,24 +192,37 @@ const App = () => {
     const entryId = displayedEventData._id;
     const startTimeUtc = new Date(getDateTimeString(startDate, startTime));
     const endTimeUtc = new Date(getDateTimeString(endDate, endTime));
+
     updateEntry(entryId, {
       title,
       description,
       startTimeUtc,
       endTimeUtc,
       allDay,
-    }).then(() => {
-      getEntryDetails(entryId);
-      getEntries().then((entries) => {
-        setEvents(entries);
+    })
+      .then(() => {
+        getEntryDetails(entryId);
+        getEntries().then((entries) => {
+          setEvents(entries);
+        });
+      })
+      .catch(() => {
+        setShowOverlay(false);
+        flashApiErrorMessage();
       });
-    });
   };
 
   return (
     <div className="App">
       <ChakraProvider>
         <Box>
+          {apiError && (
+            <Alert status="error" justifyContent="center">
+              <AlertIcon />
+              <AlertDescription>Oops! Something went wrong.</AlertDescription>
+            </Alert>
+          )}
+
           <div className={s.mainContainer}>
             <div className={s.leftSidePanel}>
               <IconButton
