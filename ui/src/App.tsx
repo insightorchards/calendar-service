@@ -1,5 +1,5 @@
-import React, { MouseEvent, useEffect } from "react";
 import EventForm from "./EventForm";
+import React, { MouseEvent, useEffect } from "react";
 import { useState } from "react";
 import FullCalendar, {
   EventClickArg,
@@ -14,6 +14,7 @@ import {
   oneHourLater,
   addDayToAllDayEvent,
 } from "./lib";
+import rrulePlugin from "@fullcalendar/rrule";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import timeGridPlugin from "@fullcalendar/timegrid";
@@ -44,6 +45,7 @@ import {
   updateEntry,
 } from "./client";
 import s from "./App.module.css";
+import { RRule } from "rrule";
 
 interface DisplayedEventData {
   _id: string;
@@ -212,6 +214,8 @@ const App = () => {
       });
   };
 
+  console.log({ events });
+
   return (
     <div className="App">
       <ChakraProvider>
@@ -244,13 +248,27 @@ const App = () => {
                   timeGridPlugin,
                   listPlugin,
                   interactionPlugin,
+                  rrulePlugin as any,
                 ]}
                 headerToolbar={{
                   left: "prev,next today",
                   center: "title",
                   right: "dayGridMonth,timeGridWeek,timeGridDay",
                 }}
-                events={events}
+                events={[
+                  {
+                    allDay: false,
+                    end: "2022-12-09T05:50:00.000Z",
+                    start: "2022-12-09T04:50:00.000Z",
+                    title: "Stargazing",
+                    _id: "638ecb82e3380cc98b759ec0",
+                    rrule: {
+                      freq: "weekly",
+                      dtstart: "2022-12-01",
+                      until: "2022-12-20",
+                    },
+                  },
+                ]}
                 initialView="dayGridMonth"
                 selectable={true}
                 eventClick={openModal}
