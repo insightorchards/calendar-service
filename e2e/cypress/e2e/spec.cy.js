@@ -2,6 +2,13 @@ describe("journey test", () => {
   let postOneId;
   let postTwoId;
 
+  beforeEach(() => {
+    // For an unknown reason this sets the current
+    // day to Dec 26, not Nov 26. Leaving since this
+    // is our only way of mocking out time in these tests
+    cy.clock(new Date(2022, 11, 26), ["Date"]);
+  });
+
   after(() => {
     cy.log({ postOneId, postTwoId });
     cy.request("DELETE", `http://localhost:4000/entries/${postOneId}`);
@@ -33,9 +40,9 @@ describe("journey test", () => {
     cy.contains("Hello").click();
     cy.contains("Hello").should("be.visible");
     cy.contains("It's a beautiful day").should("be.visible");
-    cy.contains(
-      "Saturday, November 26 04:35 AM - Sunday, November 27 06:45 AM"
-    ).should("be.visible");
+    cy.contains("Sat, Nov 26, 04:35 AM - Sun, Nov 27, 06:45 AM").should(
+      "be.visible"
+    );
     cy.contains("button", "Edit").click();
     cy.get(".chakra-modal__body").within(() => {
       cy.contains("label", "Title").click().type(" Everyone");
@@ -47,9 +54,9 @@ describe("journey test", () => {
     });
     cy.contains("Hello Everyone").should("be.visible");
     cy.contains("It's a beautiful day").should("be.visible");
-    cy.contains(
-      "Sunday, November 27 07:35 AM - Tuesday, November 29 08:45 AM"
-    ).should("be.visible");
+    cy.contains("Sun, Nov 27, 07:35 AM - Tue, Nov 29, 08:45 AM").should(
+      "be.visible"
+    );
     cy.contains("button", "Delete").click();
     cy.contains("Hello Everyone").should("not.exist");
   });
@@ -76,7 +83,7 @@ describe("journey test", () => {
     cy.contains("Bye").click();
     cy.contains("Bye").should("be.visible");
     cy.contains("It's a beautiful night").should("be.visible");
-    cy.findByText("Wednesday, December 14").should("exist");
+    cy.findByText("Wed, Dec 14").should("exist");
     cy.findByText("all day").should("exist");
   });
 
@@ -89,10 +96,10 @@ describe("journey test", () => {
     });
     cy.get(`[aria-label="Close"]`).click();
     cy.findByText("week").click();
-    cy.get(`[data-date="2022-12-15"]`).eq(1).click();
+    cy.get(`[data-date="2022-12-26"]`).eq(1).click();
     cy.get(".chakra-modal__body").within(() => {
-      cy.get(`[id="startDate"]`).should("have.value", "2022-12-15");
-      cy.get(`[id="endDate"]`).should("have.value", "2022-12-15");
+      cy.get(`[id="startDate"]`).should("have.value", "2022-12-26");
+      cy.get(`[id="endDate"]`).should("have.value", "2022-12-26");
       cy.get('[type="checkbox"]').should("be.checked");
     });
     cy.get(`[aria-label="Close"]`).click();
