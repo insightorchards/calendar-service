@@ -192,7 +192,7 @@ const App = () => {
     const entryId = displayedEventData._id;
     const startTimeUtc = new Date(getDateTimeString(startDate, startTime));
     const endTimeUtc = new Date(getDateTimeString(endDate, endTime));
-    console.log("inside update entry");
+
     updateEntry(entryId, {
       title,
       description,
