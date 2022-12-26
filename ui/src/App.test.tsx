@@ -366,7 +366,7 @@ describe("App", () => {
 
       userEvent.click(screen.getByText("Save"));
       expect(await screen.findByRole("alert")).toBeVisible();
-    });
+    }, 10000);
 
     it("deleteEntry displays an error message", async () => {
       mockGetEntries.mockResolvedValueOnce([
