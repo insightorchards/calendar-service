@@ -14,9 +14,9 @@ const formatDate: Function = (date: Date): string => {
 
 const dateFormat = (selectedEventDate: Date) =>
   `${selectedEventDate.toLocaleString("default", {
-    weekday: "long",
+    weekday: "short",
   })}, ${selectedEventDate.toLocaleString("default", {
-    month: "long",
+    month: "short",
   })} ${selectedEventDate.getDate()}`;
 
 const timeFormat = (selectedEventDate: Date) =>
@@ -44,11 +44,13 @@ const modalDateFormat: Function = ({
   if (startDate === endDate && allDay) {
     return `${startDate}`;
   } else if (startDate === endDate) {
-    return `${startDate} ${timeFormat(start)} - ${timeFormat(end)}`;
+    return `${startDate} · ${timeFormat(start)} - ${timeFormat(end)}`;
   } else if (allDay) {
     return `${startDate} - ${endDate}`;
   } else {
-    return `${startDate} ${timeFormat(start)} - ${endDate} ${timeFormat(end)}`;
+    return `${startDate}, ${timeFormat(start)} - ${endDate}, ${timeFormat(
+      end,
+    )}`;
   }
 };
 
