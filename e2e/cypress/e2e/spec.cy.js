@@ -2,6 +2,13 @@ describe("journey test", () => {
   let postOneId;
   let postTwoId;
 
+  beforeEach(() => {
+    // For an unknown reason this sets the current
+    // day to Dec 26, not Nov 26. Leaving since this
+    // is our only way of mocking out time in these tests
+    cy.clock(new Date(2022, 11, 26), ["Date"]);
+  });
+
   after(() => {
     cy.log({ postOneId, postTwoId });
     cy.request("DELETE", `http://localhost:4000/entries/${postOneId}`);
