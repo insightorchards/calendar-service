@@ -235,6 +235,7 @@ describe("App", () => {
         await render(<App />);
       });
       userEvent.click(screen.getByLabelText("add event"));
+      userEvent.type(screen.getByLabelText("Title"), "Happy dance!");
       userEvent.type(screen.getByLabelText("Start Date"), "2016-12-12");
       expect(screen.getByLabelText("Start Date")).toHaveValue("2016-12-12");
       userEvent.type(screen.getByLabelText("End Date"), "2016-11-11");
@@ -254,6 +255,7 @@ describe("App", () => {
         await render(<App />);
       });
       userEvent.click(screen.getByLabelText("add event"));
+      userEvent.type(screen.getByLabelText("Title"), "Happy dance!");
       expect(screen.getByLabelText("Start Date")).toHaveValue("2022-02-15");
       expect(screen.getByLabelText("End Date")).toHaveValue("2022-02-15");
       userEvent.type(screen.getByLabelText("Start Time"), "12:00");
