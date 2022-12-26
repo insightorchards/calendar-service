@@ -104,6 +104,29 @@ describe("EventForm", () => {
     });
   });
 
+  it("displays error when form is submitted with no title", () => {
+    const onFormSubmitMock = jest.fn();
+    render(
+      <EventForm
+        initialStartDate={formatDate(new Date())}
+        initialEndDate={formatDate(new Date())}
+        initialStartTime={`${padNumberWith0Zero(
+          currentHour
+        )}:${padNumberWith0Zero(currentMinute)}`}
+        initialEndTime={`${padNumberWith0Zero(
+          currentHour + 1
+        )}:${padNumberWith0Zero(currentMinute)}`}
+        initialTitle=""
+        initialDescription="A time to remember and appreciate classic art and more"
+        initialAllDay={false}
+        onFormSubmit={onFormSubmitMock}
+        isCreate={false}
+      />
+    );
+    userEvent.click(screen.getByRole("button"));
+    expect(screen.getByText("Error: title cannot be empty.")).toBeVisible();
+  });
+
   it("hides time sections when all day is selected", () => {
     render(
       <EventForm
