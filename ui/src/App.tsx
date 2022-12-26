@@ -73,15 +73,15 @@ const App = () => {
   const currentHour: number = new Date().getHours();
   const currentMinute: number = new Date().getMinutes();
   const DEFAULT_START_TIME: string = `${padNumberWith0Zero(
-    currentHour,
+    currentHour
   )}:${padNumberWith0Zero(currentMinute)}`;
   const DEFAULT_END_TIME: string = `${padNumberWith0Zero(
-    currentHour + 1,
+    currentHour + 1
   )}:${padNumberWith0Zero(currentMinute)}`;
   const DEFAULT_DATE = formatDate(new Date());
   const [events, setEvents] = useState<EventSourceInput>([]);
   const [displayedEventData, setDisplayedEventData] = useState(
-    {} as DisplayedEventData,
+    {} as DisplayedEventData
   );
   const [showOverlay, setShowOverlay] = useState<boolean>(false);
   const [inEditMode, setInEditMode] = useState<boolean>(false);
@@ -93,13 +93,18 @@ const App = () => {
   const [modalAllDay, setModalAllDay] = useState<boolean>(false);
   const [apiError, setApiError] = useState<boolean>(false);
 
+  const flashApiErrorMessage = () => {
+    setApiError(true);
+    setTimeout(() => setApiError(false), 4000);
+  };
+
   useEffect(() => {
     getEntries()
       .then((entries) => {
         setEvents(entries);
       })
       .catch(() => {
-        setApiError(true);
+        flashApiErrorMessage();
       });
   }, []);
 
@@ -121,21 +126,29 @@ const App = () => {
       endTimeUtc,
       allDay,
     }).catch(() => {
-      setApiError(true);
+      flashApiErrorMessage();
     });
-    getEntries().then((entries) => {
-      setEvents(entries);
-      setShowOverlay(false);
-      setInCreateMode(false);
-    });
+    getEntries()
+      .then((entries) => {
+        setEvents(entries);
+        setShowOverlay(false);
+        setInCreateMode(false);
+      })
+      .catch(() => {
+        flashApiErrorMessage();
+      });
   };
 
   const getEntryDetails = (entryId: string) => {
-    getEntry(entryId).then((data) => {
-      setDisplayedEventData(data);
-      setShowOverlay(true);
-      setInEditMode(false);
-    });
+    getEntry(entryId)
+      .then((data) => {
+        setDisplayedEventData(data);
+        setShowOverlay(true);
+        setInEditMode(false);
+      })
+      .catch(() => {
+        flashApiErrorMessage();
+      });
   };
 
   const openModal = (arg: EventClickArg) => {
@@ -145,11 +158,17 @@ const App = () => {
 
   const handleDeleteEntry = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    await deleteEntry(displayedEventData._id!);
-    getEntries().then((entries) => {
-      setEvents(entries);
-      setShowOverlay(false);
-    });
+    deleteEntry(displayedEventData._id!)
+      .then(() => {
+        getEntries().then((entries) => {
+          setEvents(entries);
+          setShowOverlay(false);
+        });
+      })
+      .catch(() => {
+        setShowOverlay(false);
+        flashApiErrorMessage();
+      });
   };
 
   const handleEditEntry = () => setInEditMode(true);
@@ -172,18 +191,24 @@ const App = () => {
     const entryId = displayedEventData._id;
     const startTimeUtc = new Date(getDateTimeString(startDate, startTime));
     const endTimeUtc = new Date(getDateTimeString(endDate, endTime));
+    console.log("inside update entry");
     updateEntry(entryId, {
       title,
       description,
       startTimeUtc,
       endTimeUtc,
       allDay,
-    }).then(() => {
-      getEntryDetails(entryId);
-      getEntries().then((entries) => {
-        setEvents(entries);
+    })
+      .then(() => {
+        getEntryDetails(entryId);
+        getEntries().then((entries) => {
+          setEvents(entries);
+        });
+      })
+      .catch(() => {
+        setShowOverlay(false);
+        flashApiErrorMessage();
       });
-    });
   };
 
   return (
@@ -232,10 +257,10 @@ const App = () => {
                 dateClick={(DateClickObject) => {
                   setModalDate(formatDate(DateClickObject.date));
                   setModalStartTime(
-                    formatTime(DateClickObject.date.toUTCString()),
+                    formatTime(DateClickObject.date.toUTCString())
                   );
                   setModalEndTime(
-                    oneHourLater(DateClickObject.date.toUTCString()),
+                    oneHourLater(DateClickObject.date.toUTCString())
                   );
                   setModalAllDay(DateClickObject.allDay);
                   setInCreateMode(true);
@@ -293,13 +318,13 @@ const App = () => {
                     initialTitle={displayedEventData.title}
                     initialDescription={displayedEventData.description}
                     initialStartDate={formatDate(
-                      new Date(displayedEventData.startTimeUtc),
+                      new Date(displayedEventData.startTimeUtc)
                     )}
                     initialEndDate={formatDate(
-                      new Date(displayedEventData.endTimeUtc),
+                      new Date(displayedEventData.endTimeUtc)
                     )}
                     initialStartTime={formatTime(
-                      displayedEventData.startTimeUtc,
+                      displayedEventData.startTimeUtc
                     )}
                     initialEndTime={formatTime(displayedEventData.endTimeUtc)}
                     initialAllDay={displayedEventData.allDay}

@@ -2,13 +2,20 @@ import { act, render, screen, waitFor, within } from "@testing-library/react";
 import React from "react";
 import userEvent from "@testing-library/user-event";
 import App from "./App";
-import { createEntry, deleteEntry, getEntries, getEntry } from "./client";
+import {
+  createEntry,
+  deleteEntry,
+  getEntries,
+  getEntry,
+  updateEntry,
+} from "./client";
 jest.mock("./client");
 
 const mockCreateEntry = createEntry as jest.MockedFunction<typeof createEntry>;
 const mockGetEntries = getEntries as jest.MockedFunction<typeof getEntries>;
 const mockGetEntry = getEntry as jest.MockedFunction<typeof getEntry>;
 const mockDeleteEntry = deleteEntry as jest.MockedFunction<typeof deleteEntry>;
+const mockUpdateEntry = updateEntry as jest.MockedFunction<typeof updateEntry>;
 
 describe("App", () => {
   beforeAll(() => {
@@ -86,11 +93,11 @@ describe("App", () => {
       userEvent.click(screen.getByLabelText("Title"));
       userEvent.type(
         screen.getByLabelText("Title"),
-        "Berta goes to the baseball game!",
+        "Berta goes to the baseball game!"
       );
       userEvent.type(
         screen.getByLabelText("Description"),
-        "She had some tasty nachos and margarita!",
+        "She had some tasty nachos and margarita!"
       );
       userEvent.type(screen.getByLabelText("Start Date"), "02152022");
       userEvent.type(screen.getByLabelText("Start Time"), "08:10");
@@ -103,10 +110,10 @@ describe("App", () => {
       });
       expect(await screen.findByLabelText("Title")).toHaveAttribute(
         "value",
-        "Berta goes to the baseball game!",
+        "Berta goes to the baseball game!"
       );
       expect(
-        await screen.findByText("Berta goes to the baseball game!"),
+        await screen.findByText("Berta goes to the baseball game!")
       ).toBeVisible();
       expect(mockCreateEntry).toHaveBeenCalledWith({
         startTimeUtc: new Date("2022-02-15T16:10:00.000Z"),
@@ -181,6 +188,8 @@ describe("App", () => {
         description: "fun times",
       });
 
+      mockDeleteEntry.mockResolvedValue(new Response());
+
       mockGetEntries.mockResolvedValueOnce([
         {
           _id: "123",
@@ -189,6 +198,7 @@ describe("App", () => {
           title: "Berta goes to the baseball game!",
         },
       ]);
+
       await act(async () => {
         await render(<App />);
       });
@@ -233,7 +243,7 @@ describe("App", () => {
         userEvent.click(screen.getByRole("button", { name: "Create Event" }));
       });
       expect(
-        screen.getByText("Error: end cannot be before start."),
+        screen.getByText("Error: end cannot be before start.")
       ).toBeInTheDocument();
     });
 
@@ -254,7 +264,7 @@ describe("App", () => {
         userEvent.click(screen.getByRole("button", { name: "Create Event" }));
       });
       expect(
-        screen.getByText("Error: end cannot be before start."),
+        screen.getByText("Error: end cannot be before start.")
       ).toBeInTheDocument();
     });
   });
@@ -278,11 +288,11 @@ describe("App", () => {
       userEvent.click(screen.getByLabelText("Title"));
       userEvent.type(
         screen.getByLabelText("Title"),
-        "Berta goes to the baseball game!",
+        "Berta goes to the baseball game!"
       );
       userEvent.type(
         screen.getByLabelText("Description"),
-        "She had some tasty nachos and margaritas!",
+        "She had some tasty nachos and margaritas!"
       );
       userEvent.type(screen.getByLabelText("Start Date"), "02152022");
       userEvent.type(screen.getByLabelText("Start Time"), "08:10");
@@ -292,6 +302,132 @@ describe("App", () => {
         userEvent.click(screen.getByRole("button", { name: "Create Event" }));
       });
 
+      expect(await screen.findByRole("alert")).toBeVisible();
+    });
+
+    it("getEntry error displays error message", async () => {
+      mockGetEntries.mockResolvedValueOnce([
+        {
+          _id: "123",
+          end: "2022-02-27T05:43:37.868Z",
+          start: "2022-02-27T05:43:37.868Z",
+          title: "Dance",
+        },
+      ]);
+
+      mockGetEntry.mockRejectedValue("Error in getEntry");
+      await act(async () => {
+        await render(<App />);
+      });
+      const eventText = await screen.findByText("Dance");
+      expect(eventText).toBeInTheDocument();
+      await act(async () => {
+        await eventText.click();
+      });
+      expect(await screen.findByRole("alert")).toBeVisible();
+    });
+
+    it.skip("updateEntry displays an error message", async () => {
+      mockGetEntries.mockResolvedValueOnce([
+        {
+          _id: "123",
+          end: "2022-02-27T05:43:37.868Z",
+          start: "2022-02-27T05:43:37.868Z",
+          title: "Dance",
+        },
+      ]);
+
+      mockGetEntry.mockResolvedValue({
+        _id: "123",
+        end: "2022-02-27T05:43:37.868Z",
+        start: "2022-02-27T05:43:37.868Z",
+        title: "Dance",
+      });
+
+      mockUpdateEntry.mockRejectedValue("Error in updateEntry");
+
+      await act(async () => {
+        await render(<App />);
+      });
+
+      const eventText = await screen.findByText("Dance");
+      expect(eventText).toBeInTheDocument();
+      await act(async () => {
+        await eventText.click();
+      });
+
+      const editText = await screen.findByText("Edit");
+      expect(editText).toBeInTheDocument();
+
+      // userEvent.click(screen.getByText("Edit"));
+
+      const editButton = await screen.findByText("Edit");
+      await act(async () => {
+        await editButton.click();
+      });
+
+      expect(screen.getByLabelText("Description")).toBeVisible();
+      userEvent.type(
+        screen.getByLabelText("Description"),
+        "party in the evening"
+      );
+
+      const descriptionText = await screen.findByText("party in the evening");
+      expect(descriptionText).toBeInTheDocument();
+
+      userEvent.click(screen.getByText("Save"));
+      expect(await screen.findByRole("alert")).toBeVisible();
+    });
+
+    it("deleteEntry displays an error message", async () => {
+      mockGetEntries.mockResolvedValueOnce([
+        {
+          _id: "123",
+          end: "2022-02-27T05:43:37.868Z",
+          start: "2022-02-27T05:43:37.868Z",
+          title: "Berta goes to the baseball game!",
+        },
+        {
+          _id: "345",
+          end: "2022-02-24T05:43:37.868Z",
+          start: "2022-02-24T05:43:37.868Z",
+          title: "Dance",
+        },
+      ]);
+
+      mockGetEntry.mockResolvedValue({
+        _id: "345",
+        end: "2022-02-24T05:43:37.868Z",
+        start: "2022-02-24T05:43:37.868Z",
+        title: "Dance",
+        description: "fun times",
+      });
+
+      mockGetEntries.mockResolvedValueOnce([
+        {
+          _id: "123",
+          end: "2022-02-27T05:43:37.868Z",
+          start: "2022-02-27T05:43:37.868Z",
+          title: "Berta goes to the baseball game!",
+        },
+      ]);
+
+      mockDeleteEntry.mockRejectedValue("Error in deleteEntry");
+
+      await act(async () => {
+        await render(<App />);
+      });
+      expect(mockGetEntries).toHaveBeenCalledTimes(1);
+      const eventText = await screen.findByText("Dance");
+      expect(eventText).toBeInTheDocument();
+      await act(async () => {
+        await eventText.click();
+      });
+      expect(mockGetEntry).toHaveBeenCalledTimes(1);
+      const deleteButton = await screen.findByText("Delete");
+      await act(async () => {
+        await deleteButton.click();
+      });
       expect(await screen.findByRole("alert")).toBeVisible();
     });
   });

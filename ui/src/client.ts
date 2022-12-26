@@ -82,7 +82,7 @@ const createEntry = async ({
 
 const updateEntry = async (
   entryId: string,
-  { title, startTimeUtc, endTimeUtc, description, allDay }: CalendarEntryInput,
+  { title, startTimeUtc, endTimeUtc, description, allDay }: CalendarEntryInput
 ) => {
   const response = await fetch(`http://localhost:4000/entries/${entryId}`, {
     method: "PATCH",
