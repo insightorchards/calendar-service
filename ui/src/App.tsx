@@ -202,6 +202,10 @@ const App = () => {
     startTime,
     endTime,
     allDay,
+    recurring,
+    frequency,
+    recurrenceBegins,
+    recurrenceEnds,
   }: FormEntryProps) => {
     const entryId = displayedEventData._id;
     const startTimeUtc = new Date(getDateTimeString(startDate, startTime));
@@ -213,7 +217,10 @@ const App = () => {
       startTimeUtc,
       endTimeUtc,
       allDay,
-      recurring: false,
+      recurring,
+      frequency,
+      recurrenceBegins,
+      recurrenceEnds,
     })
       .then(() => {
         getEntryDetails(entryId);

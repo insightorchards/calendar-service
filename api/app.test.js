@@ -62,7 +62,7 @@ describe("POST /entries", () => {
     );
   });
 
-  it.only("can create recurring events", async () => {
+  it("can create recurring events", async () => {
     const startTime = new Date();
     const endTime = new Date();
     const oneYearLater = yearAfter(startTime);
@@ -107,7 +107,7 @@ describe("POST /entries", () => {
       })
     );
 
-    expect(recurringEvents.length).toEqual(13);
+    expect(recurringEvents.length).toEqual(12);
   });
 
   it("catches and returns an error from CalendarEntry.create", async () => {
@@ -306,6 +306,48 @@ describe("PATCH / entry", () => {
         description: "by John Denver",
       })
     );
+  });
+
+  it("creates recurring events for edited event as needed", async () => {
+    const newStart = new Date();
+    const newEnd = dayAfter(newStart);
+    const oneYearLater = yearAfter(newStart);
+    await supertest(app)
+      .patch(`/entries/${data._id}`)
+      .send({
+        eventId: "345",
+        creatorId: "678",
+        title: "Listen to Sweet Surrender",
+        startTimeUtc: newStart,
+        endTimeUtc: newEnd,
+        description: "by John Denver",
+        recurring: true,
+        frequency: "monthly",
+        recurrenceBegins: newStart,
+        recurrenceEnds: oneYearLater,
+      })
+      .expect(200);
+
+    const editedEntry = await CalendarEntry.findById(data._id);
+
+    const recurringEvents = await CalendarEntry.find({
+      recurringEventId: data._id,
+    });
+
+    expect(editedEntry).toEqual(
+      expect.objectContaining({
+        _id: expect.anything(),
+        eventId: "345",
+        creatorId: "678",
+        title: "Listen to Sweet Surrender",
+        startTimeUtc: newStart,
+        endTimeUtc: newEnd,
+        recurring: true,
+        description: "by John Denver",
+      })
+    );
+
+    expect(recurringEvents.length).toBe(12);
   });
 
   it("catches and returns an error from CalendarEntry.findByIdAndUpdate", async () => {
