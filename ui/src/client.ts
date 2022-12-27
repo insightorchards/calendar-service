@@ -4,6 +4,7 @@ interface CalendarEntryInput {
   startTimeUtc: Date;
   endTimeUtc: Date;
   allDay: boolean;
+  recurring: boolean;
 }
 
 const notOk = (status: number) => {
@@ -57,6 +58,7 @@ const createEntry = async ({
   startTimeUtc,
   endTimeUtc,
   allDay,
+  recurring,
 }: CalendarEntryInput) => {
   const response = await fetch("http://localhost:4000/entries", {
     method: "POST",
@@ -71,6 +73,7 @@ const createEntry = async ({
       startTimeUtc: startTimeUtc.toISOString(),
       endTimeUtc: endTimeUtc.toISOString(),
       allDay,
+      recurring,
     }),
   });
   if (notOk(response.status)) {
@@ -82,7 +85,14 @@ const createEntry = async ({
 
 const updateEntry = async (
   entryId: string,
-  { title, startTimeUtc, endTimeUtc, description, allDay }: CalendarEntryInput
+  {
+    title,
+    startTimeUtc,
+    endTimeUtc,
+    description,
+    allDay,
+    recurring,
+  }: CalendarEntryInput
 ) => {
   const response = await fetch(`http://localhost:4000/entries/${entryId}`, {
     method: "PATCH",
@@ -97,6 +107,7 @@ const updateEntry = async (
       startTimeUtc: startTimeUtc.toISOString(),
       endTimeUtc: endTimeUtc.toISOString(),
       allDay,
+      recurring,
     }),
   });
   if (notOk(response.status)) {

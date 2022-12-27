@@ -25,6 +25,7 @@ describe("client functions", () => {
               title: "Ange's Bat Mitzvah",
               description: "Ange is turning 13!",
               allDay: false,
+              recurring: false,
               startTimeUtc: "2024-06-06T01:07:00.000Z",
               endTimeUtc: "2024-06-06T05:07:00.000Z",
               createdAt: "2022-12-05T05:27:52.212Z",
@@ -79,6 +80,7 @@ describe("client functions", () => {
             title: "Ange's Bat Mitzvah",
             description: "Ange is turning 13!",
             allDay: false,
+            recurring: false,
             startTimeUtc: "2024-06-06T01:07:00.000Z",
             endTimeUtc: "2024-06-06T05:07:00.000Z",
             createdAt: "2022-12-05T05:27:52.212Z",
@@ -101,6 +103,7 @@ describe("client functions", () => {
         title: "Ange's Bat Mitzvah",
         description: "Ange is turning 13!",
         allDay: false,
+        recurring: false,
         startTimeUtc: "2024-06-06T01:07:00.000Z",
         endTimeUtc: "2024-06-06T05:07:00.000Z",
         createdAt: "2022-12-05T05:27:52.212Z",
@@ -136,6 +139,7 @@ describe("client functions", () => {
             title: "Ange's Bat Mitzvah",
             description: "Ange is turning 13!",
             allDay: false,
+            recurring: false,
             startTimeUtc: "2024-06-06T01:07:00.000Z",
             endTimeUtc: "2024-06-06T05:07:00.000Z",
             createdAt: "2022-12-05T05:27:52.212Z",
@@ -155,6 +159,7 @@ describe("client functions", () => {
         startTimeUtc: new Date("2024-06-06T01:07:00.000Z"),
         endTimeUtc: new Date("2024-06-06T01:07:00.000Z"),
         allDay: true,
+        recurring: false,
       });
       expect(fetchSpy).toHaveBeenCalled();
       expect(result).toEqual({
@@ -164,6 +169,7 @@ describe("client functions", () => {
         title: "Ange's Bat Mitzvah",
         description: "Ange is turning 13!",
         allDay: false,
+        recurring: false,
         startTimeUtc: "2024-06-06T01:07:00.000Z",
         endTimeUtc: "2024-06-06T05:07:00.000Z",
         createdAt: "2022-12-05T05:27:52.212Z",
@@ -188,6 +194,7 @@ describe("client functions", () => {
           startTimeUtc: new Date("2024-06-06T01:07:00.000Z"),
           endTimeUtc: new Date("2024-06-06T01:07:00.000Z"),
           allDay: true,
+          recurring: false,
         })
       ).rejects.toThrowError(new Error("Create entry request failed"));
     });
@@ -205,6 +212,7 @@ describe("client functions", () => {
             title: "Barbies's Bat Mitzvah",
             description: "Barbie is turning 13!",
             allDay: false,
+            recurring: false,
             startTimeUtc: "2024-06-06T01:07:00.000Z",
             endTimeUtc: "2024-06-06T05:07:00.000Z",
             createdAt: "2022-12-05T05:27:52.212Z",
@@ -224,6 +232,7 @@ describe("client functions", () => {
         startTimeUtc: new Date("2024-06-06T01:07:00.000Z"),
         endTimeUtc: new Date("2024-06-06T01:07:00.000Z"),
         allDay: true,
+        recurring: false,
       });
       expect(fetchSpy).toHaveBeenCalled();
       expect(fetchSpy.mock.calls[0][1]).toEqual(
@@ -237,6 +246,7 @@ describe("client functions", () => {
         title: "Barbies's Bat Mitzvah",
         description: "Barbie is turning 13!",
         allDay: false,
+        recurring: false,
         startTimeUtc: "2024-06-06T01:07:00.000Z",
         endTimeUtc: "2024-06-06T05:07:00.000Z",
         createdAt: "2022-12-05T05:27:52.212Z",
@@ -262,6 +272,7 @@ describe("client functions", () => {
           startTimeUtc: new Date("2024-06-06T01:07:00.000Z"),
           endTimeUtc: new Date("2024-06-06T01:07:00.000Z"),
           allDay: true,
+          recurring: false,
         })
       ).rejects.toThrow(new Error("Update entry request failed"));
     });

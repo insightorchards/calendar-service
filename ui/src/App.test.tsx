@@ -121,6 +121,7 @@ describe("App", () => {
         title: "Berta goes to the baseball game!",
         description: "She had some tasty nachos and margarita!",
         allDay: false,
+        recurring: false,
       });
     });
 
