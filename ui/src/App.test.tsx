@@ -330,6 +330,7 @@ describe("App", () => {
       expect(await screen.findByRole("alert")).toBeVisible();
     });
 
+    // TODO: Fix 'A component is changing an uncontrolled input to be controlled' error
     it("updateEntry displays an error message", async () => {
       mockGetEntries.mockResolvedValueOnce([
         {
@@ -359,6 +360,7 @@ describe("App", () => {
         await eventText.click();
       });
 
+      // This block throws the error
       userEvent.click(screen.getByText("Edit"));
       userEvent.type(
         screen.getByLabelText("Description"),
