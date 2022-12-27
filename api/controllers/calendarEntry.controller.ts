@@ -3,6 +3,7 @@ import { CalendarEntry } from "../models/calendarEntry";
 import { dayAfter } from "../lib/dateHelpers";
 import { RRule, RRuleSet, rrulestr } from "rrule";
 
+// EB_TODO: add recurring fields to this
 interface CalendarEntry {
   id: string;
   eventId: string;

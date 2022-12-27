@@ -1,4 +1,10 @@
-import { addDayToAllDayEvent, modalDateFormat } from "./lib";
+import {
+  addDayToAllDayEvent,
+  modalDateFormat,
+  oneYearLater,
+  singleModalDateFormat,
+  dateFormatWithYear,
+} from "./lib";
 
 describe("lib functions", () => {
   describe("modalDateFormat", () => {
@@ -39,6 +45,21 @@ describe("lib functions", () => {
     });
   });
 
+  describe("dateFormatWithYear", () => {
+    it("returns a date with year included", () => {
+      const date = new Date("2022-02-15T16:10:00.000Z");
+      const result = dateFormatWithYear(date);
+      expect(result).toEqual("Tue, Feb 15 2022");
+    });
+  });
+
+  describe("singleModalDateFormat", () => {
+    it("returns a single formatted date with time and year", () => {
+      const result = singleModalDateFormat("2022-12-11T14:43:37.868Z");
+      expect(result).toEqual("Sun, Dec 11 2022, 06:43 AM");
+    });
+  });
+
   describe("addDayToAllDayEvent", () => {
     it("adds one day end date of all day events", () => {
       const event = {
@@ -56,6 +77,16 @@ describe("lib functions", () => {
       };
       const updatedEvent = addDayToAllDayEvent(event);
       expect(updatedEvent.end).toEqual(new Date("2022-02-15T04:00"));
+    });
+  });
+
+  describe("oneYearLater", () => {
+    it("returns a date one year in the future", () => {
+      const date = new Date("2022-02-15T04:00");
+
+      expect(oneYearLater(date.toUTCString())).toEqual(
+        new Date("2023-02-15T04:00")
+      );
     });
   });
 });

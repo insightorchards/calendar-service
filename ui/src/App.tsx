@@ -54,6 +54,7 @@ interface DisplayedEventData {
   startTimeUtc: string;
   endTimeUtc: string;
   allDay: boolean;
+  recurring: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -330,6 +331,8 @@ const App = () => {
                     )}
                     initialEndTime={formatTime(displayedEventData.endTimeUtc)}
                     initialAllDay={displayedEventData.allDay}
+                    // EB_TODO: remove or false here
+                    initialRecurring={displayedEventData.recurring || false}
                     onFormSubmit={handleSaveChanges}
                     isCreate={false}
                   />
@@ -349,6 +352,7 @@ const App = () => {
                     initialStartTime={modalStartTime}
                     initialEndTime={modalEndTime}
                     initialAllDay={modalAllDay}
+                    initialRecurring={false}
                     onFormSubmit={handleCreateEntry}
                     isCreate={true}
                   />

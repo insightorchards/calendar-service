@@ -19,6 +19,14 @@ const dateFormat = (selectedEventDate: Date) =>
     month: "short",
   })} ${selectedEventDate.getDate()}`;
 
+const dateFormatWithYear = (selectedEventDate: Date) => {
+  return `${selectedEventDate.toLocaleString("default", {
+    weekday: "short",
+  })}, ${selectedEventDate.toLocaleString("default", {
+    month: "short",
+  })} ${selectedEventDate.getDate()} ${selectedEventDate.getFullYear()}`;
+};
+
 const timeFormat = (selectedEventDate: Date) =>
   `${selectedEventDate.toLocaleTimeString("default", {
     hour: "2-digit",
@@ -49,9 +57,16 @@ const modalDateFormat: Function = ({
     return `${startDate} - ${endDate}`;
   } else {
     return `${startDate}, ${timeFormat(start)} - ${endDate}, ${timeFormat(
-      end,
+      end
     )}`;
   }
+};
+
+const singleModalDateFormat: Function = (dateTimeUtc: string) => {
+  const date = new Date(dateTimeUtc);
+  const formattedDate = dateFormatWithYear(date);
+  const formattedTime = timeFormat(date);
+  return `${formattedDate}, ${formattedTime}`;
 };
 
 const getDateTimeString = (date: string, time: string) => `${date}T${time}`;
@@ -65,6 +80,12 @@ const oneHourLater = (utcString: string) =>
   `${padNumberWith0Zero(
     new Date(utcString).getHours() + 1
   )}:${padNumberWith0Zero(new Date(utcString).getMinutes())}`;
+
+const oneYearLater = (utcString: string) => {
+  const newDate = new Date(utcString);
+
+  return new Date(newDate.setFullYear(new Date(utcString).getFullYear() + 1));
+};
 
 const addDayToAllDayEvent: EventInputTransformer = (event: EventInput) => {
   if (event.allDay) {
@@ -83,4 +104,7 @@ export {
   dateFormat,
   timeFormat,
   oneHourLater,
+  oneYearLater,
+  singleModalDateFormat,
+  dateFormatWithYear,
 };
