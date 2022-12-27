@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { CalendarEntry } from "../models/calendarEntry";
 import { dayAfter } from "../lib/dateHelpers";
+import { RRule, RRuleSet, rrulestr } from "rrule";
 
 interface CalendarEntry {
   id: string;
@@ -64,6 +65,30 @@ export const createCalendarEntry = async (
 ) => {
   try {
     const entry = await CalendarEntry.create(req.body as CalendarEntry);
+
+    if (entry.recurring) {
+      const timeDifference = entry.endTimeUtc - entry.startTimeUtc;
+      const rule = new RRule({
+        freq: RRule.MONTHLY,
+        dtstart: entry.recurrenceBegins,
+        until: entry.recurrenceEnds,
+      });
+      const recurrences = rule.all();
+      const recurringData = recurrences.map(async (date) => {
+        return {
+          eventId: entry.eventId,
+          creatorId: entry.creatorId,
+          title: entry.title,
+          description: entry.description,
+          allday: entry.allDay,
+          startTimeUtc: date,
+          endTimeUtc: new Date(date.getTime() + timeDifference * 60000),
+          recurring: true,
+          recurringEventId: entry._id,
+        };
+      });
+      await CalendarEntry.insertMany(recurringData);
+    }
     res.status(201).json(entry);
   } catch (err) {
     res.status(400);

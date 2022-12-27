@@ -2,7 +2,7 @@ const { connectDB, dropDB, dropCollections } = require("./setupTestDb");
 const { CalendarEntry } = require("./models/calendarEntry");
 const supertest = require("supertest");
 const { app } = require("./app");
-const { dayAfter } = require("./lib/dateHelpers");
+const { dayAfter, yearAfter } = require("./lib/dateHelpers");
 
 beforeAll(async () => {
   await connectDB();
@@ -60,6 +60,55 @@ describe("POST /entries", () => {
         description: "and a happy night too",
       })
     );
+  });
+
+  it.only("can create recurring events", async () => {
+    const startTime = new Date();
+    const endTime = new Date();
+    const oneYearLater = yearAfter(startTime);
+
+    await supertest(app)
+      .post("/entries")
+      .send({
+        eventId: "123",
+        creatorId: "456",
+        title: "Happy day",
+        startTimeUtc: startTime,
+        endTimeUtc: endTime,
+        allDay: false,
+        recurring: true,
+        frequency: "monthly",
+        recurrenceBegins: startTime,
+        recurrenceEnds: oneYearLater,
+        description: "and a happy night too",
+      })
+      .expect(201);
+
+    const mostRecentEntry = await CalendarEntry.findOne({}).sort({
+      $natural: -1,
+    });
+
+    const recurringEvents = await CalendarEntry.find({
+      recurringEventId: mostRecentEntry._id,
+    });
+
+    expect(mostRecentEntry).toEqual(
+      expect.objectContaining({
+        _id: expect.anything(),
+        eventId: "123",
+        creatorId: "456",
+        title: "Happy day",
+        startTimeUtc: startTime,
+        endTimeUtc: endTime,
+        allDay: false,
+        recurring: true,
+        recurrenceBegins: startTime,
+        recurrenceEnds: oneYearLater,
+        description: "and a happy night too",
+      })
+    );
+
+    expect(recurringEvents.length).toEqual(13);
   });
 
   it("catches and returns an error from CalendarEntry.create", async () => {
