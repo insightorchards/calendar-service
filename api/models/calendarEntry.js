@@ -30,6 +30,27 @@ const calendarEntrySchema = new mongoose.Schema(
       type: Date,
       required: true,
     },
+    recurring: {
+      type: Boolean,
+      required: true,
+    },
+    recurringEventId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "CalendarEntry",
+      required: false,
+    },
+    frequency: {
+      type: String,
+      required: false,
+    },
+    recurrenceBegins: {
+      type: Date,
+      required: false,
+    },
+    recurrenceEnds: {
+      type: Date,
+      required: false,
+    },
   },
   {
     timestamps: true,

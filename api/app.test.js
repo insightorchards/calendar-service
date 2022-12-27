@@ -38,6 +38,7 @@ describe("POST /entries", () => {
         startTimeUtc: startTime,
         endTimeUtc: endTime,
         allDay: false,
+        recurring: false,
         description: "and a happy night too",
       })
       .expect(201);
@@ -55,6 +56,7 @@ describe("POST /entries", () => {
         startTimeUtc: startTime,
         endTimeUtc: endTime,
         allDay: false,
+        recurring: false,
         description: "and a happy night too",
       })
     );
@@ -74,6 +76,7 @@ describe("POST /entries", () => {
         title: "Happy day",
         startTimeUtc: startTime,
         endTimeUtc: endTime,
+        recurring: false,
         description: "and a happy night too",
       })
       .expect(400);
@@ -92,6 +95,7 @@ describe("GET /entries", () => {
       title: "Birthday party",
       description: "Let's celebrate Janie!",
       allDay: false,
+      recurring: false,
       startTimeUtc: today,
       endTimeUtc: dayAfter(today),
     });
@@ -101,6 +105,7 @@ describe("GET /entries", () => {
       title: "Dog walk",
       description: "Time for Scottie walking",
       allDay: false,
+      recurring: false,
       startTimeUtc: today,
       endTimeUtc: dayAfter(today),
     });
@@ -132,6 +137,7 @@ describe("GET /entry/:entryId", () => {
       title: "Birthday party",
       description: "Let's celebrate Janie!",
       allDay: false,
+      recurring: false,
       startTimeUtc: today,
       endTimeUtc: dayAfter(today),
     });
@@ -148,6 +154,7 @@ describe("GET /entry/:entryId", () => {
         title: "Birthday party",
         description: "Let's celebrate Janie!",
         allDay: false,
+        recurring: false,
         startTimeUtc: today.toISOString(),
         endTimeUtc: dayAfter(today).toISOString(),
       })
@@ -179,6 +186,7 @@ describe("DELETE / entry", () => {
       title: "Happy day",
       description: "and a happy night too",
       allDay: false,
+      recurring: false,
       startTimeUtc: startTime,
       endTimeUtc: endTime,
     });
@@ -216,6 +224,7 @@ describe("PATCH / entry", () => {
       title: "Happy day",
       description: "and a happy night too",
       allDay: false,
+      recurring: false,
       startTimeUtc: startTime,
       endTimeUtc: endTime,
     });
@@ -247,7 +256,7 @@ describe("PATCH / entry", () => {
         startTimeUtc: newStart,
         endTimeUtc: newEnd,
         description: "by John Denver",
-      }),
+      })
     );
   });
 
