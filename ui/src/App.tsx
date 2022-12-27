@@ -68,6 +68,10 @@ interface FormEntryProps {
   startDate: string;
   endDate: string;
   allDay: boolean;
+  recurring: boolean;
+  frequency?: string;
+  recurrenceBegins?: Date;
+  recurrenceEnds?: Date;
 }
 
 const App = () => {
@@ -117,16 +121,24 @@ const App = () => {
     startTime,
     endTime,
     allDay,
+    recurring,
+    frequency,
+    recurrenceBegins,
+    recurrenceEnds,
   }: FormEntryProps) => {
     const startTimeUtc = new Date(getDateTimeString(startDate, startTime));
     const endTimeUtc = new Date(getDateTimeString(endDate, endTime));
+
     await createEntry({
       title,
       description,
       startTimeUtc,
       endTimeUtc,
       allDay,
-      recurring: false,
+      recurring,
+      frequency,
+      recurrenceBegins,
+      recurrenceEnds,
     }).catch(() => {
       flashApiErrorMessage();
     });
@@ -331,8 +343,7 @@ const App = () => {
                     )}
                     initialEndTime={formatTime(displayedEventData.endTimeUtc)}
                     initialAllDay={displayedEventData.allDay}
-                    // EB_TODO: remove or false here
-                    initialRecurring={displayedEventData.recurring || false}
+                    initialRecurring={displayedEventData.recurring}
                     onFormSubmit={handleSaveChanges}
                     isCreate={false}
                   />

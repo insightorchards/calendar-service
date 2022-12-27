@@ -178,6 +178,63 @@ describe("client functions", () => {
       });
     });
 
+    it.only("succeeds for recurring events", async () => {
+      const mockResponse = {
+        status: 200,
+        json: () => {
+          return {
+            _id: "638d815856e5c70955565b7e",
+            eventId: "5678",
+            creatorId: "1234",
+            title: "Ange's Bat Mitzvah",
+            description: "Ange is turning 13!",
+            allDay: false,
+            recurring: true,
+            recurrenceBegins: "2024-06-06T01:07:00.000Z",
+            recurrenceEnds: "2025-06-06T01:07:00.000Z",
+            startTimeUtc: "2024-06-06T01:07:00.000Z",
+            endTimeUtc: "2024-06-06T05:07:00.000Z",
+            createdAt: "2022-12-05T05:27:52.212Z",
+            updatedAt: "2022-12-05T05:27:52.212Z",
+            __v: 0,
+          } as any;
+        },
+      } as Response;
+
+      const fetchSpy = jest
+        .spyOn(window, "fetch")
+        .mockResolvedValue(mockResponse);
+
+      const result = await createEntry({
+        title: "Ange's Bat Mitzvah",
+        description: "Ange is turning 13!",
+        startTimeUtc: new Date("2024-06-06T01:07:00.000Z"),
+        endTimeUtc: new Date("2024-06-06T01:07:00.000Z"),
+        allDay: true,
+        recurring: true,
+        frequency: "monthly",
+        recurrenceBegins: new Date("2024-06-06T01:07:00.000Z"),
+        recurrenceEnds: new Date("2025-06-06T01:07:00.000Z"),
+      });
+      expect(fetchSpy).toHaveBeenCalled();
+      expect(result).toEqual({
+        _id: "638d815856e5c70955565b7e",
+        eventId: "5678",
+        creatorId: "1234",
+        title: "Ange's Bat Mitzvah",
+        description: "Ange is turning 13!",
+        allDay: false,
+        recurring: true,
+        recurrenceBegins: "2024-06-06T01:07:00.000Z",
+        recurrenceEnds: "2025-06-06T01:07:00.000Z",
+        startTimeUtc: "2024-06-06T01:07:00.000Z",
+        endTimeUtc: "2024-06-06T05:07:00.000Z",
+        createdAt: "2022-12-05T05:27:52.212Z",
+        updatedAt: "2022-12-05T05:27:52.212Z",
+        __v: 0,
+      });
+    });
+
     it("throws an error on failure", () => {
       const mockResponse = {
         status: 400,

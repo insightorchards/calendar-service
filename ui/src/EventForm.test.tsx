@@ -112,6 +112,7 @@ describe("EventForm", () => {
       startTime: "04:00",
       title: "Arty party",
       allDay: false,
+      recurring: false,
     });
   });
 
@@ -205,7 +206,7 @@ describe("EventForm", () => {
     expect(screen.getByLabelText("End Time")).toBeInTheDocument();
   });
 
-  it.only("displays recurring defaults when recurring is selected", () => {
+  it("displays recurring defaults when recurring is selected", () => {
     const startDate = formatDate(new Date());
     const startTime = `${padNumberWith0Zero(currentHour)}:${padNumberWith0Zero(
       currentMinute
@@ -229,16 +230,10 @@ describe("EventForm", () => {
 
     expect(screen.getByText("Recurrence type: Monthly")).toBeVisible();
     expect(
-      screen.getByText(
-        `Recurrence begins: ${dateFormat(
-          new Date(getDateTimeString(startDate, startTime))
-        )}`
-      )
+      screen.getByText("Recurrence begins: Tue, Feb 15 2022, 04:00 AM")
     ).toBeVisible();
     expect(
-      screen.getByText(
-        `Recurrence ends: ${formatDate(oneYearLater(formatDate(startDate)))}`
-      )
+      screen.getByText("Recurrence ends: Wed, Feb 15 2023, 04:00 AM")
     ).toBeVisible();
   });
 });

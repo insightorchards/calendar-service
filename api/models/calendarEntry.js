@@ -14,6 +14,7 @@ const calendarEntrySchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    // EB_TODO: make description not required
     description: {
       type: String,
       required: true,

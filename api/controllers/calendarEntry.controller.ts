@@ -1,6 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 import { CalendarEntry } from "../models/calendarEntry";
-import { dayAfter } from "../lib/dateHelpers";
+import {
+  dayAfter,
+  getMillisecondsBetween,
+  addMillisecondsToDate,
+} from "../lib/dateHelpers";
 import { RRule, RRuleSet, rrulestr } from "rrule";
 
 // EB_TODO: add recurring fields to this
@@ -66,9 +70,11 @@ export const createCalendarEntry = async (
 ) => {
   try {
     const entry = await CalendarEntry.create(req.body as CalendarEntry);
-
     if (entry.recurring) {
-      const timeDifference = entry.endTimeUtc - entry.startTimeUtc;
+      const timeDifference = getMillisecondsBetween(
+        entry.startTimeUtc,
+        entry.endTimeUtc
+      );
       const rule = new RRule({
         freq: RRule.MONTHLY,
         dtstart: entry.recurrenceBegins,
@@ -83,7 +89,7 @@ export const createCalendarEntry = async (
           description: entry.description,
           allDay: entry.allDay,
           startTimeUtc: date,
-          endTimeUtc: new Date(date.getTime() + timeDifference * 60000),
+          endTimeUtc: addMillisecondsToDate(date, timeDifference),
           recurring: true,
           recurringEventId: entry._id,
         };

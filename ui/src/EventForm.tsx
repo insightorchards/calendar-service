@@ -42,9 +42,8 @@ const EventForm = ({
   const [description, setDescription] = useState<string>(initialDescription);
   const [allDay, setAllDay] = useState<boolean>(initialAllDay);
   const [recurring, setRecurring] = useState<boolean>(initialRecurring);
-  const recurrenceStartDate = new Date(
-    getDateTimeString(startDate, startTime)
-  ).toUTCString();
+  const recurrenceBeginDate = new Date(getDateTimeString(startDate, startTime));
+  const recurrenceEndDate = oneYearLater(recurrenceBeginDate.toUTCString());
 
   const handleFormSubmit = async (_: React.MouseEvent<HTMLButtonElement>) => {
     const startDateAndTime: string = getDateTimeString(startDate, startTime);
@@ -57,15 +56,32 @@ const EventForm = ({
       setError("Error: end cannot be before start.");
       return;
     }
-    onFormSubmit({
-      title,
-      description,
-      startDate,
-      endDate,
-      startTime,
-      endTime,
-      allDay,
-    });
+    if (!recurring) {
+      onFormSubmit({
+        title,
+        description,
+        startDate,
+        endDate,
+        startTime,
+        endTime,
+        allDay,
+        recurring,
+      });
+    } else {
+      onFormSubmit({
+        title,
+        description,
+        startDate,
+        endDate,
+        startTime,
+        endTime,
+        allDay,
+        recurring,
+        frequency: "monthly",
+        recurrenceBegins: recurrenceBeginDate,
+        recurrenceEnds: recurrenceEndDate,
+      });
+    }
   };
 
   return (
@@ -177,12 +193,10 @@ const EventForm = ({
             {`Recurrence type: Monthly`}
           </label>
           <label htmlFor="recurrenceBegins" className={s.formItem}>
-            {`Recurrence begins: ${singleModalDateFormat(recurrenceStartDate)}`}
+            {`Recurrence begins: ${singleModalDateFormat(recurrenceBeginDate)}`}
           </label>
           <label htmlFor="recurrenceEnds" className={s.formItem}>
-            {`Recurrence ends: ${singleModalDateFormat(
-              oneYearLater(recurrenceStartDate)
-            )}`}
+            {`Recurrence ends: ${singleModalDateFormat(recurrenceEndDate)}`}
           </label>
         </>
       )}
