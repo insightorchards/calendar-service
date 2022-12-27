@@ -67,7 +67,7 @@ describe("POST /entries", () => {
     const endTime = new Date();
     const oneYearLater = yearAfter(startTime);
 
-    await supertest(app)
+    const eventData = await supertest(app)
       .post("/entries")
       .send({
         eventId: "123",
@@ -84,26 +84,25 @@ describe("POST /entries", () => {
       })
       .expect(201);
 
-    const mostRecentEntry = await CalendarEntry.findOne({}).sort({
-      $natural: -1,
-    });
+    const event = JSON.parse(eventData.text);
 
     const recurringEvents = await CalendarEntry.find({
-      recurringEventId: mostRecentEntry._id,
+      recurringEventId: event._id,
     });
 
-    expect(mostRecentEntry).toEqual(
+    expect(new Date(event.startTimeUtc)).toEqual(new Date(startTime));
+    expect(new Date(event.endTimeUtc)).toEqual(new Date(endTime));
+    expect(new Date(event.recurrenceBegins)).toEqual(new Date(startTime));
+    expect(new Date(event.recurrenceEnds)).toEqual(new Date(oneYearLater));
+    expect(event).toEqual(
       expect.objectContaining({
         _id: expect.anything(),
         eventId: "123",
         creatorId: "456",
         title: "Happy day",
-        startTimeUtc: startTime,
-        endTimeUtc: endTime,
         allDay: false,
         recurring: true,
-        recurrenceBegins: startTime,
-        recurrenceEnds: oneYearLater,
+        frequency: "monthly",
         description: "and a happy night too",
       })
     );

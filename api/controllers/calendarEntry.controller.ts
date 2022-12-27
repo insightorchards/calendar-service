@@ -74,13 +74,13 @@ export const createCalendarEntry = async (
         until: entry.recurrenceEnds,
       });
       const recurrences = rule.all();
-      const recurringData = recurrences.map(async (date) => {
+      const recurringData = recurrences.map((date) => {
         return {
           eventId: entry.eventId,
           creatorId: entry.creatorId,
           title: entry.title,
           description: entry.description,
-          allday: entry.allDay,
+          allDay: entry.allDay,
           startTimeUtc: date,
           endTimeUtc: new Date(date.getTime() + timeDifference * 60000),
           recurring: true,
