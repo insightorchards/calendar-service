@@ -1,3 +1,5 @@
+import "@4tw/cypress-drag-drop";
+
 describe("journey test", () => {
   let postTwoId;
 
@@ -9,7 +11,7 @@ describe("journey test", () => {
   });
 
   after(() => {
-    // cy.request("DELETE", `http://localhost:4000/entries/${postTwoId}`);
+    cy.request("DELETE", `http://localhost:4000/entries/${postTwoId}`);
   });
 
   it("can create and update an event", () => {
@@ -111,6 +113,16 @@ describe("journey test", () => {
   });
 
   describe("select draggable multiday event", () => {
-    it.only("opens and populates the modal with selected dates", () => {});
+    it("opens and populates the modal with selected dates", () => {
+      cy.visit("http://localhost:3000");
+      cy.get(`[data-date="2022-12-26"]`).drag(`[data-date="2022-12-28"]`, {
+        force: true,
+      });
+      cy.get(`[data-date="2022-12-28"]`).click({ force: true });
+      cy.get(".chakra-modal__body").within(() => {
+        cy.get(`[id="startDate"]`).should("have.value", "2022-12-26");
+        cy.get(`[id="endDate"]`).should("have.value", "2022-12-28");
+      });
+    });
   });
 });
