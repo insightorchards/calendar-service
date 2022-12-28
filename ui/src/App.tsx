@@ -11,8 +11,8 @@ import {
   padNumberWith0Zero,
   formatTime,
   modalDateFormat,
-  oneHourLater,
   addDayToAllDayEvent,
+  formatEndDate,
 } from "./lib";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
@@ -78,20 +78,22 @@ const App = () => {
   const currentHour: number = new Date().getHours();
   const currentMinute: number = new Date().getMinutes();
   const DEFAULT_START_TIME: string = `${padNumberWith0Zero(
-    currentHour
+    currentHour,
   )}:${padNumberWith0Zero(currentMinute)}`;
   const DEFAULT_END_TIME: string = `${padNumberWith0Zero(
-    currentHour + 1
+    currentHour + 1,
   )}:${padNumberWith0Zero(currentMinute)}`;
   const DEFAULT_DATE = formatDate(new Date());
   const [events, setEvents] = useState<EventSourceInput>([]);
   const [displayedEventData, setDisplayedEventData] = useState(
-    {} as DisplayedEventData
+    {} as DisplayedEventData,
   );
   const [showOverlay, setShowOverlay] = useState<boolean>(false);
   const [inEditMode, setInEditMode] = useState<boolean>(false);
   const [inCreateMode, setInCreateMode] = useState<boolean>(false);
   const [modalDate, setModalDate] = useState<string>(DEFAULT_DATE);
+  const [modalStartDate, setModalStartDate] = useState<string>("");
+  const [modalEndDate, setModalEndDate] = useState<string>("");
   const [modalStartTime, setModalStartTime] =
     useState<string>(DEFAULT_START_TIME);
   const [modalEndTime, setModalEndTime] = useState<string>(DEFAULT_END_TIME);
@@ -276,24 +278,25 @@ const App = () => {
                 initialView="dayGridMonth"
                 selectable={true}
                 eventClick={openModal}
-                height="100vh"
-                dateClick={(DateClickObject) => {
-                  setModalDate(formatDate(DateClickObject.date));
-                  setModalStartTime(
-                    formatTime(DateClickObject.date.toUTCString())
-                  );
-                  setModalEndTime(
-                    oneHourLater(DateClickObject.date.toUTCString())
-                  );
-                  setModalAllDay(DateClickObject.allDay);
+                select={({ start, end, allDay }) => {
+                  setModalAllDay(allDay);
+
+                  setModalStartDate(formatDate(start));
+                  if (allDay) {
+                    setModalEndDate(formatEndDate(end));
+                  } else {
+                    setModalEndDate(formatDate(end));
+                  }
+
+                  setModalStartTime(formatTime(start.toUTCString()));
+                  setModalEndTime(formatTime(end.toUTCString()));
+
                   setInCreateMode(true);
                   setShowOverlay(true);
                 }}
+                selectMirror={true}
+                height="100vh"
                 eventDataTransform={addDayToAllDayEvent}
-                // editable={true}
-                // selectMirror={true}
-                // dayMaxEvents={true}
-                // weekends={true}
               />
             </div>
           </div>
@@ -340,13 +343,13 @@ const App = () => {
                     initialTitle={displayedEventData.title}
                     initialDescription={displayedEventData.description}
                     initialStartDate={formatDate(
-                      new Date(displayedEventData.startTimeUtc)
+                      new Date(displayedEventData.startTimeUtc),
                     )}
                     initialEndDate={formatDate(
-                      new Date(displayedEventData.endTimeUtc)
+                      new Date(displayedEventData.endTimeUtc),
                     )}
                     initialStartTime={formatTime(
-                      displayedEventData.startTimeUtc
+                      displayedEventData.startTimeUtc,
                     )}
                     initialEndTime={formatTime(displayedEventData.endTimeUtc)}
                     initialAllDay={displayedEventData.allDay}
@@ -365,8 +368,10 @@ const App = () => {
                   <EventForm
                     initialTitle=""
                     initialDescription=""
-                    initialStartDate={modalDate}
-                    initialEndDate={modalDate}
+                    initialStartDate={
+                      modalStartDate ? modalStartDate : modalDate
+                    }
+                    initialEndDate={modalEndDate ? modalEndDate : modalDate}
                     initialStartTime={modalStartTime}
                     initialEndTime={modalEndTime}
                     initialAllDay={modalAllDay}

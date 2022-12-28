@@ -41,7 +41,7 @@ describe("journey test", () => {
     cy.contains("Hello").should("be.visible");
     cy.contains("It's a beautiful day").should("be.visible");
     cy.contains("Sat, Nov 26, 04:35 AM - Sun, Nov 27, 06:45 AM").should(
-      "be.visible"
+      "be.visible",
     );
     cy.contains("button", "Edit").click();
     cy.get(".chakra-modal__body").within(() => {
@@ -55,7 +55,7 @@ describe("journey test", () => {
     cy.contains("Hello Everyone").should("be.visible");
     cy.contains("It's a beautiful day").should("be.visible");
     cy.contains("Sun, Nov 27, 07:35 AM - Tue, Nov 29, 08:45 AM").should(
-      "be.visible"
+      "be.visible",
     );
     cy.contains("button", "Delete").click();
     cy.contains("Hello Everyone").should("not.exist");
@@ -87,26 +87,38 @@ describe("journey test", () => {
     cy.findByText("all day").should("exist");
   });
 
-  it("opens create event modal with date, time, and all day pre-selected when field is clicked", () => {
-    cy.visit("http://localhost:3000");
-    cy.get(`[data-date="2022-12-14"]`).click();
-    cy.get(".chakra-modal__body").within(() => {
-      cy.get(`[id="startDate"]`).should("have.value", "2022-12-14");
-      cy.get(`[id="endDate"]`).should("have.value", "2022-12-14");
+  describe("month view", () => {
+    it("has correct start/end date in modal when date clicked", () => {
+      cy.visit("http://localhost:3000");
+      cy.get(`[data-date="2022-12-14"]`).click();
+      cy.get(".chakra-modal__body").within(() => {
+        cy.get(`[id="startDate"]`).should("have.value", "2022-12-14");
+        cy.get(`[id="endDate"]`).should("have.value", "2022-12-14");
+      });
+      cy.get(`[aria-label="Close"]`).click();
     });
-    cy.get(`[aria-label="Close"]`).click();
-    cy.findByText("week").click();
-    cy.get(`[data-date="2022-12-26"]`).eq(1).click();
-    cy.get(".chakra-modal__body").within(() => {
-      cy.get(`[id="startDate"]`).should("have.value", "2022-12-26");
-      cy.get(`[id="endDate"]`).should("have.value", "2022-12-26");
-      cy.get('[type="checkbox"]').should("be.checked");
+
+    it("opens a modal when drag selecting multiple days", () => {});
+  });
+
+  describe("week view", () => {
+    it("has correct start/end date and allDay is checked in modal when date clicked", () => {
+      cy.findByText("week").click();
+      cy.get(`[data-date="2022-12-26"]`).eq(1).click();
+      cy.get(".chakra-modal__body").within(() => {
+        cy.get(`[id="startDate"]`).should("have.value", "2022-12-26");
+        cy.get(`[id="endDate"]`).should("have.value", "2022-12-26");
+        cy.get('[type="checkbox"]').should("be.checked");
+      });
+      cy.get(`[aria-label="Close"]`).click();
     });
-    cy.get(`[aria-label="Close"]`).click();
-    cy.get(`[data-time="06:30:00"]`).eq(1).click();
-    cy.get(".chakra-modal__body").within(() => {
-      cy.get(`[id="startTime"]`).should("have.value", "06:30");
-      cy.get(`[id="endTime"]`).should("have.value", "07:30");
+
+    it("has correct start/end time in modal when specific time clicked", () => {
+      cy.get(`[data-time="06:30:00"]`).eq(1).click();
+      cy.get(".chakra-modal__body").within(() => {
+        cy.get(`[id="startTime"]`).should("have.value", "06:30");
+        cy.get(`[id="endTime"]`).should("have.value", "07:00");
+      });
     });
   });
 });
