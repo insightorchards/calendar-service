@@ -426,6 +426,56 @@ describe("PATCH / entry", () => {
     expect(updatedRecurringEvents.length).toBe(0);
   });
 
+  it.only("edits recurring events for edited event as needed", async () => {
+    const newStart = new Date();
+    const newEnd = dayAfter(newStart);
+    const oneYearLater = yearAfter(newStart);
+    const recurringEvent = await supertest(app).post("/entries").send({
+      eventId: "123",
+      creatorId: "456",
+      title: "Happy day",
+      startTimeUtc: startTime,
+      endTimeUtc: endTime,
+      allDay: false,
+      recurring: true,
+      frequency: "monthly",
+      recurrenceBegins: startTime,
+      recurrenceEnds: oneYearLater,
+      description: "and a happy night too",
+    });
+
+    const recurringEvents = await CalendarEntry.find({
+      recurringEventId: recurringEvent._id,
+    });
+
+    expect(recurringEvents.length).toBe(12);
+    expect(recurringEvents[0].title).toEqual("Happy day");
+
+    const updatedEvent = await supertest(app)
+      .patch(`/entries/${recurringEvent._id}`)
+      .send({
+        eventId: "123",
+        creatorId: "456",
+        title: "Listen to Sweet Surrender",
+        startTimeUtc: newStart,
+        endTimeUtc: newEnd,
+        description: "by John Denver",
+        recurring: true,
+        frequency: "monthly",
+        recurrenceBegins: newStart,
+        recurrenceEnds: oneYearLater,
+      });
+
+    console.log({ updatedEvent });
+
+    const updatedRecurringEvents = await CalendarEntry.find({
+      recurringEventId: data._id,
+    });
+
+    expect(updatedRecurringEvents.length).toBe(12);
+    expect(recurringEvents[0].title).toEqual("Listen to Sweet Surrender");
+  });
+
   it("catches and returns an error from CalendarEntry.findByIdAndUpdate", async () => {
     const updateMock = jest
       .spyOn(CalendarEntry, "findByIdAndUpdate")

@@ -169,6 +169,7 @@ export const updateCalendarEntry = async (
   res: Response,
   _next: NextFunction
 ) => {
+  console.log("inside update");
   const { id } = req.params;
   try {
     const originalEntry = await CalendarEntry.findByIdAndUpdate(
@@ -177,11 +178,15 @@ export const updateCalendarEntry = async (
     );
     const updatedEntry = await CalendarEntry.findById(id);
     if (!originalEntry.recurring && updatedEntry.recurring) {
+      console.log("in the block");
       const recurringData = prepRecurringEvents(updatedEntry);
       await CalendarEntry.insertMany(recurringData);
     }
     if (originalEntry.recurring && !updatedEntry.recurring) {
       deleteChildEvents(updatedEntry);
+    }
+    if (originalEntry.recurring && updatedEntry.recurring) {
+      console.log("in this right block");
     }
     res.status(200).json(updatedEntry);
   } catch (err) {
