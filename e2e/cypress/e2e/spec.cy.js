@@ -9,7 +9,7 @@ describe("journey test", () => {
   });
 
   after(() => {
-    cy.request("DELETE", `http://localhost:4000/entries/${postTwoId}`);
+    // cy.request("DELETE", `http://localhost:4000/entries/${postTwoId}`);
   });
 
   it("can create and update an event", () => {
@@ -29,7 +29,7 @@ describe("journey test", () => {
     cy.contains("Hello").should("be.visible");
     cy.contains("It's a beautiful day").should("be.visible");
     cy.contains("Sat, Nov 26, 04:35 AM - Sun, Nov 27, 06:45 AM").should(
-      "be.visible",
+      "be.visible"
     );
     cy.contains("button", "Edit").click();
     cy.get(".chakra-modal__body").within(() => {
@@ -43,7 +43,7 @@ describe("journey test", () => {
     cy.contains("Hello Everyone").should("be.visible");
     cy.contains("It's a beautiful day").should("be.visible");
     cy.contains("Sun, Nov 27, 07:35 AM - Tue, Nov 29, 08:45 AM").should(
-      "be.visible",
+      "be.visible"
     );
     cy.contains("button", "Delete").click();
     cy.contains("Hello Everyone").should("not.exist");
@@ -108,5 +108,9 @@ describe("journey test", () => {
         cy.get(`[id="endTime"]`).should("have.value", "07:00");
       });
     });
+  });
+
+  describe("select draggable multiday event", () => {
+    it.only("opens and populates the modal with selected dates", () => {});
   });
 });
