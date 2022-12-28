@@ -1,7 +1,15 @@
 const {
   addMillisecondsToDate,
   getMillisecondsBetween,
+  yearAfter,
 } = require("./dateHelpers");
+
+describe("yearAfter", () => {
+  it("returns a date one year in the future", () => {
+    const date = new Date("05 October 2011 14:48 UTC");
+    expect(yearAfter(date)).toEqual(new Date("05 October 2012 14:48 UTC"));
+  });
+});
 
 describe("getMillisecondsBetween", () => {
   it("returns number of minutes between two dates", () => {
