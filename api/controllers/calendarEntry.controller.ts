@@ -37,6 +37,7 @@ const prepRecurringEvents = (entry) => {
     until: entry.recurrenceEnds,
   });
   const recurrences = rule.all().slice(1);
+
   return recurrences.map((date) => {
     return {
       eventId: entry.eventId,
@@ -186,7 +187,9 @@ export const updateCalendarEntry = async (
       deleteChildEvents(updatedEntry);
     }
     if (originalEntry.recurring && updatedEntry.recurring) {
-      console.log("in this right block");
+      deleteChildEvents(updatedEntry);
+      const recurringData = prepRecurringEvents(updatedEntry);
+      await CalendarEntry.insertMany(recurringData);
     }
     res.status(200).json(updatedEntry);
   } catch (err) {
