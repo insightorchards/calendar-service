@@ -12,7 +12,7 @@ const formatDate: Function = (date: Date): string => {
   ].join("-");
 };
 
-const formatEndDate: Function = (date: Date): string => {
+const formatDateMinusOneDay: Function = (date: Date): string => {
   // subtract a day from the given date
   date.setDate(date.getDate() - 1);
   return [
@@ -102,7 +102,7 @@ const addDayToAllDayEvent: EventInputTransformer = (event: EventInput) => {
 export {
   addDayToAllDayEvent,
   formatDate,
-  formatEndDate,
+  formatDateMinusOneDay,
   getDateTimeString,
   padNumberWith0Zero,
   modalDateFormat,

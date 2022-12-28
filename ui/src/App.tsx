@@ -12,7 +12,7 @@ import {
   formatTime,
   modalDateFormat,
   addDayToAllDayEvent,
-  formatEndDate,
+  formatDateMinusOneDay,
 } from "./lib";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
@@ -91,7 +91,6 @@ const App = () => {
   const [showOverlay, setShowOverlay] = useState<boolean>(false);
   const [inEditMode, setInEditMode] = useState<boolean>(false);
   const [inCreateMode, setInCreateMode] = useState<boolean>(false);
-  const [modalDate, setModalDate] = useState<string>(DEFAULT_DATE);
   const [modalStartDate, setModalStartDate] = useState<string>("");
   const [modalEndDate, setModalEndDate] = useState<string>("");
   const [modalStartTime, setModalStartTime] =
@@ -253,7 +252,8 @@ const App = () => {
                 aria-label="add event"
                 icon={<AddIcon boxSize={5} w={5} h={5} />}
                 onClick={() => {
-                  setModalDate(DEFAULT_DATE);
+                  setModalStartDate(DEFAULT_DATE);
+                  setModalEndDate(DEFAULT_DATE);
                   setModalStartTime(DEFAULT_START_TIME);
                   setModalEndTime(DEFAULT_END_TIME);
                   setInCreateMode(true);
@@ -283,7 +283,7 @@ const App = () => {
 
                   setModalStartDate(formatDate(start));
                   if (allDay) {
-                    setModalEndDate(formatEndDate(end));
+                    setModalEndDate(formatDateMinusOneDay(end));
                   } else {
                     setModalEndDate(formatDate(end));
                   }
@@ -368,10 +368,8 @@ const App = () => {
                   <EventForm
                     initialTitle=""
                     initialDescription=""
-                    initialStartDate={
-                      modalStartDate ? modalStartDate : modalDate
-                    }
-                    initialEndDate={modalEndDate ? modalEndDate : modalDate}
+                    initialStartDate={modalStartDate}
+                    initialEndDate={modalEndDate}
                     initialStartTime={modalStartTime}
                     initialEndTime={modalEndTime}
                     initialAllDay={modalAllDay}

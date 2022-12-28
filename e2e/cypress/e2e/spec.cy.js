@@ -1,5 +1,4 @@
 describe("journey test", () => {
-  let postOneId;
   let postTwoId;
 
   beforeEach(() => {
@@ -10,18 +9,11 @@ describe("journey test", () => {
   });
 
   after(() => {
-    cy.log({ postOneId, postTwoId });
-    cy.request("DELETE", `http://localhost:4000/entries/${postOneId}`);
     cy.request("DELETE", `http://localhost:4000/entries/${postTwoId}`);
   });
 
   it("can create and update an event", () => {
     cy.visit("http://localhost:3000");
-    cy.intercept({
-      method: "POST",
-      url: "/entries",
-      hostname: "localhost",
-    }).as("createEntry");
 
     cy.get(`[aria-label="add event"]`).click();
     cy.contains("label", "Title").click().type("Hello");
@@ -32,10 +24,6 @@ describe("journey test", () => {
     cy.contains("label", "Start Time").click().type("04:35");
     cy.contains("label", "End Time").click().type("06:45");
     cy.contains("button", "Create Event").click();
-
-    cy.wait("@createEntry").then((interception) => {
-      postOneId = interception.response.body._id;
-    });
 
     cy.contains("Hello").click();
     cy.contains("Hello").should("be.visible");
