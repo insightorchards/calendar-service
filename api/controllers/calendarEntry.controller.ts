@@ -5,9 +5,9 @@ import {
   getMillisecondsBetween,
   addMillisecondsToDate,
 } from "../lib/dateHelpers";
+import mongoose from "mongoose";
 import { RRule, RRuleSet, rrulestr } from "rrule";
 
-// EB_TODO: add recurring fields to this
 interface CalendarEntry {
   id: string;
   eventId: string;
@@ -15,8 +15,13 @@ interface CalendarEntry {
   title: string;
   description: string;
   allDay: boolean;
+  recurring: boolean;
   startTimeUtc: Date;
   endTimeUtc: Date;
+  recurringEventId?: mongoose.Schema.Types.ObjectId;
+  frequency?: string;
+  recurrenceBegins?: Date;
+  recurrenceEnds?: Date;
   createdAt: Date;
   updatedAt: Date;
 }
