@@ -4,6 +4,10 @@ interface CalendarEntryInput {
   startTimeUtc: Date;
   endTimeUtc: Date;
   allDay: boolean;
+  recurring: boolean;
+  frequency?: string;
+  recurrenceBegins?: Date;
+  recurrenceEnds?: Date;
 }
 
 const notOk = (status: number) => {
@@ -57,22 +61,50 @@ const createEntry = async ({
   startTimeUtc,
   endTimeUtc,
   allDay,
+  recurring,
+  frequency,
+  recurrenceBegins,
+  recurrenceEnds,
 }: CalendarEntryInput) => {
-  const response = await fetch("http://localhost:4000/entries", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      description,
-      title,
-      creatorId: "1234",
-      eventId: "5678",
-      startTimeUtc: startTimeUtc.toISOString(),
-      endTimeUtc: endTimeUtc.toISOString(),
-      allDay,
-    }),
-  });
+  let response;
+  if (recurring) {
+    response = await fetch("http://localhost:4000/entries", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        description,
+        title,
+        creatorId: "1234",
+        eventId: "5678",
+        startTimeUtc: startTimeUtc.toISOString(),
+        endTimeUtc: endTimeUtc.toISOString(),
+        allDay,
+        recurring,
+        frequency,
+        recurrenceBegins: recurrenceBegins?.toISOString(),
+        recurrenceEnds: recurrenceEnds?.toISOString(),
+      }),
+    });
+  } else {
+    response = await fetch("http://localhost:4000/entries", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        description,
+        title,
+        creatorId: "1234",
+        eventId: "5678",
+        startTimeUtc: startTimeUtc.toISOString(),
+        endTimeUtc: endTimeUtc.toISOString(),
+        allDay,
+        recurring,
+      }),
+    });
+  }
   if (notOk(response.status)) {
     throw new Error("Create entry request failed");
   }
@@ -82,23 +114,57 @@ const createEntry = async ({
 
 const updateEntry = async (
   entryId: string,
-  { title, startTimeUtc, endTimeUtc, description, allDay }: CalendarEntryInput
+  {
+    title,
+    startTimeUtc,
+    endTimeUtc,
+    description,
+    allDay,
+    recurring,
+    frequency,
+    recurrenceBegins,
+    recurrenceEnds,
+  }: CalendarEntryInput
 ) => {
-  const response = await fetch(`http://localhost:4000/entries/${entryId}`, {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      description: description,
-      title: title,
-      creatorId: "1234",
-      eventId: "5678",
-      startTimeUtc: startTimeUtc.toISOString(),
-      endTimeUtc: endTimeUtc.toISOString(),
-      allDay,
-    }),
-  });
+  let response;
+  if (recurring) {
+    response = await fetch(`http://localhost:4000/entries/${entryId}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        description: description,
+        title: title,
+        creatorId: "1234",
+        eventId: "5678",
+        startTimeUtc: startTimeUtc.toISOString(),
+        endTimeUtc: endTimeUtc.toISOString(),
+        allDay,
+        recurring,
+        frequency,
+        recurrenceBegins: recurrenceBegins?.toISOString(),
+        recurrenceEnds: recurrenceEnds?.toISOString(),
+      }),
+    });
+  } else {
+    response = await fetch(`http://localhost:4000/entries/${entryId}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        description: description,
+        title: title,
+        creatorId: "1234",
+        eventId: "5678",
+        startTimeUtc: startTimeUtc.toISOString(),
+        endTimeUtc: endTimeUtc.toISOString(),
+        allDay,
+        recurring,
+      }),
+    });
+  }
   if (notOk(response.status)) {
     throw new Error("Update entry request failed");
   }

@@ -1,5 +1,10 @@
 import React, { useState } from "react";
-import { formatDate, getDateTimeString } from "./lib";
+import {
+  formatDate,
+  getDateTimeString,
+  oneYearLater,
+  singleModalDateFormat,
+} from "./lib";
 import { Checkbox } from "@chakra-ui/react";
 import s from "./EventForm.module.css";
 
@@ -11,6 +16,7 @@ interface FormProps {
   initialTitle: string;
   initialDescription: string;
   initialAllDay: boolean;
+  initialRecurring: boolean;
   onFormSubmit: Function;
   isCreate: boolean;
 }
@@ -23,6 +29,7 @@ const EventForm = ({
   initialTitle,
   initialDescription,
   initialAllDay,
+  initialRecurring,
   onFormSubmit,
   isCreate,
 }: FormProps) => {
@@ -34,6 +41,9 @@ const EventForm = ({
   const [title, setTitle] = useState<string>(initialTitle);
   const [description, setDescription] = useState<string>(initialDescription);
   const [allDay, setAllDay] = useState<boolean>(initialAllDay);
+  const [recurring, setRecurring] = useState<boolean>(initialRecurring);
+  const recurrenceBeginDate = new Date(getDateTimeString(startDate, startTime));
+  const recurrenceEndDate = oneYearLater(recurrenceBeginDate.toUTCString());
 
   const handleFormSubmit = async (_: React.MouseEvent<HTMLButtonElement>) => {
     const startDateAndTime: string = getDateTimeString(startDate, startTime);
@@ -46,15 +56,32 @@ const EventForm = ({
       setError("Error: end cannot be before start.");
       return;
     }
-    onFormSubmit({
-      title,
-      description,
-      startDate,
-      endDate,
-      startTime,
-      endTime,
-      allDay,
-    });
+    if (!recurring) {
+      onFormSubmit({
+        title,
+        description,
+        startDate,
+        endDate,
+        startTime,
+        endTime,
+        allDay,
+        recurring,
+      });
+    } else {
+      onFormSubmit({
+        title,
+        description,
+        startDate,
+        endDate,
+        startTime,
+        endTime,
+        allDay,
+        recurring,
+        frequency: "monthly",
+        recurrenceBegins: recurrenceBeginDate,
+        recurrenceEnds: recurrenceEndDate,
+      });
+    }
   };
 
   return (
@@ -147,6 +174,29 @@ const EventForm = ({
               value={endTime}
               disabled={allDay}
             />
+          </label>
+        </>
+      )}
+      <div className={s.checkbox}>
+        <Checkbox
+          isChecked={recurring}
+          onChange={(e) => {
+            setRecurring(e.target.checked);
+          }}
+        >
+          Recurring
+        </Checkbox>
+      </div>
+      {recurring && (
+        <>
+          <label htmlFor="recurrenceType" className={s.formItem}>
+            {`Recurrence type: Monthly`}
+          </label>
+          <label htmlFor="recurrenceBegins" className={s.formItem}>
+            {`Recurrence begins: ${singleModalDateFormat(recurrenceBeginDate)}`}
+          </label>
+          <label htmlFor="recurrenceEnds" className={s.formItem}>
+            {`Recurrence ends: ${singleModalDateFormat(recurrenceEndDate)}`}
           </label>
         </>
       )}

@@ -2,7 +2,7 @@ const { connectDB, dropDB, dropCollections } = require("./setupTestDb");
 const { CalendarEntry } = require("./models/calendarEntry");
 const supertest = require("supertest");
 const { app } = require("./app");
-const { dayAfter } = require("./lib/dateHelpers");
+const { dayAfter, yearAfter } = require("./lib/dateHelpers");
 
 beforeAll(async () => {
   await connectDB();
@@ -38,6 +38,7 @@ describe("POST /entries", () => {
         startTimeUtc: startTime,
         endTimeUtc: endTime,
         allDay: false,
+        recurring: false,
         description: "and a happy night too",
       })
       .expect(201);
@@ -55,9 +56,58 @@ describe("POST /entries", () => {
         startTimeUtc: startTime,
         endTimeUtc: endTime,
         allDay: false,
+        recurring: false,
         description: "and a happy night too",
       })
     );
+  });
+
+  it("can create recurring events", async () => {
+    const startTime = new Date();
+    const endTime = new Date();
+    const oneYearLater = yearAfter(startTime);
+
+    const eventData = await supertest(app)
+      .post("/entries")
+      .send({
+        eventId: "123",
+        creatorId: "456",
+        title: "Happy day",
+        startTimeUtc: startTime,
+        endTimeUtc: endTime,
+        allDay: false,
+        recurring: true,
+        frequency: "monthly",
+        recurrenceBegins: startTime,
+        recurrenceEnds: oneYearLater,
+        description: "and a happy night too",
+      })
+      .expect(201);
+
+    const event = JSON.parse(eventData.text);
+
+    const recurringEvents = await CalendarEntry.find({
+      recurringEventId: event._id,
+    });
+
+    expect(new Date(event.startTimeUtc)).toEqual(new Date(startTime));
+    expect(new Date(event.endTimeUtc)).toEqual(new Date(endTime));
+    expect(new Date(event.recurrenceBegins)).toEqual(new Date(startTime));
+    expect(new Date(event.recurrenceEnds)).toEqual(new Date(oneYearLater));
+    expect(event).toEqual(
+      expect.objectContaining({
+        _id: expect.anything(),
+        eventId: "123",
+        creatorId: "456",
+        title: "Happy day",
+        allDay: false,
+        recurring: true,
+        frequency: "monthly",
+        description: "and a happy night too",
+      })
+    );
+
+    expect(recurringEvents.length).toEqual(12);
   });
 
   it("catches and returns an error from CalendarEntry.create", async () => {
@@ -74,6 +124,7 @@ describe("POST /entries", () => {
         title: "Happy day",
         startTimeUtc: startTime,
         endTimeUtc: endTime,
+        recurring: false,
         description: "and a happy night too",
       })
       .expect(400);
@@ -92,6 +143,7 @@ describe("GET /entries", () => {
       title: "Birthday party",
       description: "Let's celebrate Janie!",
       allDay: false,
+      recurring: false,
       startTimeUtc: today,
       endTimeUtc: dayAfter(today),
     });
@@ -101,6 +153,7 @@ describe("GET /entries", () => {
       title: "Dog walk",
       description: "Time for Scottie walking",
       allDay: false,
+      recurring: false,
       startTimeUtc: today,
       endTimeUtc: dayAfter(today),
     });
@@ -132,6 +185,7 @@ describe("GET /entry/:entryId", () => {
       title: "Birthday party",
       description: "Let's celebrate Janie!",
       allDay: false,
+      recurring: false,
       startTimeUtc: today,
       endTimeUtc: dayAfter(today),
     });
@@ -148,6 +202,7 @@ describe("GET /entry/:entryId", () => {
         title: "Birthday party",
         description: "Let's celebrate Janie!",
         allDay: false,
+        recurring: false,
         startTimeUtc: today.toISOString(),
         endTimeUtc: dayAfter(today).toISOString(),
       })
@@ -169,22 +224,53 @@ describe("GET /entry/:entryId", () => {
 
 describe("DELETE / entry", () => {
   let data;
+  const startTime = new Date();
+  const endTime = new Date();
+  const oneYearLater = yearAfter(startTime);
 
   beforeEach(async () => {
-    const startTime = new Date();
-    const endTime = new Date();
     data = await CalendarEntry.create({
       eventId: "123",
       creatorId: "456",
       title: "Happy day",
       description: "and a happy night too",
       allDay: false,
+      recurring: false,
       startTimeUtc: startTime,
       endTimeUtc: endTime,
     });
   });
 
   it("deletes the selected entry from the database", async () => {
+    await supertest(app).delete(`/entries/${data._id}`).expect(200);
+
+    const newCount = await CalendarEntry.countDocuments();
+    expect(newCount).toEqual(0);
+  });
+
+  it("deletes recurring events from the database", async () => {
+    await supertest(app)
+      .patch(`/entries/${data._id}`)
+      .send({
+        eventId: "345",
+        creatorId: "678",
+        title: "Listen to Sweet Surrender",
+        startTimeUtc: startTime,
+        endTimeUtc: endTime,
+        description: "by John Denver",
+        recurring: true,
+        frequency: "monthly",
+        recurrenceBegins: startTime,
+        recurrenceEnds: oneYearLater,
+      })
+      .expect(200);
+
+    const recurringEvents = await CalendarEntry.find({
+      recurringEventId: data._id,
+    });
+
+    expect(recurringEvents.length).toBe(12);
+
     await supertest(app).delete(`/entries/${data._id}`).expect(200);
 
     const newCount = await CalendarEntry.countDocuments();
@@ -216,6 +302,7 @@ describe("PATCH / entry", () => {
       title: "Happy day",
       description: "and a happy night too",
       allDay: false,
+      recurring: false,
       startTimeUtc: startTime,
       endTimeUtc: endTime,
     });
@@ -247,8 +334,96 @@ describe("PATCH / entry", () => {
         startTimeUtc: newStart,
         endTimeUtc: newEnd,
         description: "by John Denver",
-      }),
+      })
     );
+  });
+
+  it("creates recurring events for edited event as needed", async () => {
+    const newStart = new Date();
+    const newEnd = dayAfter(newStart);
+    const oneYearLater = yearAfter(newStart);
+    await supertest(app)
+      .patch(`/entries/${data._id}`)
+      .send({
+        eventId: "345",
+        creatorId: "678",
+        title: "Listen to Sweet Surrender",
+        startTimeUtc: newStart,
+        endTimeUtc: newEnd,
+        description: "by John Denver",
+        recurring: true,
+        frequency: "monthly",
+        recurrenceBegins: newStart,
+        recurrenceEnds: oneYearLater,
+      })
+      .expect(200);
+
+    const editedEntry = await CalendarEntry.findById(data._id);
+
+    const recurringEvents = await CalendarEntry.find({
+      recurringEventId: data._id,
+    });
+
+    expect(editedEntry).toEqual(
+      expect.objectContaining({
+        _id: expect.anything(),
+        eventId: "345",
+        creatorId: "678",
+        title: "Listen to Sweet Surrender",
+        startTimeUtc: newStart,
+        endTimeUtc: newEnd,
+        recurring: true,
+        description: "by John Denver",
+      })
+    );
+
+    expect(recurringEvents.length).toBe(12);
+  });
+
+  it("deletes recurring events for edited event as needed", async () => {
+    const newStart = new Date();
+    const newEnd = dayAfter(newStart);
+    const oneYearLater = yearAfter(newStart);
+    await supertest(app)
+      .patch(`/entries/${data._id}`)
+      .send({
+        eventId: "345",
+        creatorId: "678",
+        title: "Listen to Sweet Surrender",
+        startTimeUtc: newStart,
+        endTimeUtc: newEnd,
+        description: "by John Denver",
+        recurring: true,
+        frequency: "monthly",
+        recurrenceBegins: newStart,
+        recurrenceEnds: oneYearLater,
+      })
+      .expect(200);
+
+    const recurringEvents = await CalendarEntry.find({
+      recurringEventId: data._id,
+    });
+
+    expect(recurringEvents.length).toBe(12);
+
+    await supertest(app)
+      .patch(`/entries/${data._id}`)
+      .send({
+        eventId: "345",
+        creatorId: "678",
+        title: "Listen to Sweet Surrender",
+        startTimeUtc: newStart,
+        endTimeUtc: newEnd,
+        description: "by John Denver",
+        recurring: false,
+      })
+      .expect(200);
+
+    const updatedRecurringEvents = await CalendarEntry.find({
+      recurringEventId: data._id,
+    });
+
+    expect(updatedRecurringEvents.length).toBe(0);
   });
 
   it("catches and returns an error from CalendarEntry.findByIdAndUpdate", async () => {

@@ -1,5 +1,5 @@
-import React, { MouseEvent, useEffect } from "react";
 import EventForm from "./EventForm";
+import React, { MouseEvent, useEffect } from "react";
 import { useState } from "react";
 import FullCalendar, {
   EventClickArg,
@@ -54,6 +54,7 @@ interface DisplayedEventData {
   startTimeUtc: string;
   endTimeUtc: string;
   allDay: boolean;
+  recurring: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -67,6 +68,10 @@ interface FormEntryProps {
   startDate: string;
   endDate: string;
   allDay: boolean;
+  recurring: boolean;
+  frequency?: string;
+  recurrenceBegins?: Date;
+  recurrenceEnds?: Date;
 }
 
 const App = () => {
@@ -116,15 +121,24 @@ const App = () => {
     startTime,
     endTime,
     allDay,
+    recurring,
+    frequency,
+    recurrenceBegins,
+    recurrenceEnds,
   }: FormEntryProps) => {
     const startTimeUtc = new Date(getDateTimeString(startDate, startTime));
     const endTimeUtc = new Date(getDateTimeString(endDate, endTime));
+
     await createEntry({
       title,
       description,
       startTimeUtc,
       endTimeUtc,
       allDay,
+      recurring,
+      frequency,
+      recurrenceBegins,
+      recurrenceEnds,
     }).catch(() => {
       flashApiErrorMessage();
     });
@@ -188,6 +202,10 @@ const App = () => {
     startTime,
     endTime,
     allDay,
+    recurring,
+    frequency,
+    recurrenceBegins,
+    recurrenceEnds,
   }: FormEntryProps) => {
     const entryId = displayedEventData._id;
     const startTimeUtc = new Date(getDateTimeString(startDate, startTime));
@@ -199,6 +217,10 @@ const App = () => {
       startTimeUtc,
       endTimeUtc,
       allDay,
+      recurring,
+      frequency,
+      recurrenceBegins,
+      recurrenceEnds,
     })
       .then(() => {
         getEntryDetails(entryId);
@@ -328,6 +350,7 @@ const App = () => {
                     )}
                     initialEndTime={formatTime(displayedEventData.endTimeUtc)}
                     initialAllDay={displayedEventData.allDay}
+                    initialRecurring={displayedEventData.recurring}
                     onFormSubmit={handleSaveChanges}
                     isCreate={false}
                   />
@@ -347,6 +370,7 @@ const App = () => {
                     initialStartTime={modalStartTime}
                     initialEndTime={modalEndTime}
                     initialAllDay={modalAllDay}
+                    initialRecurring={false}
                     onFormSubmit={handleCreateEntry}
                     isCreate={true}
                   />
