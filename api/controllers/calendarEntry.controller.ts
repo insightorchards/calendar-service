@@ -13,7 +13,7 @@ interface CalendarEntry {
   eventId: string;
   creatorId: string;
   title: string;
-  description: string;
+  description?: string;
   allDay: boolean;
   recurring: boolean;
   startTimeUtc: Date;
