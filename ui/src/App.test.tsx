@@ -93,11 +93,11 @@ describe("App", () => {
       userEvent.click(screen.getByLabelText("Title"));
       userEvent.type(
         screen.getByLabelText("Title"),
-        "Berta goes to the baseball game!"
+        "Berta goes to the baseball game!",
       );
       userEvent.type(
         screen.getByLabelText("Description"),
-        "She had some tasty nachos and margarita!"
+        "She had some tasty nachos and margarita!",
       );
       userEvent.type(screen.getByLabelText("Start Date"), "02152022");
       userEvent.type(screen.getByLabelText("Start Time"), "08:10");
@@ -110,10 +110,10 @@ describe("App", () => {
       });
       expect(await screen.findByLabelText("Title")).toHaveAttribute(
         "value",
-        "Berta goes to the baseball game!"
+        "Berta goes to the baseball game!",
       );
       expect(
-        await screen.findByText("Berta goes to the baseball game!")
+        await screen.findByText("Berta goes to the baseball game!"),
       ).toBeVisible();
       expect(mockCreateEntry).toHaveBeenCalledWith({
         startTimeUtc: new Date("2022-02-15T16:10:00.000Z"),
@@ -228,7 +228,9 @@ describe("App", () => {
       expect(screen.getByLabelText("Start Date")).toHaveValue("2016-12-12");
       expect(screen.getByLabelText("End Date")).toHaveValue("2016-12-12");
     });
+  });
 
+  describe("user errors", () => {
     it("errors when end date is before start date", async () => {
       mockCreateEntry.mockResolvedValue({});
       mockGetEntries.mockResolvedValue([]);
@@ -245,7 +247,7 @@ describe("App", () => {
         userEvent.click(screen.getByRole("button", { name: "Create Event" }));
       });
       expect(
-        screen.getByText("Error: end cannot be before start.")
+        screen.getByText("Error: end cannot be before start."),
       ).toBeInTheDocument();
     });
 
@@ -267,12 +269,12 @@ describe("App", () => {
         userEvent.click(screen.getByRole("button", { name: "Create Event" }));
       });
       expect(
-        screen.getByText("Error: end cannot be before start.")
+        screen.getByText("Error: end cannot be before start."),
       ).toBeInTheDocument();
     });
   });
 
-  describe("errors", () => {
+  describe("Backend interaction errors", () => {
     it("getEntries error displays error message", async () => {
       mockGetEntries.mockRejectedValue("Error in getEntry");
       await act(async () => {
@@ -291,11 +293,11 @@ describe("App", () => {
       userEvent.click(screen.getByLabelText("Title"));
       userEvent.type(
         screen.getByLabelText("Title"),
-        "Berta goes to the baseball game!"
+        "Berta goes to the baseball game!",
       );
       userEvent.type(
         screen.getByLabelText("Description"),
-        "She had some tasty nachos and margaritas!"
+        "She had some tasty nachos and margaritas!",
       );
       userEvent.type(screen.getByLabelText("Start Date"), "02152022");
       userEvent.type(screen.getByLabelText("Start Time"), "08:10");
@@ -364,7 +366,7 @@ describe("App", () => {
       userEvent.click(screen.getByText("Edit"));
       userEvent.type(
         screen.getByLabelText("Description"),
-        "party in the evening"
+        "party in the evening",
       );
 
       userEvent.click(screen.getByText("Save"));

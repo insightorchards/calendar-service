@@ -1,5 +1,6 @@
+import "@4tw/cypress-drag-drop";
+
 describe("journey test", () => {
-  let postOneId;
   let postTwoId;
 
   beforeEach(() => {
@@ -10,18 +11,11 @@ describe("journey test", () => {
   });
 
   after(() => {
-    cy.log({ postOneId, postTwoId });
-    cy.request("DELETE", `http://localhost:4000/entries/${postOneId}`);
     cy.request("DELETE", `http://localhost:4000/entries/${postTwoId}`);
   });
 
   it("can create and update an event", () => {
     cy.visit("http://localhost:3000");
-    cy.intercept({
-      method: "POST",
-      url: "/entries",
-      hostname: "localhost",
-    }).as("createEntry");
 
     cy.get(`[aria-label="add event"]`).click();
     cy.contains("label", "Title").click().type("Hello");
@@ -32,10 +26,6 @@ describe("journey test", () => {
     cy.contains("label", "Start Time").click().type("04:35");
     cy.contains("label", "End Time").click().type("06:45");
     cy.contains("button", "Create Event").click();
-
-    cy.wait("@createEntry").then((interception) => {
-      postOneId = interception.response.body._id;
-    });
 
     cy.contains("Hello").click();
     cy.contains("Hello").should("be.visible");
@@ -87,26 +77,52 @@ describe("journey test", () => {
     cy.findByText("all day").should("exist");
   });
 
-  it("opens create event modal with date, time, and all day pre-selected when field is clicked", () => {
-    cy.visit("http://localhost:3000");
-    cy.get(`[data-date="2022-12-14"]`).click();
-    cy.get(".chakra-modal__body").within(() => {
-      cy.get(`[id="startDate"]`).should("have.value", "2022-12-14");
-      cy.get(`[id="endDate"]`).should("have.value", "2022-12-14");
+  describe("month view", () => {
+    it("has correct start/end date in modal when date clicked", () => {
+      cy.visit("http://localhost:3000");
+      cy.get(`[data-date="2022-12-14"]`).click();
+      cy.get(".chakra-modal__body").within(() => {
+        cy.get(`[id="startDate"]`).should("have.value", "2022-12-14");
+        cy.get(`[id="endDate"]`).should("have.value", "2022-12-14");
+      });
+      cy.get(`[aria-label="Close"]`).click();
     });
-    cy.get(`[aria-label="Close"]`).click();
-    cy.findByText("week").click();
-    cy.get(`[data-date="2022-12-26"]`).eq(1).click();
-    cy.get(".chakra-modal__body").within(() => {
-      cy.get(`[id="startDate"]`).should("have.value", "2022-12-26");
-      cy.get(`[id="endDate"]`).should("have.value", "2022-12-26");
-      cy.get('[type="checkbox"]').should("be.checked");
+
+    it("opens a modal when drag selecting multiple days", () => {});
+  });
+
+  describe("week view", () => {
+    it("has correct start/end date and allDay is checked in modal when date clicked", () => {
+      cy.findByText("week").click();
+      cy.get(`[data-date="2022-12-26"]`).eq(1).click();
+      cy.get(".chakra-modal__body").within(() => {
+        cy.get(`[id="startDate"]`).should("have.value", "2022-12-26");
+        cy.get(`[id="endDate"]`).should("have.value", "2022-12-26");
+        cy.get('[type="checkbox"]').should("be.checked");
+      });
+      cy.get(`[aria-label="Close"]`).click();
     });
-    cy.get(`[aria-label="Close"]`).click();
-    cy.get(`[data-time="06:30:00"]`).eq(1).click();
-    cy.get(".chakra-modal__body").within(() => {
-      cy.get(`[id="startTime"]`).should("have.value", "06:30");
-      cy.get(`[id="endTime"]`).should("have.value", "07:30");
+
+    it("has correct start/end time in modal when specific time clicked", () => {
+      cy.get(`[data-time="06:30:00"]`).eq(1).click();
+      cy.get(".chakra-modal__body").within(() => {
+        cy.get(`[id="startTime"]`).should("have.value", "06:30");
+        cy.get(`[id="endTime"]`).should("have.value", "07:00");
+      });
+    });
+  });
+
+  describe("select draggable multiday event", () => {
+    it("opens and populates the modal with selected dates", () => {
+      cy.visit("http://localhost:3000");
+      cy.get(`[data-date="2022-12-26"]`).drag(`[data-date="2022-12-28"]`, {
+        force: true,
+      });
+      cy.get(`[data-date="2022-12-28"]`).click({ force: true });
+      cy.get(".chakra-modal__body").within(() => {
+        cy.get(`[id="startDate"]`).should("have.value", "2022-12-26");
+        cy.get(`[id="endDate"]`).should("have.value", "2022-12-28");
+      });
     });
   });
 });

@@ -12,6 +12,16 @@ const formatDate: Function = (date: Date): string => {
   ].join("-");
 };
 
+const formatDateMinusOneDay: Function = (date: Date): string => {
+  // subtract a day from the given date
+  date.setDate(date.getDate() - 1);
+  return [
+    date.getFullYear(),
+    padNumberWith0Zero(date.getMonth() + 1),
+    padNumberWith0Zero(date.getDate()),
+  ].join("-");
+};
+
 const dateFormat = (selectedEventDate: Date) =>
   `${selectedEventDate.toLocaleString("default", {
     weekday: "short",
@@ -57,7 +67,7 @@ const modalDateFormat: Function = ({
     return `${startDate} - ${endDate}`;
   } else {
     return `${startDate}, ${timeFormat(start)} - ${endDate}, ${timeFormat(
-      end
+      end,
     )}`;
   }
 };
@@ -73,13 +83,8 @@ const getDateTimeString = (date: string, time: string) => `${date}T${time}`;
 
 const formatTime = (utcString: string) =>
   `${padNumberWith0Zero(new Date(utcString).getHours())}:${padNumberWith0Zero(
-    new Date(utcString).getMinutes()
+    new Date(utcString).getMinutes(),
   )}`;
-
-const oneHourLater = (utcString: string) =>
-  `${padNumberWith0Zero(
-    new Date(utcString).getHours() + 1
-  )}:${padNumberWith0Zero(new Date(utcString).getMinutes())}`;
 
 const oneYearLater = (utcString: string) => {
   const newDate = new Date(utcString);
@@ -97,13 +102,13 @@ const addDayToAllDayEvent: EventInputTransformer = (event: EventInput) => {
 export {
   addDayToAllDayEvent,
   formatDate,
+  formatDateMinusOneDay,
   getDateTimeString,
   padNumberWith0Zero,
   modalDateFormat,
   formatTime,
   dateFormat,
   timeFormat,
-  oneHourLater,
   oneYearLater,
   singleModalDateFormat,
   dateFormatWithYear,
