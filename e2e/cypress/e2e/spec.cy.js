@@ -79,7 +79,11 @@ describe("journey test", () => {
 
   it("shows correct default time when uncreated event is changed to not be `allDay`", () => {
     cy.visit("http://localhost:3000");
-
+    cy.intercept({
+      method: "POST",
+      url: "/entries",
+      hostname: "localhost",
+    }).as("createEntry");
     cy.get(`[aria-label="add event"]`).click();
     cy.contains("label", "Title").click().type("Bye");
     cy.contains("label", "Description").click().type("It's a beautiful night");
@@ -95,6 +99,33 @@ describe("journey test", () => {
     cy.get(`[id="startTime"]`).should("have.value", "03:12");
     cy.get(`[id="endTime"]`).should("have.value", "04:12");
     cy.contains("button", "Create Event").click();
+  });
+
+  it.only("shows correct default time when existing allDay event is changed to not be `allDay`", () => {
+    cy.visit("http://localhost:3000");
+    cy.intercept({
+      method: "POST",
+      url: "/entries",
+      hostname: "localhost",
+    }).as("createEntry");
+    cy.get(`[data-date="2022-12-14"]`).click();
+    cy.contains("label", "Title").click().type("Bye");
+    cy.contains("label", "Description").click().type("It's a beautiful night");
+    cy.contains("label", "Start Date").click().type("2022-12-14");
+    cy.contains("label", "End Date").click().type("2022-12-14");
+
+    cy.contains("label", "All Day").within(() => {
+      cy.get('[type="checkbox"]').should("be.checked");
+    });
+    cy.contains("button", "Create Event").click();
+
+    cy.contains("Bye").click();
+    cy.contains("Edit").click();
+
+    cy.contains("label", "All Day").click();
+
+    cy.get(`[id="startTime"]`).should("have.value", "03:12");
+    cy.get(`[id="endTime"]`).should("have.value", "04:12");
   });
 
   describe("month view", () => {
@@ -118,7 +149,9 @@ describe("journey test", () => {
       cy.get(".chakra-modal__body").within(() => {
         cy.get(`[id="startDate"]`).should("have.value", "2022-12-26");
         cy.get(`[id="endDate"]`).should("have.value", "2022-12-26");
-        cy.get('[type="checkbox"]').should("be.checked");
+        cy.contains("label", "All Day").within(() => {
+          cy.get('[type="checkbox"]').should("be.checked");
+        });
       });
       cy.get(`[aria-label="Close"]`).click();
     });
