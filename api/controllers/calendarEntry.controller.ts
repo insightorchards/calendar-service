@@ -37,7 +37,6 @@ const prepRecurringEvents = (entry) => {
     until: entry.recurrenceEnds,
   });
   const recurrences = rule.all().slice(1);
-
   return recurrences.map((date) => {
     return {
       eventId: entry.eventId,

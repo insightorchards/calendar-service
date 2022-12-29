@@ -63,8 +63,8 @@ describe("POST /entries", () => {
   });
 
   it("can create recurring events", async () => {
-    const startTime = new Date();
-    const endTime = new Date();
+    const startTime = new Date("05 July 2011 14:48 UTC");
+    const endTime = new Date("05 July 2011 14:48 UTC");
     const oneYearLater = yearAfter(startTime);
 
     const eventData = await supertest(app)
@@ -224,8 +224,8 @@ describe("GET /entry/:entryId", () => {
 
 describe("DELETE / entry", () => {
   let data;
-  const startTime = new Date();
-  const endTime = new Date();
+  const startTime = new Date("05 July 2011 14:48 UTC");
+  const endTime = new Date("05 July 2011 14:48 UTC");
   const oneYearLater = yearAfter(startTime);
 
   beforeEach(async () => {
@@ -339,7 +339,7 @@ describe("PATCH / entry", () => {
   });
 
   it("creates recurring events for edited event as needed", async () => {
-    const newStart = new Date();
+    const newStart = new Date("05 July 2011 14:48 UTC");
     const newEnd = dayAfter(newStart);
     const oneYearLater = yearAfter(newStart);
     await supertest(app)
@@ -381,7 +381,7 @@ describe("PATCH / entry", () => {
   });
 
   it("deletes recurring events for edited event as needed", async () => {
-    const newStart = new Date();
+    const newStart = new Date("05 July 2011 14:48 UTC");
     const newEnd = dayAfter(newStart);
     const oneYearLater = yearAfter(newStart);
     await supertest(app)
@@ -427,7 +427,7 @@ describe("PATCH / entry", () => {
   });
 
   it("cascades changes to child recurring events when parent is edited", async () => {
-    const newStart = new Date();
+    const newStart = new Date("05 July 2011 14:48 UTC");
     const newEnd = dayAfter(newStart);
     const oneYearLater = yearAfter(newStart);
     const recurringEventData = await supertest(app).post("/entries").send({
