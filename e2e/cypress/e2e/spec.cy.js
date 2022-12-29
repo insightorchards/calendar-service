@@ -5,9 +5,9 @@ describe("journey test", () => {
 
   beforeEach(() => {
     // For an unknown reason this sets the current
-    // day to Dec 26, not Nov 26. Leaving since this
+    // day to Dec 26, 3:12am not Nov 26. Leaving since this
     // is our only way of mocking out time in these tests
-    cy.clock(new Date(2022, 11, 26), ["Date"]);
+    cy.clock(new Date(2022, 11, 26, 3, 12), ["Date"]);
   });
 
   after(() => {
@@ -31,7 +31,7 @@ describe("journey test", () => {
     cy.contains("Hello").should("be.visible");
     cy.contains("It's a beautiful day").should("be.visible");
     cy.contains("Sat, Nov 26, 04:35 AM - Sun, Nov 27, 06:45 AM").should(
-      "be.visible"
+      "be.visible",
     );
     cy.contains("button", "Edit").click();
     cy.get(".chakra-modal__body").within(() => {
@@ -45,7 +45,7 @@ describe("journey test", () => {
     cy.contains("Hello Everyone").should("be.visible");
     cy.contains("It's a beautiful day").should("be.visible");
     cy.contains("Sun, Nov 27, 07:35 AM - Tue, Nov 29, 08:45 AM").should(
-      "be.visible"
+      "be.visible",
     );
     cy.contains("button", "Delete").click();
     cy.contains("Hello Everyone").should("not.exist");
@@ -75,6 +75,26 @@ describe("journey test", () => {
     cy.contains("It's a beautiful night").should("be.visible");
     cy.findByText("Wed, Dec 14").should("exist");
     cy.findByText("all day").should("exist");
+  });
+
+  it("shows correct default time when uncreated event is changed to not be `allDay`", () => {
+    cy.visit("http://localhost:3000");
+
+    cy.get(`[aria-label="add event"]`).click();
+    cy.contains("label", "Title").click().type("Bye");
+    cy.contains("label", "Description").click().type("It's a beautiful night");
+    cy.contains("label", "Start Date").click().type("2022-12-14");
+    cy.contains("label", "End Date").click().type("2022-12-14");
+    cy.contains("label", "All Day").click();
+
+    cy.contains("label", "Start Time").should("not.exist");
+    cy.contains("label", "End Time").should("not.exist");
+
+    cy.contains("label", "All Day").click();
+
+    cy.get(`[id="startTime"]`).should("have.value", "03:12");
+    cy.get(`[id="endTime"]`).should("have.value", "04:12");
+    cy.contains("button", "Create Event").click();
   });
 
   describe("month view", () => {
