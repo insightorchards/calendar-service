@@ -8,6 +8,11 @@ import {
 import mongoose from "mongoose";
 import { RRule } from "rrule";
 
+const FREQUENCY_MAPPING = {
+  monthly: RRule.MONTHLY,
+  weekly: RRule.WEEKLY,
+};
+
 type CalendarEntry =
   | NonRecurringEntry
   | RecurringParentEntry
@@ -84,7 +89,7 @@ const prepRecurringEvents = (entry) => {
     entry.endTimeUtc
   );
   const rule = new RRule({
-    freq: RRule.MONTHLY,
+    freq: FREQUENCY_MAPPING[entry.frequency],
     dtstart: entry.recurrenceBegins,
     until: entry.recurrenceEnds,
   });

@@ -228,6 +228,46 @@ describe("App", () => {
       expect(screen.getByLabelText("Start Date")).toHaveValue("2016-12-12");
       expect(screen.getByLabelText("End Date")).toHaveValue("2016-12-12");
     });
+
+    it("passes recurrence frequency when recurring event is created", async () => {
+      mockGetEntries.mockResolvedValue([]);
+      mockCreateEntry.mockResolvedValue({});
+      await act(async () => {
+        await render(<App />);
+      });
+
+      userEvent.click(screen.getByLabelText("add event"));
+      userEvent.click(screen.getByLabelText("Title"));
+      userEvent.type(
+        screen.getByLabelText("Title"),
+        "Berta goes to the baseball game!"
+      );
+      userEvent.type(
+        screen.getByLabelText("Description"),
+        "She had some tasty nachos and margaritas!"
+      );
+      userEvent.type(screen.getByLabelText("Start Date"), "02152022");
+      userEvent.type(screen.getByLabelText("Start Time"), "08:10");
+      userEvent.type(screen.getByLabelText("End Date"), "02152022");
+      userEvent.type(screen.getByLabelText("End Time"), "10:10");
+      userEvent.click(screen.getByText("Recurring"));
+      userEvent.click(screen.getByText("Monthly"));
+      userEvent.click(screen.getByText("Weekly"));
+
+      await act(async () => {
+        userEvent.click(screen.getByRole("button", { name: "Create Event" }));
+      });
+
+      expect(mockCreateEntry).toHaveBeenCalledWith(
+        expect.objectContaining({
+          allDay: false,
+          description: "She had some tasty nachos and margaritas!",
+          frequency: "weekly",
+          recurring: true,
+          title: "Berta goes to the baseball game!",
+        })
+      );
+    });
   });
 
   describe("user errors", () => {

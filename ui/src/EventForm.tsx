@@ -5,7 +5,7 @@ import {
   oneYearLater,
   singleModalDateFormat,
 } from "./lib";
-import { Checkbox } from "@chakra-ui/react";
+import { Checkbox, RadioGroup, Radio, Stack } from "@chakra-ui/react";
 import s from "./EventForm.module.css";
 
 interface FormProps {
@@ -42,6 +42,8 @@ const EventForm = ({
   const [description, setDescription] = useState<string>(initialDescription);
   const [allDay, setAllDay] = useState<boolean>(initialAllDay);
   const [recurring, setRecurring] = useState<boolean>(initialRecurring);
+  const [recurrenceFrequency, setRecurrenceFrequency] =
+    useState<string>("monthly");
   const recurrenceBeginDate = new Date(getDateTimeString(startDate, startTime));
   const recurrenceEndDate = oneYearLater(recurrenceBeginDate.toUTCString());
 
@@ -77,7 +79,7 @@ const EventForm = ({
         endTime,
         allDay,
         recurring,
-        frequency: "monthly",
+        frequency: recurrenceFrequency,
         recurrenceBegins: recurrenceBeginDate,
         recurrenceEnds: recurrenceEndDate,
       });
@@ -190,7 +192,16 @@ const EventForm = ({
       {recurring && (
         <>
           <label htmlFor="recurrenceType" className={s.formItem}>
-            {`Recurrence type: Monthly`}
+            Recurrence Frequency
+            <RadioGroup
+              onChange={setRecurrenceFrequency}
+              value={recurrenceFrequency}
+            >
+              <Stack direction="row">
+                <Radio value="monthly">Monthly</Radio>
+                <Radio value="weekly">Weekly</Radio>
+              </Stack>
+            </RadioGroup>
           </label>
           <label htmlFor="recurrenceBegins" className={s.formItem}>
             {`Recurrence begins: ${singleModalDateFormat(recurrenceBeginDate)}`}
