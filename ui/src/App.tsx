@@ -78,15 +78,15 @@ const App = () => {
   const currentHour: number = new Date().getHours();
   const currentMinute: number = new Date().getMinutes();
   const DEFAULT_START_TIME: string = `${padNumberWith0Zero(
-    currentHour,
+    currentHour
   )}:${padNumberWith0Zero(currentMinute)}`;
   const DEFAULT_END_TIME: string = `${padNumberWith0Zero(
-    currentHour + 1,
+    currentHour + 1
   )}:${padNumberWith0Zero(currentMinute)}`;
   const DEFAULT_DATE = formatDate(new Date());
   const [events, setEvents] = useState<EventSourceInput>([]);
   const [displayedEventData, setDisplayedEventData] = useState(
-    {} as DisplayedEventData,
+    {} as DisplayedEventData
   );
   const [showOverlay, setShowOverlay] = useState<boolean>(false);
   const [inEditMode, setInEditMode] = useState<boolean>(false);
@@ -247,21 +247,24 @@ const App = () => {
           )}
 
           <div className={s.mainContainer}>
-            <div className={s.leftSidePanel}>
-              <IconButton
-                aria-label="add event"
-                icon={<AddIcon boxSize={5} w={5} h={5} />}
-                onClick={() => {
-                  setModalStartDate(DEFAULT_DATE);
-                  setModalEndDate(DEFAULT_DATE);
-                  setModalStartTime(DEFAULT_START_TIME);
-                  setModalEndTime(DEFAULT_END_TIME);
-                  setInCreateMode(true);
-                  setShowOverlay(true);
-                }}
-              />
-            </div>
             <div className={s.fullCalendarUI}>
+              <div className={s.leftSidePanel}>
+                <div>
+                  <IconButton
+                    aria-label="add event"
+                    size="lg"
+                    icon={<AddIcon boxSize={7} w={7} h={7} />}
+                    onClick={() => {
+                      setModalStartDate(DEFAULT_DATE);
+                      setModalEndDate(DEFAULT_DATE);
+                      setModalStartTime(DEFAULT_START_TIME);
+                      setModalEndTime(DEFAULT_END_TIME);
+                      setInCreateMode(true);
+                      setShowOverlay(true);
+                    }}
+                  />
+                </div>
+              </div>
               <FullCalendar
                 plugins={[
                   dayGridPlugin,
@@ -343,13 +346,13 @@ const App = () => {
                     initialTitle={displayedEventData.title}
                     initialDescription={displayedEventData.description}
                     initialStartDate={formatDate(
-                      new Date(displayedEventData.startTimeUtc),
+                      new Date(displayedEventData.startTimeUtc)
                     )}
                     initialEndDate={formatDate(
-                      new Date(displayedEventData.endTimeUtc),
+                      new Date(displayedEventData.endTimeUtc)
                     )}
                     initialStartTime={formatTime(
-                      displayedEventData.startTimeUtc,
+                      displayedEventData.startTimeUtc
                     )}
                     initialEndTime={formatTime(displayedEventData.endTimeUtc)}
                     initialAllDay={displayedEventData.allDay}

@@ -1,6 +1,8 @@
 .mainContainer {
   display: flex;
+  flex-direction: column;
 }
+
 .allDay {
   font-style: italic;
   font-weight: 600;
@@ -25,7 +27,7 @@
 
 .leftSidePanel {
   display: flex;
-  margin: 10px;
+  margin-bottom: 10px;
   width: 15vw;
 }
 
@@ -49,8 +51,10 @@
 }
 
 .fullCalendarUI {
-  padding: 20px 50px 0 0;
-  width: 80vw;
+  padding: 20px;
+  width: 100%;
+  max-width: 1100px;
+  align-self: center;
 }
 
 .saveButton {
@@ -99,10 +103,17 @@
   }
 
   .fullCalendarUI {
-    display: flex;
-    padding: 25px;
-    position: relative;
+    padding: 10px;
     width: 100%;
+  }
+
+  :global(.fc-toolbar) {
+    display: block !important;
+    text-align: center;
+  }
+
+  :global(.fc-button-group) {
+    width: 200px;
   }
 
   .buttonText {
