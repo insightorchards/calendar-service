@@ -6,9 +6,45 @@ import {
   addMillisecondsToDate,
 } from "../lib/dateHelpers";
 import mongoose from "mongoose";
-import { RRule, RRuleSet, rrulestr } from "rrule";
+import { RRule } from "rrule";
 
-interface CalendarEntry {
+type CalendarEntry =
+  | NonRecurringEntry
+  | RecurringParentEntry
+  | RecurringChildEntry;
+
+type NonRecurringEntry = {
+  id: string;
+  eventId: string;
+  creatorId: string;
+  title: string;
+  description?: string;
+  allDay: boolean;
+  recurring: false;
+  startTimeUtc: Date;
+  endTimeUtc: Date;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+type RecurringParentEntry = {
+  id: string;
+  eventId: string;
+  creatorId: string;
+  title: string;
+  description?: string;
+  allDay: boolean;
+  recurring: true;
+  startTimeUtc: Date;
+  endTimeUtc: Date;
+  frequency: string;
+  recurrenceBegins: Date;
+  recurrenceEnds: Date;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+type RecurringChildEntry = {
   id: string;
   eventId: string;
   creatorId: string;
@@ -18,13 +54,28 @@ interface CalendarEntry {
   recurring: boolean;
   startTimeUtc: Date;
   endTimeUtc: Date;
-  recurringEventId?: mongoose.Schema.Types.ObjectId;
-  frequency?: string;
-  recurrenceBegins?: Date;
-  recurrenceEnds?: Date;
+  recurringEventId: mongoose.Schema.Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
-}
+};
+
+const isNonRecurringEntry = (entry) => {
+  return (entry as NonRecurringEntry).recurring == false;
+};
+
+const isRecurringParentEntry = (entry) => {
+  return (
+    (entry as RecurringParentEntry).recurring == true &&
+    (entry as RecurringParentEntry).frequency !== undefined
+  );
+};
+
+const isRecurringChildEntry = (entry) => {
+  return (
+    (entry as RecurringChildEntry).recurring == true &&
+    (entry as RecurringChildEntry).recurringEventId !== undefined
+  );
+};
 
 const prepRecurringEvents = (entry) => {
   const timeDifference = getMillisecondsBetween(
@@ -105,7 +156,7 @@ export const createCalendarEntry = async (
 ) => {
   try {
     const entry = await CalendarEntry.create(req.body as CalendarEntry);
-    if (entry.recurring) {
+    if (isRecurringParentEntry(entry)) {
       const recurringData = prepRecurringEvents(entry);
       await CalendarEntry.insertMany(recurringData);
     }
@@ -153,7 +204,7 @@ export const deleteCalendarEntry = async (
   const { id } = req.params;
   try {
     const entryToDelete = await CalendarEntry.findById(id);
-    if (entryToDelete.recurring && entryToDelete.frequency) {
+    if (isRecurringParentEntry(entryToDelete)) {
       await deleteChildEvents(entryToDelete);
     }
     await CalendarEntry.deleteOne({ _id: id });
@@ -176,14 +227,23 @@ export const updateCalendarEntry = async (
       req.body as CalendarEntry
     );
     const updatedEntry = await CalendarEntry.findById(id);
-    if (!originalEntry.recurring && updatedEntry.recurring) {
+    if (
+      isNonRecurringEntry(originalEntry) &&
+      isRecurringParentEntry(updatedEntry)
+    ) {
       const recurringData = prepRecurringEvents(updatedEntry);
       await CalendarEntry.insertMany(recurringData);
     }
-    if (originalEntry.recurring && !updatedEntry.recurring) {
+    if (
+      isRecurringParentEntry(originalEntry) &&
+      isNonRecurringEntry(updatedEntry)
+    ) {
       deleteChildEvents(updatedEntry);
     }
-    if (originalEntry.recurring && updatedEntry.recurring) {
+    if (
+      isRecurringParentEntry(originalEntry) &&
+      isRecurringParentEntry(updatedEntry)
+    ) {
       deleteChildEvents(updatedEntry);
       const recurringData = prepRecurringEvents(updatedEntry);
       await CalendarEntry.insertMany(recurringData);
