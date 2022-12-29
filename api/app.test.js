@@ -426,7 +426,7 @@ describe("PATCH / entry", () => {
     expect(updatedRecurringEvents.length).toBe(0);
   });
 
-  it.only("cascades changes to child recurring events when parent is edited", async () => {
+  it("cascades changes to child recurring events when parent is edited", async () => {
     const newStart = new Date();
     const newEnd = dayAfter(newStart);
     const oneYearLater = yearAfter(newStart);
