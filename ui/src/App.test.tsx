@@ -240,11 +240,11 @@ describe("App", () => {
       userEvent.click(screen.getByLabelText("Title"));
       userEvent.type(
         screen.getByLabelText("Title"),
-        "Berta goes to the baseball game!"
+        "Berta goes to the baseball game!",
       );
       userEvent.type(
         screen.getByLabelText("Description"),
-        "She had some tasty nachos and margaritas!"
+        "She had some tasty nachos and margaritas!",
       );
       userEvent.type(screen.getByLabelText("Start Date"), "02152022");
       userEvent.type(screen.getByLabelText("Start Time"), "08:10");
@@ -264,7 +264,7 @@ describe("App", () => {
           frequency: "weekly",
           recurring: true,
           title: "Berta goes to the baseball game!",
-        })
+        }),
       );
     });
   });
@@ -410,7 +410,7 @@ describe("App", () => {
 
       userEvent.click(screen.getByText("Save"));
       expect(await screen.findByRole("alert")).toBeVisible();
-    }, 10000);
+    }, 20000);
 
     it("deleteEntry displays an error message", async () => {
       mockGetEntries.mockResolvedValueOnce([
