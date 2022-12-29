@@ -228,12 +228,38 @@ describe("EventForm", () => {
       />
     );
 
-    expect(screen.getByText("Recurrence type: Monthly")).toBeVisible();
+    expect(screen.getByText("Recurrence Frequency")).toBeVisible();
     expect(
       screen.getByText("Recurrence begins: Tue, Feb 15 2022, 04:00 AM")
     ).toBeVisible();
     expect(
       screen.getByText("Recurrence ends: Wed, Feb 15 2023, 04:00 AM")
     ).toBeVisible();
+  });
+
+  it("allows user to choose between monthly and weekly recurrence", () => {
+    const startDate = formatDate(new Date());
+    const startTime = `${padNumberWith0Zero(currentHour)}:${padNumberWith0Zero(
+      currentMinute
+    )}`;
+    render(
+      <EventForm
+        initialStartDate={startDate}
+        initialEndDate={startDate}
+        initialStartTime={startTime}
+        initialEndTime={`${padNumberWith0Zero(
+          currentHour + 1
+        )}:${padNumberWith0Zero(currentMinute)}`}
+        initialTitle="Mary's Chicken Feast"
+        initialDescription="A time to remember and appreciate chicken nuggets and more"
+        initialAllDay={false}
+        initialRecurring={true}
+        onFormSubmit={() => {}}
+        isCreate={true}
+      />
+    );
+
+    expect(screen.getByText("Monthly")).toBeVisible();
+    expect(screen.getByText("Weekly")).toBeVisible();
   });
 });

@@ -465,29 +465,27 @@ describe("PATCH / entry", () => {
         endTimeUtc: updatedEnd,
         description: "by John Denver",
         recurring: true,
-        frequency: "monthly",
+        frequency: "weekly",
         recurrenceBegins: updatedStart,
         recurrenceEnds: updatedOneYearLater,
       });
 
-    const updatedEvent = JSON.parse(updatedEventData.text);
+    const updatedParentEvent = JSON.parse(updatedEventData.text);
 
-    const updatedRecurringEvents = await CalendarEntry.find({
-      recurringEventId: recurringEvent._id,
-    });
-
-    const updatedRecurringEvent = updatedRecurringEvents[0];
-
-    expect(new Date(updatedEvent.startTimeUtc)).toEqual(new Date(updatedStart));
-    expect(new Date(updatedEvent.endTimeUtc)).toEqual(new Date(updatedEnd));
-    expect(new Date(updatedEvent.recurrenceBegins)).toEqual(
+    expect(new Date(updatedParentEvent.startTimeUtc)).toEqual(
       new Date(updatedStart)
     );
-    expect(new Date(updatedEvent.recurrenceEnds)).toEqual(
+    expect(new Date(updatedParentEvent.endTimeUtc)).toEqual(
+      new Date(updatedEnd)
+    );
+    expect(new Date(updatedParentEvent.recurrenceBegins)).toEqual(
+      new Date(updatedStart)
+    );
+    expect(new Date(updatedParentEvent.recurrenceEnds)).toEqual(
       new Date(updatedOneYearLater)
     );
 
-    expect(updatedEvent).toEqual(
+    expect(updatedParentEvent).toEqual(
       expect.objectContaining({
         eventId: "123",
         creatorId: "456",
@@ -495,24 +493,28 @@ describe("PATCH / entry", () => {
         description: "by John Denver",
         allDay: false,
         recurring: true,
-        frequency: "monthly",
+        frequency: "weekly",
       })
     );
 
-    const updatedRecurringEventStart = new Date("05 September 2011 14:48 UTC");
-    expect(updatedRecurringEvents.length).toBe(12);
+    const updatedChildEvents = await CalendarEntry.find({
+      recurringEventId: recurringEvent._id,
+    });
+    const updatedChildEvent = updatedChildEvents[0];
+    const updatedChildEventStart = new Date("12 August 2011 14:48 UTC");
+    expect(updatedChildEvents.length).toBe(52);
 
-    expect(new Date(updatedRecurringEvent.startTimeUtc)).toEqual(
-      new Date(updatedRecurringEventStart)
+    expect(new Date(updatedChildEvent.startTimeUtc)).toEqual(
+      new Date(updatedChildEventStart)
     );
-    expect(new Date(updatedRecurringEvent.endTimeUtc)).toEqual(
-      new Date(new Date(dayAfter(updatedRecurringEventStart)))
+    expect(new Date(updatedChildEvent.endTimeUtc)).toEqual(
+      new Date(new Date(dayAfter(updatedChildEventStart)))
     );
 
-    expect(updatedRecurringEvent.title).toEqual("Listen to Sweet Surrender");
-    expect(updatedRecurringEvent.description).toEqual("by John Denver");
-    expect(updatedRecurringEvent.recurring).toEqual(true);
-    expect(`${updatedRecurringEvent.recurringEventId}`).toEqual(
+    expect(updatedChildEvent.title).toEqual("Listen to Sweet Surrender");
+    expect(updatedChildEvent.description).toEqual("by John Denver");
+    expect(updatedChildEvent.recurring).toEqual(true);
+    expect(`${updatedChildEvent.recurringEventId}`).toEqual(
       `${recurringEvent._id}`
     );
   });
