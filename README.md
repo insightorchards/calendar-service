@@ -15,8 +15,9 @@ Welcome to our Typescript/React frontend and express API for a simple calendar. 
 
 - Ability to create events with date and time [Done]
 - Ability to show day/week/month views [Done]
-- Ability to create all-day events
-- Ability to edit and delete event
+- Ability to create all-day events [Done]
+- Ability to edit and delete event [Done]
+- Ability to create recurring events [In Progress]
 
 # Running the app
 - For frontend: navigate to `ui` directory and run the following commands: `npm i` and `npm start`
