@@ -183,6 +183,11 @@ export const updateCalendarEntry = async (
     if (originalEntry.recurring && !updatedEntry.recurring) {
       deleteChildEvents(updatedEntry);
     }
+    if (originalEntry.recurring && updatedEntry.recurring) {
+      deleteChildEvents(updatedEntry);
+      const recurringData = prepRecurringEvents(updatedEntry);
+      await CalendarEntry.insertMany(recurringData);
+    }
     res.status(200).json(updatedEntry);
   } catch (err) {
     res.status(400);
