@@ -251,10 +251,9 @@ describe("App", () => {
       userEvent.type(screen.getByLabelText("End Date"), "02152022");
       userEvent.type(screen.getByLabelText("End Time"), "10:10");
       userEvent.click(screen.getByText("Recurring"));
-      userEvent.click(screen.getByText("Monthly"));
       userEvent.click(screen.getByText("Weekly"));
 
-      await act(async () => {
+      await act(() => {
         userEvent.click(screen.getByRole("button", { name: "Create Event" }));
       });
 
