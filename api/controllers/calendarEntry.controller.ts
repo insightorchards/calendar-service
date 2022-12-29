@@ -60,19 +60,20 @@ type RecurringChildEntry = {
 };
 
 const isNonRecurringEntry = (entry) => {
-  return (entry as NonRecurringEntry).recurring == false;
+  return (entry as NonRecurringEntry).recurring === false;
 };
 
 const isRecurringParentEntry = (entry) => {
   return (
-    (entry as RecurringParentEntry).recurring == true &&
+    (entry as RecurringParentEntry).recurring === true &&
     (entry as RecurringParentEntry).frequency !== undefined
   );
 };
 
+// Not currently used but will be used during future features
 const isRecurringChildEntry = (entry) => {
   return (
-    (entry as RecurringChildEntry).recurring == true &&
+    (entry as RecurringChildEntry).recurring === true &&
     (entry as RecurringChildEntry).recurringEventId !== undefined
   );
 };
