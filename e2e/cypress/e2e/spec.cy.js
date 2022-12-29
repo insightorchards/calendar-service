@@ -101,7 +101,7 @@ describe("journey test", () => {
     cy.contains("button", "Create Event").click();
   });
 
-  it.only("shows correct default time when existing allDay event is changed to not be `allDay`", () => {
+  it("shows correct default time when existing allDay event is changed to not be `allDay`", () => {
     cy.visit("http://localhost:3000");
     cy.intercept({
       method: "POST",
@@ -119,6 +119,10 @@ describe("journey test", () => {
     });
     cy.contains("button", "Create Event").click();
 
+    cy.wait("@createEntry").then((interception) => {
+      postTwoId = interception.response.body._id;
+    });
+
     cy.contains("Bye").click();
     cy.contains("Edit").click();
 
@@ -126,6 +130,7 @@ describe("journey test", () => {
 
     cy.get(`[id="startTime"]`).should("have.value", "03:12");
     cy.get(`[id="endTime"]`).should("have.value", "04:12");
+    cy.contains("button", "Save").click();
   });
 
   describe("month view", () => {

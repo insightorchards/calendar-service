@@ -99,6 +99,19 @@ const addDayToAllDayEvent: EventInputTransformer = (event: EventInput) => {
   return event;
 };
 
+const currentHour: number = new Date().getHours();
+const currentMinute: number = new Date().getMinutes();
+
+const DEFAULT_START_TIME: string = `${padNumberWith0Zero(
+  currentHour,
+)}:${padNumberWith0Zero(currentMinute)}`;
+
+const DEFAULT_END_TIME: string = `${padNumberWith0Zero(
+  currentHour + 1,
+)}:${padNumberWith0Zero(currentMinute)}`;
+
+const DEFAULT_DATE = formatDate(new Date());
+
 export {
   addDayToAllDayEvent,
   formatDate,
@@ -112,4 +125,7 @@ export {
   oneYearLater,
   singleModalDateFormat,
   dateFormatWithYear,
+  DEFAULT_START_TIME,
+  DEFAULT_END_TIME,
+  DEFAULT_DATE,
 };

@@ -8,11 +8,13 @@ import FullCalendar, {
 import {
   formatDate,
   getDateTimeString,
-  padNumberWith0Zero,
   formatTime,
   modalDateFormat,
   addDayToAllDayEvent,
   formatDateMinusOneDay,
+  DEFAULT_START_TIME,
+  DEFAULT_END_TIME,
+  DEFAULT_DATE,
 } from "./lib";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
@@ -75,18 +77,9 @@ interface FormEntryProps {
 }
 
 const App = () => {
-  const currentHour: number = new Date().getHours();
-  const currentMinute: number = new Date().getMinutes();
-  const DEFAULT_START_TIME: string = `${padNumberWith0Zero(
-    currentHour
-  )}:${padNumberWith0Zero(currentMinute)}`;
-  const DEFAULT_END_TIME: string = `${padNumberWith0Zero(
-    currentHour + 1
-  )}:${padNumberWith0Zero(currentMinute)}`;
-  const DEFAULT_DATE = formatDate(new Date());
   const [events, setEvents] = useState<EventSourceInput>([]);
   const [displayedEventData, setDisplayedEventData] = useState(
-    {} as DisplayedEventData
+    {} as DisplayedEventData,
   );
   const [showOverlay, setShowOverlay] = useState<boolean>(false);
   const [inEditMode, setInEditMode] = useState<boolean>(false);
@@ -346,13 +339,13 @@ const App = () => {
                     initialTitle={displayedEventData.title}
                     initialDescription={displayedEventData.description}
                     initialStartDate={formatDate(
-                      new Date(displayedEventData.startTimeUtc)
+                      new Date(displayedEventData.startTimeUtc),
                     )}
                     initialEndDate={formatDate(
-                      new Date(displayedEventData.endTimeUtc)
+                      new Date(displayedEventData.endTimeUtc),
                     )}
                     initialStartTime={formatTime(
-                      displayedEventData.startTimeUtc
+                      displayedEventData.startTimeUtc,
                     )}
                     initialEndTime={formatTime(displayedEventData.endTimeUtc)}
                     initialAllDay={displayedEventData.allDay}

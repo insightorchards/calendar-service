@@ -4,6 +4,8 @@ import {
   getDateTimeString,
   oneYearLater,
   singleModalDateFormat,
+  DEFAULT_START_TIME,
+  DEFAULT_END_TIME,
 } from "./lib";
 import { Checkbox, RadioGroup, Radio, Stack } from "@chakra-ui/react";
 import s from "./EventForm.module.css";
@@ -144,6 +146,8 @@ const EventForm = ({
           isChecked={allDay}
           onChange={(e) => {
             setAllDay(e.target.checked);
+            setStartTime(DEFAULT_START_TIME);
+            setEndTime(DEFAULT_END_TIME);
           }}
         >
           All Day
