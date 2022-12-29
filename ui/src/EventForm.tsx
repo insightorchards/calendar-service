@@ -51,7 +51,7 @@ const EventForm = ({
     const startDateAndTime: string = getDateTimeString(startDate, startTime);
     const endDateAndTime: string = getDateTimeString(endDate, endTime);
     if (title === "") {
-      setError("Error: title cannot be empty.");
+      setError("Error: Add Title");
       return;
     }
     if (startDateAndTime > endDateAndTime) {

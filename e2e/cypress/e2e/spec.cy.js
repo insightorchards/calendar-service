@@ -31,7 +31,7 @@ describe("journey test", () => {
     cy.contains("Hello").should("be.visible");
     cy.contains("It's a beautiful day").should("be.visible");
     cy.contains("Sat, Nov 26, 04:35 AM - Sun, Nov 27, 06:45 AM").should(
-      "be.visible"
+      "be.visible",
     );
     cy.contains("button", "Edit").click();
     cy.get(".chakra-modal__body").within(() => {
@@ -45,7 +45,7 @@ describe("journey test", () => {
     cy.contains("Hello Everyone").should("be.visible");
     cy.contains("It's a beautiful day").should("be.visible");
     cy.contains("Sun, Nov 27, 07:35 AM - Tue, Nov 29, 08:45 AM").should(
-      "be.visible"
+      "be.visible",
     );
     cy.contains("button", "Delete").click();
     cy.contains("Hello Everyone").should("not.exist");
@@ -74,7 +74,7 @@ describe("journey test", () => {
     cy.contains("Bye").should("be.visible");
     cy.contains("It's a beautiful night").should("be.visible");
     cy.findByText("Wed, Dec 14").should("exist");
-    cy.findByText("all day").should("exist");
+    cy.findByText("All Day").should("exist");
   });
 
   describe("month view", () => {
