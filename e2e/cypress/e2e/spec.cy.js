@@ -154,6 +154,26 @@ describe("journey test", () => {
     cy.get(`[id="startTime"]`).should("have.value", "04:00");
     cy.get(`[id="endTime"]`).should("have.value", "05:00");
     cy.contains("button", "Save").click();
+  it("shows an error if recurrence end is before the event start", () => {
+    cy.visit("http://localhost:3000");
+
+    cy.get(`[aria-label="add event"]`).click();
+    cy.contains("label", "Title").click().type("Hello");
+    cy.contains("label", "Description").click().type("It's a beautiful day");
+    cy.contains("label", "Start Date").click().type("2022-11-26");
+    cy.get("#endDate").should("have.value", "2022-11-26");
+    cy.contains("label", "End Date").click().type("2022-11-27");
+    cy.contains("label", "Start Time").click().type("04:35");
+    cy.contains("label", "End Time").click().type("06:45");
+
+    cy.contains("label", "Recurring").click();
+    cy.contains("label", "Recurrence End").click().type("2021-04-26");
+
+    cy.contains("button", "Create Event").click();
+
+    cy.contains("Error: recurrence end must be after start.").should(
+      "be.visible",
+    );
   });
 
   describe("month view", () => {
