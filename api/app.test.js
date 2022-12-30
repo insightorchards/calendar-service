@@ -58,7 +58,7 @@ describe("POST /entries", () => {
         allDay: false,
         recurring: false,
         description: "and a happy night too",
-      })
+      }),
     );
   });
 
@@ -104,7 +104,7 @@ describe("POST /entries", () => {
         recurring: true,
         frequency: "monthly",
         description: "and a happy night too",
-      })
+      }),
     );
 
     expect(recurringEvents.length).toEqual(12);
@@ -205,7 +205,7 @@ describe("GET /entry/:entryId", () => {
         recurring: false,
         startTimeUtc: today.toISOString(),
         endTimeUtc: dayAfter(today).toISOString(),
-      })
+      }),
     );
   });
 
@@ -334,7 +334,7 @@ describe("PATCH / entry", () => {
         startTimeUtc: newStart,
         endTimeUtc: newEnd,
         description: "by John Denver",
-      })
+      }),
     );
   });
 
@@ -374,7 +374,7 @@ describe("PATCH / entry", () => {
         endTimeUtc: newEnd,
         recurring: true,
         description: "by John Denver",
-      })
+      }),
     );
 
     expect(recurringEvents.length).toBe(12);
@@ -473,16 +473,16 @@ describe("PATCH / entry", () => {
     const updatedParentEvent = JSON.parse(updatedEventData.text);
 
     expect(new Date(updatedParentEvent.startTimeUtc)).toEqual(
-      new Date(updatedStart)
+      new Date(updatedStart),
     );
     expect(new Date(updatedParentEvent.endTimeUtc)).toEqual(
-      new Date(updatedEnd)
+      new Date(updatedEnd),
     );
     expect(new Date(updatedParentEvent.recurrenceBegins)).toEqual(
-      new Date(updatedStart)
+      new Date(updatedStart),
     );
     expect(new Date(updatedParentEvent.recurrenceEnds)).toEqual(
-      new Date(updatedOneYearLater)
+      new Date(updatedOneYearLater),
     );
 
     expect(updatedParentEvent).toEqual(
@@ -494,7 +494,7 @@ describe("PATCH / entry", () => {
         allDay: false,
         recurring: true,
         frequency: "weekly",
-      })
+      }),
     );
 
     const updatedChildEvents = await CalendarEntry.find({
@@ -505,17 +505,20 @@ describe("PATCH / entry", () => {
     expect(updatedChildEvents.length).toBe(52);
 
     expect(new Date(updatedChildEvent.startTimeUtc)).toEqual(
-      new Date(updatedChildEventStart)
+      new Date(updatedChildEventStart),
     );
     expect(new Date(updatedChildEvent.endTimeUtc)).toEqual(
-      new Date(new Date(dayAfter(updatedChildEventStart)))
+      new Date(new Date(dayAfter(updatedChildEventStart))),
     );
 
     expect(updatedChildEvent.title).toEqual("Listen to Sweet Surrender");
     expect(updatedChildEvent.description).toEqual("by John Denver");
     expect(updatedChildEvent.recurring).toEqual(true);
     expect(`${updatedChildEvent.recurringEventId}`).toEqual(
-      `${recurringEvent._id}`
+      `${recurringEvent._id}`,
+    );
+    expect(new Date(updatedChildEvent.recurrenceEnds)).toEqual(
+      new Date(updatedOneYearLater),
     );
   });
 

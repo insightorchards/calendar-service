@@ -34,7 +34,8 @@ describe("EventForm", () => {
         initialTitle="Mary's Chicken Feast"
         initialDescription="A time to remember and appreciate chicken nuggets and more"
         initialAllDay={false}
-        initialRecurring={false}
+        initialRecurring={true}
+        initialRecurrenceEnd={formatDate(new Date("2022-06-15T04:00"))}
         onFormSubmit={() => {}}
         isCreate={true}
       />,
@@ -49,7 +50,8 @@ describe("EventForm", () => {
       "A time to remember and appreciate chicken nuggets and more",
     );
     expect(screen.getByLabelText("All Day")).not.toBeChecked();
-    expect(screen.getByLabelText("Recurring")).not.toBeChecked();
+    expect(screen.getByLabelText("Recurring")).toBeChecked();
+    expect(screen.getByLabelText("Recurrence Ends")).toHaveValue("2022-06-15");
     expect(screen.getByRole("button")).toHaveAccessibleName("Create Event");
   });
 
@@ -68,6 +70,7 @@ describe("EventForm", () => {
         initialDescription="A time to remember and appreciate classic art and more"
         initialAllDay={false}
         initialRecurring={false}
+        initialRecurrenceEnd={formatDate(new Date("2022-06-15T04:00"))}
         onFormSubmit={() => {}}
         isCreate={false}
       />,
@@ -92,6 +95,7 @@ describe("EventForm", () => {
         initialDescription="A time to remember and appreciate classic art and more"
         initialAllDay={false}
         initialRecurring={false}
+        initialRecurrenceEnd={formatDate(new Date("2022-06-15T04:00"))}
         onFormSubmit={onFormSubmitMock}
         isCreate={false}
       />,
@@ -126,6 +130,7 @@ describe("EventForm", () => {
         initialDescription="A time to remember and appreciate classic art and more"
         initialAllDay={false}
         initialRecurring={false}
+        initialRecurrenceEnd={formatDate(new Date("2022-06-15T04:00"))}
         onFormSubmit={onFormSubmitMock}
         isCreate={false}
       />,
@@ -149,6 +154,7 @@ describe("EventForm", () => {
         initialDescription="A time to remember and appreciate classic art and more"
         initialAllDay={true}
         initialRecurring={false}
+        initialRecurrenceEnd={formatDate(new Date("2022-06-15T04:00"))}
         onFormSubmit={() => {}}
         isCreate={false}
       />,
@@ -180,6 +186,7 @@ describe("EventForm", () => {
           initialDescription="A time to remember and appreciate classic art and more"
           initialAllDay={false}
           initialRecurring={true}
+          initialRecurrenceEnd={formatDate(new Date("2023-02-15T04:00"))}
           onFormSubmit={onFormSubmitMock}
           isCreate={false}
         />,
@@ -218,6 +225,7 @@ describe("EventForm", () => {
           initialDescription="A time to remember and appreciate chicken nuggets and more"
           initialAllDay={false}
           initialRecurring={true}
+          initialRecurrenceEnd={formatDate(new Date("2023-02-15T04:00"))}
           onFormSubmit={() => {}}
           isCreate={true}
         />,
@@ -246,6 +254,7 @@ describe("EventForm", () => {
           initialDescription="A time to remember and appreciate chicken nuggets and more"
           initialAllDay={false}
           initialRecurring={true}
+          initialRecurrenceEnd={formatDate(new Date("2023-02-15T04:00"))}
           onFormSubmit={() => {}}
           isCreate={true}
         />,

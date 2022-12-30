@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import {
   formatDate,
   getDateTimeString,
-  oneYearLater,
   DEFAULT_START_TIME,
   DEFAULT_END_TIME,
 } from "./lib";
@@ -18,6 +17,7 @@ interface FormProps {
   initialDescription: string;
   initialAllDay: boolean;
   initialRecurring: boolean;
+  initialRecurrenceEnd: string;
   onFormSubmit: Function;
   isCreate: boolean;
 }
@@ -31,6 +31,7 @@ const EventForm = ({
   initialDescription,
   initialAllDay,
   initialRecurring,
+  initialRecurrenceEnd,
   onFormSubmit,
   isCreate,
 }: FormProps) => {
@@ -48,9 +49,8 @@ const EventForm = ({
 
   const recurrenceBeginDate = new Date(getDateTimeString(startDate, startTime));
 
-  const [recurrenceEndDate, setRecurrenceEndDate] = useState<string>(
-    formatDate(oneYearLater(recurrenceBeginDate.toUTCString())),
-  );
+  const [recurrenceEndDate, setRecurrenceEndDate] =
+    useState<string>(initialRecurrenceEnd);
 
   const handleFormSubmit = async (_: React.MouseEvent<HTMLButtonElement>) => {
     const startDateAndTime: string = getDateTimeString(startDate, startTime);
