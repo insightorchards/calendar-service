@@ -146,8 +146,10 @@ const EventForm = ({
           isChecked={allDay}
           onChange={(e) => {
             setAllDay(e.target.checked);
-            setStartTime(DEFAULT_START_TIME);
-            setEndTime(DEFAULT_END_TIME);
+            if(e.target.checked === false) {
+              setStartTime(DEFAULT_START_TIME);
+              setEndTime(DEFAULT_END_TIME);
+            }
           }}
         >
           All Day
