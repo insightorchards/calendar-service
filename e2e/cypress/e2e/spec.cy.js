@@ -84,6 +84,8 @@ describe("journey test", () => {
       url: "/entries",
       hostname: "localhost",
     }).as("createEntry");
+
+    // Creating new event from "+"
     cy.get(`[aria-label="add event"]`).click();
     cy.contains("label", "Title").click().type("Bye");
     cy.contains("label", "Description").click().type("It's a beautiful night");
@@ -96,46 +98,52 @@ describe("journey test", () => {
 
     cy.contains("label", "All Day").click();
 
+    // Create event modal has correct time defaults
     cy.get(`[id="startTime"]`).should("have.value", "04:00");
     cy.get(`[id="endTime"]`).should("have.value", "05:00");
     cy.contains("button", "Create Event").click();
   });
 
-  it("shows correct default time when allDay event is changed to not be `allDay`", () => {
+  it("shows correct default time when new and existing allDay event is changed to not be `allDay`", () => {
     cy.visit("http://localhost:3000");
     cy.intercept({
       method: "POST",
       url: "/entries",
       hostname: "localhost",
     }).as("createEntry");
+
+    // Creating new event from clicking on a date
     cy.get(`[data-date="2022-12-14"]`).click();
     cy.contains("label", "Title").click().type("Bye");
     cy.contains("label", "Description").click().type("It's a beautiful night");
     cy.contains("label", "Start Date").click().type("2022-12-14");
     cy.contains("label", "End Date").click().type("2022-12-14");
 
+    // Assert All Day is default true
     cy.contains("label", "All Day").within(() => {
       cy.get('[type="checkbox"]').should("be.checked");
     });
 
+    // Uncheck All Day
+    // Assert time defaults are correct
     cy.contains("label", "All Day").click();
-
     cy.get(`[id="startTime"]`).should("have.value", "04:00");
     cy.get(`[id="endTime"]`).should("have.value", "05:00");
 
+    // Recheck All Day to create event
     cy.contains("label", "All Day").click();
-
     cy.contains("button", "Create Event").click();
-
     cy.wait("@createEntry").then((interception) => {
       postTwoId = interception.response.body._id;
     });
 
+    // Open event
     cy.contains("Bye").click();
     cy.contains("Edit").click();
 
+    // Uncheck All Day
+    // Assert time defaults are correct
     cy.contains("label", "All Day").click();
-
     cy.get(`[id="startTime"]`).should("have.value", "04:00");
     cy.get(`[id="endTime"]`).should("have.value", "05:00");
     cy.contains("button", "Save").click();
