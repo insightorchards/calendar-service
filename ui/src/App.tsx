@@ -8,11 +8,13 @@ import FullCalendar, {
 import {
   formatDate,
   getDateTimeString,
-  padNumberWith0Zero,
   formatTime,
   modalDateFormat,
   addDayToAllDayEvent,
   formatDateMinusOneDay,
+  DEFAULT_START_TIME,
+  DEFAULT_END_TIME,
+  DEFAULT_DATE,
 } from "./lib";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
@@ -75,15 +77,6 @@ interface FormEntryProps {
 }
 
 const App = () => {
-  const currentHour: number = new Date().getHours();
-  const currentMinute: number = new Date().getMinutes();
-  const DEFAULT_START_TIME: string = `${padNumberWith0Zero(
-    currentHour,
-  )}:${padNumberWith0Zero(currentMinute)}`;
-  const DEFAULT_END_TIME: string = `${padNumberWith0Zero(
-    currentHour + 1,
-  )}:${padNumberWith0Zero(currentMinute)}`;
-  const DEFAULT_DATE = formatDate(new Date());
   const [events, setEvents] = useState<EventSourceInput>([]);
   const [displayedEventData, setDisplayedEventData] = useState(
     {} as DisplayedEventData,

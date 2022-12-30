@@ -2,16 +2,20 @@ import "@4tw/cypress-drag-drop";
 
 describe("journey test", () => {
   let postTwoId;
+  let postThreeId;
+  let postFourId;
 
   beforeEach(() => {
     // For an unknown reason this sets the current
-    // day to Dec 26, not Nov 26. Leaving since this
+    // day to Dec 26, 3:12am not Nov 26. Leaving since this
     // is our only way of mocking out time in these tests
-    cy.clock(new Date(2022, 11, 26), ["Date"]);
+    cy.clock(new Date(2022, 11, 26, 3, 12), ["Date"]);
   });
 
   after(() => {
     cy.request("DELETE", `http://localhost:4000/entries/${postTwoId}`);
+    cy.request("DELETE", `http://localhost:4000/entries/${postThreeId}`);
+    cy.request("DELETE", `http://localhost:4000/entries/${postFourId}`);
   });
 
   it("can create and update an event", () => {
@@ -77,6 +81,81 @@ describe("journey test", () => {
     cy.findByText("All Day").should("exist");
   });
 
+  it("shows correct default time when uncreated event is changed to not be `allDay`", () => {
+    cy.visit("http://localhost:3000");
+    cy.intercept({
+      method: "POST",
+      url: "/entries",
+      hostname: "localhost",
+    }).as("createEntry");
+
+    // Creating new event from "+"
+    cy.get(`[aria-label="add event"]`).click();
+    cy.contains("label", "Title").click().type("Bye");
+    cy.contains("label", "Description").click().type("It's a beautiful night");
+    cy.contains("label", "Start Date").click().type("2022-12-14");
+    cy.contains("label", "End Date").click().type("2022-12-14");
+    cy.contains("label", "All Day").click();
+
+    cy.contains("label", "Start Time").should("not.exist");
+    cy.contains("label", "End Time").should("not.exist");
+
+    cy.contains("label", "All Day").click();
+
+    // Create event modal has correct time defaults
+    cy.get(`[id="startTime"]`).should("have.value", "04:00");
+    cy.get(`[id="endTime"]`).should("have.value", "05:00");
+    cy.contains("button", "Create Event").click();
+    cy.wait("@createEntry").then((interception) => {
+      postThreeId = interception.response.body._id;
+    });
+  });
+
+  it("shows correct default time when new and existing allDay event is changed to not be `allDay`", () => {
+    cy.visit("http://localhost:3000");
+    cy.intercept({
+      method: "POST",
+      url: "/entries",
+      hostname: "localhost",
+    }).as("createEntry");
+
+    // Creating new event from clicking on a date
+    cy.get(`[data-date="2022-12-14"]`).click();
+    cy.contains("label", "Title").click().type("Night");
+    cy.contains("label", "Description").click().type("It's a beautiful night");
+    cy.contains("label", "Start Date").click().type("2022-12-14");
+    cy.contains("label", "End Date").click().type("2022-12-14");
+
+    // Assert All Day is default true
+    cy.contains("label", "All Day").within(() => {
+      cy.get('[type="checkbox"]').should("be.checked");
+    });
+
+    // Uncheck All Day
+    // Assert time defaults are correct
+    cy.contains("label", "All Day").click();
+    cy.get(`[id="startTime"]`).should("have.value", "04:00");
+    cy.get(`[id="endTime"]`).should("have.value", "05:00");
+
+    // Recheck All Day to create event
+    cy.contains("label", "All Day").click();
+    cy.contains("button", "Create Event").click();
+    cy.wait("@createEntry").then((interception) => {
+      postFourId = interception.response.body._id;
+    });
+
+    // Open event
+    cy.contains("Night").click();
+    cy.contains("Edit").click();
+
+    // Uncheck All Day
+    // Assert time defaults are correct
+    cy.contains("label", "All Day").click();
+    cy.get(`[id="startTime"]`).should("have.value", "04:00");
+    cy.get(`[id="endTime"]`).should("have.value", "05:00");
+    cy.contains("button", "Save").click();
+  });
+
   describe("month view", () => {
     it("has correct start/end date in modal when date clicked", () => {
       cy.visit("http://localhost:3000");
@@ -98,7 +177,9 @@ describe("journey test", () => {
       cy.get(".chakra-modal__body").within(() => {
         cy.get(`[id="startDate"]`).should("have.value", "2022-12-26");
         cy.get(`[id="endDate"]`).should("have.value", "2022-12-26");
-        cy.get('[type="checkbox"]').should("be.checked");
+        cy.contains("label", "All Day").within(() => {
+          cy.get('[type="checkbox"]').should("be.checked");
+        });
       });
       cy.get(`[aria-label="Close"]`).click();
     });
