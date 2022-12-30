@@ -32,10 +32,10 @@ describe("EventForm", () => {
         initialStartDate={formatDate(new Date())}
         initialEndDate={formatDate(new Date())}
         initialStartTime={`${padNumberWith0Zero(
-          currentHour
+          currentHour,
         )}:${padNumberWith0Zero(currentMinute)}`}
         initialEndTime={`${padNumberWith0Zero(
-          currentHour + 1
+          currentHour + 1,
         )}:${padNumberWith0Zero(currentMinute)}`}
         initialTitle="Mary's Chicken Feast"
         initialDescription="A time to remember and appreciate chicken nuggets and more"
@@ -43,7 +43,7 @@ describe("EventForm", () => {
         initialRecurring={false}
         onFormSubmit={() => {}}
         isCreate={true}
-      />
+      />,
     );
 
     expect(screen.getByLabelText("Start Date")).toHaveValue("2022-02-15");
@@ -52,7 +52,7 @@ describe("EventForm", () => {
     expect(screen.getByLabelText("End Time")).toHaveValue("05:00");
     expect(screen.getByLabelText("Title")).toHaveValue("Mary's Chicken Feast");
     expect(screen.getByLabelText("Description")).toHaveValue(
-      "A time to remember and appreciate chicken nuggets and more"
+      "A time to remember and appreciate chicken nuggets and more",
     );
     expect(screen.getByLabelText("All Day")).not.toBeChecked();
     expect(screen.getByLabelText("Recurring")).not.toBeChecked();
@@ -65,10 +65,10 @@ describe("EventForm", () => {
         initialStartDate={formatDate(new Date())}
         initialEndDate={formatDate(new Date())}
         initialStartTime={`${padNumberWith0Zero(
-          currentHour
+          currentHour,
         )}:${padNumberWith0Zero(currentMinute)}`}
         initialEndTime={`${padNumberWith0Zero(
-          currentHour + 1
+          currentHour + 1,
         )}:${padNumberWith0Zero(currentMinute)}`}
         initialTitle="Arty party"
         initialDescription="A time to remember and appreciate classic art and more"
@@ -76,7 +76,7 @@ describe("EventForm", () => {
         initialRecurring={false}
         onFormSubmit={() => {}}
         isCreate={false}
-      />
+      />,
     );
 
     expect(screen.getByRole("button")).toHaveAccessibleName("Save");
@@ -89,10 +89,10 @@ describe("EventForm", () => {
         initialStartDate={formatDate(new Date())}
         initialEndDate={formatDate(new Date())}
         initialStartTime={`${padNumberWith0Zero(
-          currentHour
+          currentHour,
         )}:${padNumberWith0Zero(currentMinute)}`}
         initialEndTime={`${padNumberWith0Zero(
-          currentHour + 1
+          currentHour + 1,
         )}:${padNumberWith0Zero(currentMinute)}`}
         initialTitle="Arty party"
         initialDescription="A time to remember and appreciate classic art and more"
@@ -100,7 +100,7 @@ describe("EventForm", () => {
         initialRecurring={false}
         onFormSubmit={onFormSubmitMock}
         isCreate={false}
-      />
+      />,
     );
 
     userEvent.click(screen.getByRole("button"));
@@ -123,10 +123,10 @@ describe("EventForm", () => {
         initialStartDate={formatDate(new Date())}
         initialEndDate={formatDate(new Date())}
         initialStartTime={`${padNumberWith0Zero(
-          currentHour
+          currentHour,
         )}:${padNumberWith0Zero(currentMinute)}`}
         initialEndTime={`${padNumberWith0Zero(
-          currentHour + 1
+          currentHour + 1,
         )}:${padNumberWith0Zero(currentMinute)}`}
         initialTitle="Arty party"
         initialDescription="A time to remember and appreciate classic art and more"
@@ -134,7 +134,7 @@ describe("EventForm", () => {
         initialRecurring={true}
         onFormSubmit={onFormSubmitMock}
         isCreate={false}
-      />
+      />,
     );
 
     userEvent.click(screen.getByRole("button"));
@@ -160,10 +160,10 @@ describe("EventForm", () => {
         initialStartDate={formatDate(new Date())}
         initialEndDate={formatDate(new Date())}
         initialStartTime={`${padNumberWith0Zero(
-          currentHour
+          currentHour,
         )}:${padNumberWith0Zero(currentMinute)}`}
         initialEndTime={`${padNumberWith0Zero(
-          currentHour + 1
+          currentHour + 1,
         )}:${padNumberWith0Zero(currentMinute)}`}
         initialTitle=""
         initialDescription="A time to remember and appreciate classic art and more"
@@ -171,10 +171,10 @@ describe("EventForm", () => {
         initialRecurring={false}
         onFormSubmit={onFormSubmitMock}
         isCreate={false}
-      />
+      />,
     );
     userEvent.click(screen.getByRole("button"));
-    expect(screen.getByText("Error: title cannot be empty.")).toBeVisible();
+    expect(screen.getByText("Error: Add Title")).toBeVisible();
   });
 
   it("hides time sections when all day is selected", () => {
@@ -183,10 +183,10 @@ describe("EventForm", () => {
         initialStartDate={formatDate(new Date())}
         initialEndDate={formatDate(new Date())}
         initialStartTime={`${padNumberWith0Zero(
-          currentHour
+          currentHour,
         )}:${padNumberWith0Zero(currentMinute)}`}
         initialEndTime={`${padNumberWith0Zero(
-          currentHour + 1
+          currentHour + 1,
         )}:${padNumberWith0Zero(currentMinute)}`}
         initialTitle="Arty party"
         initialDescription="A time to remember and appreciate classic art and more"
@@ -194,7 +194,7 @@ describe("EventForm", () => {
         initialRecurring={false}
         onFormSubmit={() => {}}
         isCreate={false}
-      />
+      />,
     );
     expect(screen.getByLabelText("All Day")).toBeChecked();
     expect(screen.queryByLabelText("Start Time")).not.toBeInTheDocument();
@@ -209,7 +209,7 @@ describe("EventForm", () => {
   it("displays recurring defaults when recurring is selected", () => {
     const startDate = formatDate(new Date());
     const startTime = `${padNumberWith0Zero(currentHour)}:${padNumberWith0Zero(
-      currentMinute
+      currentMinute,
     )}`;
     render(
       <EventForm
@@ -217,7 +217,7 @@ describe("EventForm", () => {
         initialEndDate={startDate}
         initialStartTime={startTime}
         initialEndTime={`${padNumberWith0Zero(
-          currentHour + 1
+          currentHour + 1,
         )}:${padNumberWith0Zero(currentMinute)}`}
         initialTitle="Mary's Chicken Feast"
         initialDescription="A time to remember and appreciate chicken nuggets and more"
@@ -225,22 +225,22 @@ describe("EventForm", () => {
         initialRecurring={true}
         onFormSubmit={() => {}}
         isCreate={true}
-      />
+      />,
     );
 
     expect(screen.getByText("Recurrence Frequency")).toBeVisible();
     expect(
-      screen.getByText("Recurrence begins: Tue, Feb 15 2022, 04:00 AM")
+      screen.getByText("Recurrence begins: Tue, Feb 15 2022, 04:00 AM"),
     ).toBeVisible();
     expect(
-      screen.getByText("Recurrence ends: Wed, Feb 15 2023, 04:00 AM")
+      screen.getByText("Recurrence ends: Wed, Feb 15 2023, 04:00 AM"),
     ).toBeVisible();
   });
 
   it("allows user to choose between monthly and weekly recurrence", () => {
     const startDate = formatDate(new Date());
     const startTime = `${padNumberWith0Zero(currentHour)}:${padNumberWith0Zero(
-      currentMinute
+      currentMinute,
     )}`;
     render(
       <EventForm
@@ -248,7 +248,7 @@ describe("EventForm", () => {
         initialEndDate={startDate}
         initialStartTime={startTime}
         initialEndTime={`${padNumberWith0Zero(
-          currentHour + 1
+          currentHour + 1,
         )}:${padNumberWith0Zero(currentMinute)}`}
         initialTitle="Mary's Chicken Feast"
         initialDescription="A time to remember and appreciate chicken nuggets and more"
@@ -256,7 +256,7 @@ describe("EventForm", () => {
         initialRecurring={true}
         onFormSubmit={() => {}}
         isCreate={true}
-      />
+      />,
     );
 
     expect(screen.getByText("Monthly")).toBeVisible();
