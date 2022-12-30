@@ -2,6 +2,7 @@ import "@4tw/cypress-drag-drop";
 
 describe("journey test", () => {
   let postTwoId;
+  let postThreeId;
 
   beforeEach(() => {
     // For an unknown reason this sets the current
@@ -12,6 +13,7 @@ describe("journey test", () => {
 
   after(() => {
     cy.request("DELETE", `http://localhost:4000/entries/${postTwoId}`);
+    cy.request("DELETE", `http://localhost:4000/entries/${postThreeId}`);
   });
 
   it("can create and update an event", () => {
@@ -134,7 +136,7 @@ describe("journey test", () => {
     cy.contains("label", "All Day").click();
     cy.contains("button", "Create Event").click();
     cy.wait("@createEntry").then((interception) => {
-      postTwoId = interception.response.body._id;
+      postThreeId = interception.response.body._id;
     });
 
     // Open event
