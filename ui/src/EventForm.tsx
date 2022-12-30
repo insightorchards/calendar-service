@@ -46,18 +46,32 @@ const EventForm = ({
   const [recurring, setRecurring] = useState<boolean>(initialRecurring);
   const [recurrenceFrequency, setRecurrenceFrequency] =
     useState<string>("monthly");
+
   const recurrenceBeginDate = new Date(getDateTimeString(startDate, startTime));
-  const recurrenceEndDate = oneYearLater(recurrenceBeginDate.toUTCString());
+  // const recurrenceEndDate = oneYearLater(recurrenceBeginDate.toUTCString());
+
+  const [recurrenceEndDate, setRecurrenceEndDate] = useState<string>(
+    formatDate(oneYearLater(recurrenceBeginDate.toUTCString())),
+  );
 
   const handleFormSubmit = async (_: React.MouseEvent<HTMLButtonElement>) => {
     const startDateAndTime: string = getDateTimeString(startDate, startTime);
     const endDateAndTime: string = getDateTimeString(endDate, endTime);
+    const recurrenceEndDateAndTime: string = getDateTimeString(
+      recurrenceEndDate,
+      startTime,
+    );
+
     if (title === "") {
       setError("Error: Add Title");
       return;
     }
     if (startDateAndTime > endDateAndTime) {
       setError("Error: end cannot be before start.");
+      return;
+    }
+    if (startDateAndTime > recurrenceEndDateAndTime) {
+      setError("Error: recurrence end cannot be before start.");
       return;
     }
     if (!recurring) {
@@ -209,11 +223,18 @@ const EventForm = ({
               </Stack>
             </RadioGroup>
           </label>
-          <label htmlFor="recurrenceBegins" className={s.formItem}>
-            {`Recurrence begins: ${singleModalDateFormat(recurrenceBeginDate)}`}
-          </label>
-          <label htmlFor="recurrenceEnds" className={s.formItem}>
-            {`Recurrence ends: ${singleModalDateFormat(recurrenceEndDate)}`}
+          <label htmlFor="recurrenceEnd" className={s.formItem}>
+            Recurrence Ends
+            <input
+              className={s.formInput}
+              id="recurrenceEnd"
+              min={startDate}
+              type="date"
+              onChange={(e) => {
+                setRecurrenceEndDate(e.target.value);
+              }}
+              value={recurrenceEndDate}
+            />
           </label>
         </>
       )}

@@ -7,7 +7,7 @@ interface CalendarEntryInput {
   recurring: boolean;
   frequency?: string;
   recurrenceBegins?: Date;
-  recurrenceEnds?: Date;
+  recurrenceEndUtc?: Date;
 }
 
 const notOk = (status: number) => {
@@ -64,7 +64,7 @@ const createEntry = async ({
   recurring,
   frequency,
   recurrenceBegins,
-  recurrenceEnds,
+  recurrenceEndUtc,
 }: CalendarEntryInput) => {
   let response;
   if (recurring) {
@@ -84,7 +84,7 @@ const createEntry = async ({
         recurring,
         frequency,
         recurrenceBegins: recurrenceBegins?.toISOString(),
-        recurrenceEnds: recurrenceEnds?.toISOString(),
+        recurrenceEnds: recurrenceEndUtc?.toISOString(),
       }),
     });
   } else {
@@ -123,7 +123,7 @@ const updateEntry = async (
     recurring,
     frequency,
     recurrenceBegins,
-    recurrenceEnds,
+    recurrenceEndUtc,
   }: CalendarEntryInput
 ) => {
   let response;
@@ -144,7 +144,7 @@ const updateEntry = async (
         recurring,
         frequency,
         recurrenceBegins: recurrenceBegins?.toISOString(),
-        recurrenceEnds: recurrenceEnds?.toISOString(),
+        recurrenceEnds: recurrenceEndUtc?.toISOString(),
       }),
     });
   } else {

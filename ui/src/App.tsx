@@ -73,7 +73,7 @@ interface FormEntryProps {
   recurring: boolean;
   frequency?: string;
   recurrenceBegins?: Date;
-  recurrenceEnds?: Date;
+  recurrenceEnds?: string;
 }
 
 const App = () => {
@@ -122,6 +122,10 @@ const App = () => {
   }: FormEntryProps) => {
     const startTimeUtc = new Date(getDateTimeString(startDate, startTime));
     const endTimeUtc = new Date(getDateTimeString(endDate, endTime));
+    let recurrenceEndUtc;
+    if (recurrenceEnds) {
+      recurrenceEndUtc = new Date(getDateTimeString(recurrenceEnds, startTime));
+    }
 
     await createEntry({
       title,
@@ -132,7 +136,7 @@ const App = () => {
       recurring,
       frequency,
       recurrenceBegins,
-      recurrenceEnds,
+      recurrenceEndUtc,
     }).catch(() => {
       flashApiErrorMessage();
     });
@@ -204,6 +208,10 @@ const App = () => {
     const entryId = displayedEventData._id;
     const startTimeUtc = new Date(getDateTimeString(startDate, startTime));
     const endTimeUtc = new Date(getDateTimeString(endDate, endTime));
+    let recurrenceEndUtc;
+    if (recurrenceEnds) {
+      recurrenceEndUtc = new Date(getDateTimeString(recurrenceEnds, startTime));
+    }
 
     updateEntry(entryId, {
       title,
@@ -214,7 +222,7 @@ const App = () => {
       recurring,
       frequency,
       recurrenceBegins,
-      recurrenceEnds,
+      recurrenceEndUtc,
     })
       .then(() => {
         getEntryDetails(entryId);

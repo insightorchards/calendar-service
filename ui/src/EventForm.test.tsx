@@ -110,43 +110,6 @@ describe("EventForm", () => {
     });
   });
 
-  it("calls onFormSubmit with recurrence data when recurring event is submitted", () => {
-    const onFormSubmitMock = jest.fn();
-    render(
-      <EventForm
-        initialStartDate={formatDate(new Date())}
-        initialEndDate={formatDate(new Date())}
-        initialStartTime={`${padNumberWith0Zero(
-          currentHour,
-        )}:${padNumberWith0Zero(currentMinute)}`}
-        initialEndTime={`${padNumberWith0Zero(
-          currentHour + 1,
-        )}:${padNumberWith0Zero(currentMinute)}`}
-        initialTitle="Arty party"
-        initialDescription="A time to remember and appreciate classic art and more"
-        initialAllDay={false}
-        initialRecurring={true}
-        onFormSubmit={onFormSubmitMock}
-        isCreate={false}
-      />,
-    );
-
-    userEvent.click(screen.getByRole("button"));
-    expect(onFormSubmitMock).toHaveBeenCalledWith({
-      description: "A time to remember and appreciate classic art and more",
-      endDate: "2022-02-15",
-      endTime: "05:00",
-      startDate: "2022-02-15",
-      startTime: "04:00",
-      title: "Arty party",
-      allDay: false,
-      recurring: true,
-      frequency: "monthly",
-      recurrenceBegins: new Date(getDateTimeString("2022-02-15", "04:00")),
-      recurrenceEnds: new Date(getDateTimeString("2023-02-15", "04:00")),
-    });
-  });
-
   it("displays error when form is submitted with no title", () => {
     const onFormSubmitMock = jest.fn();
     render(
@@ -200,60 +163,99 @@ describe("EventForm", () => {
     expect(screen.getByLabelText("End Time")).toBeInTheDocument();
   });
 
-  it("displays recurring defaults when recurring is selected", () => {
-    const startDate = formatDate(new Date());
-    const startTime = `${padNumberWith0Zero(currentHour)}:${padNumberWith0Zero(
-      currentMinute,
-    )}`;
-    render(
-      <EventForm
-        initialStartDate={startDate}
-        initialEndDate={startDate}
-        initialStartTime={startTime}
-        initialEndTime={`${padNumberWith0Zero(
-          currentHour + 1,
-        )}:${padNumberWith0Zero(currentMinute)}`}
-        initialTitle="Mary's Chicken Feast"
-        initialDescription="A time to remember and appreciate chicken nuggets and more"
-        initialAllDay={false}
-        initialRecurring={true}
-        onFormSubmit={() => {}}
-        isCreate={true}
-      />,
-    );
+  describe("recurring events", () => {
+    it("calls onFormSubmit with recurrence data when recurring event is submitted", () => {
+      const onFormSubmitMock = jest.fn();
+      render(
+        <EventForm
+          initialStartDate={formatDate(new Date())}
+          initialEndDate={formatDate(new Date())}
+          initialStartTime={`${padNumberWith0Zero(
+            currentHour,
+          )}:${padNumberWith0Zero(currentMinute)}`}
+          initialEndTime={`${padNumberWith0Zero(
+            currentHour + 1,
+          )}:${padNumberWith0Zero(currentMinute)}`}
+          initialTitle="Arty party"
+          initialDescription="A time to remember and appreciate classic art and more"
+          initialAllDay={false}
+          initialRecurring={true}
+          onFormSubmit={onFormSubmitMock}
+          isCreate={false}
+        />,
+      );
 
-    expect(screen.getByText("Recurrence Frequency")).toBeVisible();
-    expect(
-      screen.getByText("Recurrence begins: Tue, Feb 15 2022, 04:00 AM"),
-    ).toBeVisible();
-    expect(
-      screen.getByText("Recurrence ends: Wed, Feb 15 2023, 04:00 AM"),
-    ).toBeVisible();
-  });
+      userEvent.click(screen.getByRole("button"));
+      expect(onFormSubmitMock).toHaveBeenCalledWith({
+        description: "A time to remember and appreciate classic art and more",
+        endDate: "2022-02-15",
+        endTime: "05:00",
+        startDate: "2022-02-15",
+        startTime: "04:00",
+        title: "Arty party",
+        allDay: false,
+        recurring: true,
+        frequency: "monthly",
+        recurrenceBegins: new Date(getDateTimeString("2022-02-15", "04:00")),
+        recurrenceEnds: "2023-02-15",
+      });
+    });
 
-  it("allows user to choose between monthly and weekly recurrence", () => {
-    const startDate = formatDate(new Date());
-    const startTime = `${padNumberWith0Zero(currentHour)}:${padNumberWith0Zero(
-      currentMinute,
-    )}`;
-    render(
-      <EventForm
-        initialStartDate={startDate}
-        initialEndDate={startDate}
-        initialStartTime={startTime}
-        initialEndTime={`${padNumberWith0Zero(
-          currentHour + 1,
-        )}:${padNumberWith0Zero(currentMinute)}`}
-        initialTitle="Mary's Chicken Feast"
-        initialDescription="A time to remember and appreciate chicken nuggets and more"
-        initialAllDay={false}
-        initialRecurring={true}
-        onFormSubmit={() => {}}
-        isCreate={true}
-      />,
-    );
+    it("displays recurring defaults when recurring is selected", () => {
+      const startDate = formatDate(new Date());
+      const startTime = `${padNumberWith0Zero(
+        currentHour,
+      )}:${padNumberWith0Zero(currentMinute)}`;
+      render(
+        <EventForm
+          initialStartDate={startDate}
+          initialEndDate={startDate}
+          initialStartTime={startTime}
+          initialEndTime={`${padNumberWith0Zero(
+            currentHour + 1,
+          )}:${padNumberWith0Zero(currentMinute)}`}
+          initialTitle="Mary's Chicken Feast"
+          initialDescription="A time to remember and appreciate chicken nuggets and more"
+          initialAllDay={false}
+          initialRecurring={true}
+          onFormSubmit={() => {}}
+          isCreate={true}
+        />,
+      );
 
-    expect(screen.getByText("Monthly")).toBeVisible();
-    expect(screen.getByText("Weekly")).toBeVisible();
+      expect(screen.getByText("Recurrence Frequency")).toBeVisible();
+      expect(screen.getByLabelText("Recurrence Ends")).toHaveValue(
+        "2023-02-15",
+      );
+      // expect(
+      //   screen.getByText("Recurrence ends: Wed, Feb 15 2023, 04:00 AM")
+      // ).toBeVisible();
+    });
+
+    it("allows user to choose between monthly and weekly recurrence", () => {
+      const startDate = formatDate(new Date());
+      const startTime = `${padNumberWith0Zero(
+        currentHour,
+      )}:${padNumberWith0Zero(currentMinute)}`;
+      render(
+        <EventForm
+          initialStartDate={startDate}
+          initialEndDate={startDate}
+          initialStartTime={startTime}
+          initialEndTime={`${padNumberWith0Zero(
+            currentHour + 1,
+          )}:${padNumberWith0Zero(currentMinute)}`}
+          initialTitle="Mary's Chicken Feast"
+          initialDescription="A time to remember and appreciate chicken nuggets and more"
+          initialAllDay={false}
+          initialRecurring={true}
+          onFormSubmit={() => {}}
+          isCreate={true}
+        />,
+      );
+
+      expect(screen.getByText("Monthly")).toBeVisible();
+      expect(screen.getByText("Weekly")).toBeVisible();
+    });
   });
 });

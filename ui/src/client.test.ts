@@ -191,7 +191,7 @@ describe("client functions", () => {
             allDay: false,
             recurring: true,
             recurrenceBegins: "2024-06-06T01:07:00.000Z",
-            recurrenceEnds: "2025-06-06T01:07:00.000Z",
+            recurrenceEndUtc: "2025-06-06T01:07:00.000Z",
             startTimeUtc: "2024-06-06T01:07:00.000Z",
             endTimeUtc: "2024-06-06T05:07:00.000Z",
             createdAt: "2022-12-05T05:27:52.212Z",
@@ -214,7 +214,7 @@ describe("client functions", () => {
         recurring: true,
         frequency: "monthly",
         recurrenceBegins: new Date("2024-06-06T01:07:00.000Z"),
-        recurrenceEnds: new Date("2025-06-06T01:07:00.000Z"),
+        recurrenceEndUtc: new Date("2025-06-06T01:07:00.000Z"),
       });
       expect(fetchSpy).toHaveBeenCalled();
       expect(result).toEqual({
@@ -226,7 +226,7 @@ describe("client functions", () => {
         allDay: false,
         recurring: true,
         recurrenceBegins: "2024-06-06T01:07:00.000Z",
-        recurrenceEnds: "2025-06-06T01:07:00.000Z",
+        recurrenceEndUtc: "2025-06-06T01:07:00.000Z",
         startTimeUtc: "2024-06-06T01:07:00.000Z",
         endTimeUtc: "2024-06-06T05:07:00.000Z",
         createdAt: "2022-12-05T05:27:52.212Z",
@@ -325,7 +325,7 @@ describe("client functions", () => {
             allDay: false,
             recurring: true,
             recurrenceBegins: "2024-06-06T01:07:00.000Z",
-            recurrenceEnds: "2025-06-06T01:07:00.000Z",
+            recurrenceEndUtc: "2025-06-06T01:07:00.000Z",
             startTimeUtc: "2024-06-06T01:07:00.000Z",
             endTimeUtc: "2024-06-06T05:07:00.000Z",
             createdAt: "2022-12-05T05:27:52.212Z",
@@ -348,7 +348,7 @@ describe("client functions", () => {
         recurring: true,
         frequency: "monthly",
         recurrenceBegins: new Date("2024-06-06T01:07:00.000Z"),
-        recurrenceEnds: new Date("2025-06-06T01:07:00.000Z"),
+        recurrenceEndUtc: new Date("2025-06-06T01:07:00.000Z"),
       });
       expect(fetchSpy).toHaveBeenCalled();
       expect(result).toEqual({
@@ -360,7 +360,7 @@ describe("client functions", () => {
         allDay: false,
         recurring: true,
         recurrenceBegins: "2024-06-06T01:07:00.000Z",
-        recurrenceEnds: "2025-06-06T01:07:00.000Z",
+        recurrenceEndUtc: "2025-06-06T01:07:00.000Z",
         startTimeUtc: "2024-06-06T01:07:00.000Z",
         endTimeUtc: "2024-06-06T05:07:00.000Z",
         createdAt: "2022-12-05T05:27:52.212Z",
