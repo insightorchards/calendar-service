@@ -100,15 +100,10 @@ const addDayToAllDayEvent: EventInputTransformer = (event: EventInput) => {
 };
 
 const currentHour: number = new Date().getHours();
-const currentMinute: number = new Date().getMinutes();
 
-const DEFAULT_START_TIME: string = `${padNumberWith0Zero(
-  currentHour,
-)}:${padNumberWith0Zero(currentMinute)}`;
+const DEFAULT_START_TIME: string = `${padNumberWith0Zero(currentHour + 1)}:00`;
 
-const DEFAULT_END_TIME: string = `${padNumberWith0Zero(
-  currentHour + 1,
-)}:${padNumberWith0Zero(currentMinute)}`;
+const DEFAULT_END_TIME: string = `${padNumberWith0Zero(currentHour + 2)}:00`;
 
 const DEFAULT_DATE = formatDate(new Date());
 

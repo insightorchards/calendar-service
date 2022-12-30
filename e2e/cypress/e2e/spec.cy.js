@@ -96,8 +96,8 @@ describe("journey test", () => {
 
     cy.contains("label", "All Day").click();
 
-    cy.get(`[id="startTime"]`).should("have.value", "03:12");
-    cy.get(`[id="endTime"]`).should("have.value", "04:12");
+    cy.get(`[id="startTime"]`).should("have.value", "04:00");
+    cy.get(`[id="endTime"]`).should("have.value", "05:00");
     cy.contains("button", "Create Event").click();
   });
 
@@ -120,8 +120,8 @@ describe("journey test", () => {
 
     cy.contains("label", "All Day").click();
 
-    cy.get(`[id="startTime"]`).should("have.value", "03:12");
-    cy.get(`[id="endTime"]`).should("have.value", "04:12");
+    cy.get(`[id="startTime"]`).should("have.value", "04:00");
+    cy.get(`[id="endTime"]`).should("have.value", "05:00");
 
     cy.contains("label", "All Day").click();
 
@@ -136,8 +136,8 @@ describe("journey test", () => {
 
     cy.contains("label", "All Day").click();
 
-    cy.get(`[id="startTime"]`).should("have.value", "03:12");
-    cy.get(`[id="endTime"]`).should("have.value", "04:12");
+    cy.get(`[id="startTime"]`).should("have.value", "04:00");
+    cy.get(`[id="endTime"]`).should("have.value", "05:00");
     cy.contains("button", "Save").click();
   });
 
