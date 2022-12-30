@@ -168,7 +168,7 @@ describe("EventForm", () => {
       />,
     );
     userEvent.click(screen.getByRole("button"));
-    expect(screen.getByText("Error: title cannot be empty.")).toBeVisible();
+    expect(screen.getByText("Error: Add Title")).toBeVisible();
   });
 
   it("hides time sections when all day is selected", () => {

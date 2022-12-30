@@ -74,7 +74,7 @@ describe("journey test", () => {
     cy.contains("Bye").should("be.visible");
     cy.contains("It's a beautiful night").should("be.visible");
     cy.findByText("Wed, Dec 14").should("exist");
-    cy.findByText("all day").should("exist");
+    cy.findByText("All Day").should("exist");
   });
 
   it("shows correct default time when uncreated event is changed to not be `allDay`", () => {

@@ -316,7 +316,7 @@ const App = () => {
                       })}
                     </p>
                     <div className={s.allDay}>
-                      {displayedEventData.allDay ? "all day" : ""}
+                      {displayedEventData.allDay ? "All Day" : ""}
                     </div>
                   </div>
                 </ModalBody>
