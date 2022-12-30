@@ -227,9 +227,6 @@ describe("EventForm", () => {
       expect(screen.getByLabelText("Recurrence Ends")).toHaveValue(
         "2023-02-15",
       );
-      // expect(
-      //   screen.getByText("Recurrence ends: Wed, Feb 15 2023, 04:00 AM")
-      // ).toBeVisible();
     });
 
     it("allows user to choose between monthly and weekly recurrence", () => {

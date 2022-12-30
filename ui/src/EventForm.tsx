@@ -3,7 +3,6 @@ import {
   formatDate,
   getDateTimeString,
   oneYearLater,
-  singleModalDateFormat,
   DEFAULT_START_TIME,
   DEFAULT_END_TIME,
 } from "./lib";
@@ -48,7 +47,6 @@ const EventForm = ({
     useState<string>("monthly");
 
   const recurrenceBeginDate = new Date(getDateTimeString(startDate, startTime));
-  // const recurrenceEndDate = oneYearLater(recurrenceBeginDate.toUTCString());
 
   const [recurrenceEndDate, setRecurrenceEndDate] = useState<string>(
     formatDate(oneYearLater(recurrenceBeginDate.toUTCString())),
@@ -71,7 +69,7 @@ const EventForm = ({
       return;
     }
     if (startDateAndTime > recurrenceEndDateAndTime) {
-      setError("Error: recurrence end cannot be before start.");
+      setError("Error: recurrence end must be after start.");
       return;
     }
     if (!recurring) {
@@ -160,7 +158,7 @@ const EventForm = ({
           isChecked={allDay}
           onChange={(e) => {
             setAllDay(e.target.checked);
-            if(e.target.checked === false) {
+            if (e.target.checked === false) {
               setStartTime(DEFAULT_START_TIME);
               setEndTime(DEFAULT_END_TIME);
             }

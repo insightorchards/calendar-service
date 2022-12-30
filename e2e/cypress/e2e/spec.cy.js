@@ -171,7 +171,7 @@ describe("journey test", () => {
 
     cy.contains("button", "Create Event").click();
 
-    cy.contains("Error: recurrence end cannot be before start.").should(
+    cy.contains("Error: recurrence end must be after start.").should(
       "be.visible",
     );
   });
