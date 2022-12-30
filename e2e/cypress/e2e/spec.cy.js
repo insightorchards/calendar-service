@@ -3,6 +3,7 @@ import "@4tw/cypress-drag-drop";
 describe("journey test", () => {
   let postTwoId;
   let postThreeId;
+  let postFourId;
 
   beforeEach(() => {
     // For an unknown reason this sets the current
@@ -14,6 +15,7 @@ describe("journey test", () => {
   after(() => {
     cy.request("DELETE", `http://localhost:4000/entries/${postTwoId}`);
     cy.request("DELETE", `http://localhost:4000/entries/${postThreeId}`);
+    cy.request("DELETE", `http://localhost:4000/entries/${postFourId}`);
   });
 
   it("can create and update an event", () => {
@@ -104,6 +106,9 @@ describe("journey test", () => {
     cy.get(`[id="startTime"]`).should("have.value", "04:00");
     cy.get(`[id="endTime"]`).should("have.value", "05:00");
     cy.contains("button", "Create Event").click();
+    cy.wait("@createEntry").then((interception) => {
+      postThreeId = interception.response.body._id;
+    });
   });
 
   it("shows correct default time when new and existing allDay event is changed to not be `allDay`", () => {
@@ -116,7 +121,7 @@ describe("journey test", () => {
 
     // Creating new event from clicking on a date
     cy.get(`[data-date="2022-12-14"]`).click();
-    cy.contains("label", "Title").click().type("Bye");
+    cy.contains("label", "Title").click().type("Night");
     cy.contains("label", "Description").click().type("It's a beautiful night");
     cy.contains("label", "Start Date").click().type("2022-12-14");
     cy.contains("label", "End Date").click().type("2022-12-14");
@@ -136,11 +141,11 @@ describe("journey test", () => {
     cy.contains("label", "All Day").click();
     cy.contains("button", "Create Event").click();
     cy.wait("@createEntry").then((interception) => {
-      postThreeId = interception.response.body._id;
+      postFourId = interception.response.body._id;
     });
 
     // Open event
-    cy.contains("Bye").click();
+    cy.contains("Night").click();
     cy.contains("Edit").click();
 
     // Uncheck All Day
