@@ -101,7 +101,7 @@ describe("journey test", () => {
     cy.contains("button", "Create Event").click();
   });
 
-  it("shows correct default time when existing allDay event is changed to not be `allDay`", () => {
+  it("shows correct default time when allDay event is changed to not be `allDay`", () => {
     cy.visit("http://localhost:3000");
     cy.intercept({
       method: "POST",
@@ -117,6 +117,14 @@ describe("journey test", () => {
     cy.contains("label", "All Day").within(() => {
       cy.get('[type="checkbox"]').should("be.checked");
     });
+
+    cy.contains("label", "All Day").click();
+
+    cy.get(`[id="startTime"]`).should("have.value", "03:12");
+    cy.get(`[id="endTime"]`).should("have.value", "04:12");
+
+    cy.contains("label", "All Day").click();
+
     cy.contains("button", "Create Event").click();
 
     cy.wait("@createEntry").then((interception) => {
