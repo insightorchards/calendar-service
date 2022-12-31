@@ -12,10 +12,8 @@ import {
   modalDateFormat,
   addDayToAllDayEvent,
   formatDateMinusOneDay,
-  DEFAULT_START_TIME,
-  DEFAULT_END_TIME,
-  DEFAULT_DATE,
   oneYearLater,
+  padNumberWith0Zero,
 } from "./lib";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
@@ -79,6 +77,12 @@ interface FormEntryProps {
 }
 
 const App = () => {
+  const currentHour: number = new Date().getHours();
+
+  const DEFAULT_START_TIME: string = `${padNumberWith0Zero(currentHour + 1)}:00`;
+  const DEFAULT_END_TIME: string = `${padNumberWith0Zero(currentHour + 2)}:00`;
+  const DEFAULT_DATE = formatDate(new Date());
+
   const [events, setEvents] = useState<EventSourceInput>([]);
   const [displayedEventData, setDisplayedEventData] = useState(
     {} as DisplayedEventData,

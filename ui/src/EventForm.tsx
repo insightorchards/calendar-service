@@ -2,8 +2,7 @@ import React, { useState } from "react";
 import {
   formatDate,
   getDateTimeString,
-  DEFAULT_START_TIME,
-  DEFAULT_END_TIME,
+  padNumberWith0Zero,
 } from "./lib";
 import { Checkbox, RadioGroup, Radio, Stack } from "@chakra-ui/react";
 import s from "./EventForm.module.css";
@@ -46,6 +45,11 @@ const EventForm = ({
   const [recurring, setRecurring] = useState<boolean>(initialRecurring);
   const [recurrenceFrequency, setRecurrenceFrequency] =
     useState<string>("monthly");
+
+  const currentHour: number = new Date().getHours();
+
+  const DEFAULT_START_TIME: string = `${padNumberWith0Zero(currentHour + 1)}:00`;
+  const DEFAULT_END_TIME: string = `${padNumberWith0Zero(currentHour + 2)}:00`;
 
   const recurrenceBeginDate = new Date(getDateTimeString(startDate, startTime));
 
