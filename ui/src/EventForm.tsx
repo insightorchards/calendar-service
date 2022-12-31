@@ -68,8 +68,8 @@ const EventForm = ({
       setError("Error: end cannot be before start.");
       return;
     }
-    if (startDateAndTime > recurrenceEndDateAndTime) {
-      setError("Error: recurrence end must be after start.");
+    if (endDateAndTime > recurrenceEndDateAndTime) {
+      setError("Error: recurrence end cannot be before start.");
       return;
     }
     if (!recurring) {
@@ -226,7 +226,7 @@ const EventForm = ({
             <input
               className={s.formInput}
               id="recurrenceEnd"
-              min={startDate}
+              min={endDate}
               type="date"
               onChange={(e) => {
                 setRecurrenceEndDate(e.target.value);
