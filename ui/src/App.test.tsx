@@ -71,8 +71,8 @@ describe("App", () => {
       userEvent.click(screen.getByLabelText("add event"));
       expect(screen.getByLabelText("Start Date")).toHaveValue("2022-02-15");
       expect(screen.getByLabelText("End Date")).toHaveValue("2022-02-15");
-      expect(screen.getByLabelText("Start Time")).toHaveValue("04:00");
-      expect(screen.getByLabelText("End Time")).toHaveValue("05:00");
+      expect(screen.getByLabelText("Start Time")).toHaveValue("05:00");
+      expect(screen.getByLabelText("End Time")).toHaveValue("06:00");
     });
 
     it("displays event in ui when all inputs are provided valid values", async () => {
