@@ -35,6 +35,8 @@ const getEntries = async () => {
           start: event.startTimeUtc,
           end: event.endTimeUtc,
           allDay: event.allDay,
+          recurring: event.recurring,
+          recurrenceEnd: event.recurrenceEnd,
         };
       });
       return result;
@@ -124,7 +126,7 @@ const updateEntry = async (
     frequency,
     recurrenceBegins,
     recurrenceEndUtc,
-  }: CalendarEntryInput
+  }: CalendarEntryInput,
 ) => {
   let response;
   if (recurring) {

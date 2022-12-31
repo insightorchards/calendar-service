@@ -25,9 +25,10 @@ describe("client functions", () => {
               title: "Ange's Bat Mitzvah",
               description: "Ange is turning 13!",
               allDay: false,
-              recurring: false,
+              recurring: true,
               startTimeUtc: "2024-06-06T01:07:00.000Z",
               endTimeUtc: "2024-06-06T05:07:00.000Z",
+              recurrenceEnd: "2024-06-06T05:07:00.000Z",
               createdAt: "2022-12-05T05:27:52.212Z",
               updatedAt: "2022-12-05T05:27:52.212Z",
               __v: 0,
@@ -46,8 +47,10 @@ describe("client functions", () => {
         {
           _id: "638d815856e5c70955565b7e",
           allDay: false,
+          recurring: true,
           end: "2024-06-06T05:07:00.000Z",
           start: "2024-06-06T01:07:00.000Z",
+          recurrenceEnd: "2024-06-06T05:07:00.000Z",
           title: "Ange's Bat Mitzvah",
         },
       ]);
@@ -63,7 +66,7 @@ describe("client functions", () => {
 
       jest.spyOn(window, "fetch").mockResolvedValue(mockResponse);
       expect(() => getEntries()).rejects.toThrowError(
-        new Error("Get entries request failed")
+        new Error("Get entries request failed"),
       );
     });
   });
@@ -122,7 +125,7 @@ describe("client functions", () => {
 
       jest.spyOn(window, "fetch").mockResolvedValue(mockResponse);
       expect(() => getEntry("638d815856e5c70955565b7e")).rejects.toThrowError(
-        new Error("Get entry request failed")
+        new Error("Get entry request failed"),
       );
     });
   });
@@ -252,7 +255,7 @@ describe("client functions", () => {
           endTimeUtc: new Date("2024-06-06T01:07:00.000Z"),
           allDay: true,
           recurring: false,
-        })
+        }),
       ).rejects.toThrowError(new Error("Create entry request failed"));
     });
   });
@@ -293,7 +296,7 @@ describe("client functions", () => {
       });
       expect(fetchSpy).toHaveBeenCalled();
       expect(fetchSpy.mock.calls[0][1]).toEqual(
-        expect.objectContaining({ method: "PATCH" })
+        expect.objectContaining({ method: "PATCH" }),
       );
 
       expect(result).toEqual({
@@ -387,7 +390,7 @@ describe("client functions", () => {
           endTimeUtc: new Date("2024-06-06T01:07:00.000Z"),
           allDay: true,
           recurring: false,
-        })
+        }),
       ).rejects.toThrow(new Error("Update entry request failed"));
     });
   });
@@ -405,7 +408,7 @@ describe("client functions", () => {
       const result = await deleteEntry("638d815856e5c70955565b7e");
       expect(fetchSpy).toHaveBeenCalled();
       expect(fetchSpy.mock.calls[0][1]).toEqual(
-        expect.objectContaining({ method: "DELETE" })
+        expect.objectContaining({ method: "DELETE" }),
       );
 
       expect(result).toEqual({
@@ -424,7 +427,7 @@ describe("client functions", () => {
       jest.spyOn(window, "fetch").mockResolvedValue(mockResponse);
 
       expect(() => deleteEntry("638d815856e5c70955565b7e")).rejects.toThrow(
-        new Error("Delete entry request failed")
+        new Error("Delete entry request failed"),
       );
     });
   });

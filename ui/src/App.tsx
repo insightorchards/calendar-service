@@ -15,6 +15,7 @@ import {
   DEFAULT_START_TIME,
   DEFAULT_END_TIME,
   DEFAULT_DATE,
+  oneYearLater,
 } from "./lib";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
@@ -57,6 +58,7 @@ interface DisplayedEventData {
   endTimeUtc: string;
   allDay: boolean;
   recurring: boolean;
+  recurrenceEnds: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -358,6 +360,9 @@ const App = () => {
                     initialEndTime={formatTime(displayedEventData.endTimeUtc)}
                     initialAllDay={displayedEventData.allDay}
                     initialRecurring={displayedEventData.recurring}
+                    initialRecurrenceEnd={formatDate(
+                      new Date(displayedEventData.recurrenceEnds),
+                    )}
                     onFormSubmit={handleSaveChanges}
                     isCreate={false}
                   />
@@ -378,6 +383,9 @@ const App = () => {
                     initialEndTime={modalEndTime}
                     initialAllDay={modalAllDay}
                     initialRecurring={false}
+                    initialRecurrenceEnd={formatDate(
+                      oneYearLater(modalStartDate),
+                    )}
                     onFormSubmit={handleCreateEntry}
                     isCreate={true}
                   />

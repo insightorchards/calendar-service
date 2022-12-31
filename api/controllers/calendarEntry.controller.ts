@@ -57,6 +57,9 @@ type RecurringChildEntry = {
   description?: string;
   allDay: boolean;
   recurring: boolean;
+  frequency: string;
+  recurrenceBegins: Date;
+  recurrenceEnds: Date;
   startTimeUtc: Date;
   endTimeUtc: Date;
   recurringEventId: mongoose.Schema.Types.ObjectId;
@@ -71,7 +74,7 @@ const isNonRecurringEntry = (entry) => {
 const isRecurringParentEntry = (entry) => {
   return (
     (entry as RecurringParentEntry).recurring === true &&
-    (entry as RecurringParentEntry).frequency !== undefined
+    entry.recurringEventId === undefined
   );
 };
 
@@ -86,7 +89,7 @@ const isRecurringChildEntry = (entry) => {
 const prepRecurringEvents = (entry) => {
   const timeDifference = getMillisecondsBetween(
     entry.startTimeUtc,
-    entry.endTimeUtc
+    entry.endTimeUtc,
   );
   const rule = new RRule({
     freq: FREQUENCY_MAPPING[entry.frequency],
@@ -105,6 +108,9 @@ const prepRecurringEvents = (entry) => {
       endTimeUtc: addMillisecondsToDate(date, timeDifference),
       recurring: true,
       recurringEventId: entry._id,
+      frequency: entry.frequency,
+      recurrenceBegins: entry.recurrenceBegins,
+      recurrenceEnds: entry.recurrenceEnds,
     };
   });
 };
@@ -116,7 +122,7 @@ const deleteChildEvents = async (parentEvent) => {
 export const seedDatabaseWithEntry = async (
   _req: Request,
   res: Response,
-  _next: NextFunction
+  _next: NextFunction,
 ) => {
   const today = new Date();
   await CalendarEntry.insertMany([
@@ -158,7 +164,7 @@ export const seedDatabaseWithEntry = async (
 export const createCalendarEntry = async (
   req: Request,
   res: Response,
-  _next: NextFunction
+  _next: NextFunction,
 ) => {
   try {
     const entry = await CalendarEntry.create(req.body as CalendarEntry);
@@ -176,7 +182,7 @@ export const createCalendarEntry = async (
 export const getCalendarEntries = async (
   _req: Request,
   res: Response,
-  _next: NextFunction
+  _next: NextFunction,
 ) => {
   try {
     const entries: CalendarEntry = await CalendarEntry.find();
@@ -190,7 +196,7 @@ export const getCalendarEntries = async (
 export const getCalendarEntry = async (
   req: Request,
   res: Response,
-  _next: NextFunction
+  _next: NextFunction,
 ) => {
   const { id } = req.params;
   try {
@@ -205,7 +211,7 @@ export const getCalendarEntry = async (
 export const deleteCalendarEntry = async (
   req: Request,
   res: Response,
-  _next: NextFunction
+  _next: NextFunction,
 ) => {
   const { id } = req.params;
   try {
@@ -224,13 +230,13 @@ export const deleteCalendarEntry = async (
 export const updateCalendarEntry = async (
   req: Request,
   res: Response,
-  _next: NextFunction
+  _next: NextFunction,
 ) => {
   const { id } = req.params;
   try {
     const originalEntry = await CalendarEntry.findByIdAndUpdate(
       id,
-      req.body as CalendarEntry
+      req.body as CalendarEntry,
     );
     const updatedEntry = await CalendarEntry.findById(id);
     if (
