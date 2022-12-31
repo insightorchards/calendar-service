@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const calendarEntrySchema = new mongoose.Schema(
+const recurringSeriesSchema = new mongoose.Schema(
   {
     eventId: {
       type: String,
@@ -34,11 +34,6 @@ const calendarEntrySchema = new mongoose.Schema(
       type: Boolean,
       required: true,
     },
-    recurringEventId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "RecurringSeries",
-      required: false,
-    },
     frequency: {
       type: String,
       required: false,
@@ -57,10 +52,10 @@ const calendarEntrySchema = new mongoose.Schema(
   },
 );
 
-const CalendarEntry = mongoose.model(
-  "CalendarEntry",
-  calendarEntrySchema,
-  "calendarEntries",
+const RecurringSeries = mongoose.model(
+  "RecurringSeries",
+  recurringSeriesSchema,
+  "recurringSeries",
 );
 
-module.exports = { CalendarEntry };
+module.exports = { RecurringSeries };
