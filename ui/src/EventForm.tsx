@@ -1,9 +1,5 @@
 import React, { useState } from "react";
-import {
-  formatDate,
-  getDateTimeString,
-  padNumberWith0Zero,
-} from "./lib";
+import { formatDate, getDateTimeString, padNumberWith0Zero } from "./lib";
 import { Checkbox, RadioGroup, Radio, Stack } from "@chakra-ui/react";
 import s from "./EventForm.module.css";
 
@@ -48,7 +44,9 @@ const EventForm = ({
 
   const currentHour: number = new Date().getHours();
 
-  const DEFAULT_START_TIME: string = `${padNumberWith0Zero(currentHour + 1)}:00`;
+  const DEFAULT_START_TIME: string = `${padNumberWith0Zero(
+    currentHour + 1,
+  )}:00`;
   const DEFAULT_END_TIME: string = `${padNumberWith0Zero(currentHour + 2)}:00`;
 
   const recurrenceBeginDate = new Date(getDateTimeString(startDate, startTime));
@@ -73,7 +71,7 @@ const EventForm = ({
       return;
     }
     if (endDateAndTime > recurrenceEndDateAndTime) {
-      setError("Error: recurrence end cannot be before start.");
+      setError("Error: recurrence end must be after start.");
       return;
     }
     if (!recurring) {
