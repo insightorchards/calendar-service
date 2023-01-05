@@ -316,18 +316,16 @@ describe("App", () => {
   describe("Backend interaction errors", () => {
     it("getEntries error displays error message", async () => {
       mockGetEntries.mockRejectedValue("Error in getEntry");
-      await act(async () => {
-        await render(<App />);
-      });
+      render(<App />);
+
       expect(await screen.findByRole("alert")).toBeVisible();
     });
 
     it("createEntry error displays error message", async () => {
       mockGetEntries.mockResolvedValue([]);
       mockCreateEntry.mockRejectedValue("Error in createEntry");
-      await act(async () => {
-        await render(<App />);
-      });
+      render(<App />);
+
       userEvent.click(screen.getByLabelText("add event"));
       userEvent.click(screen.getByLabelText("Title"));
       userEvent.type(
@@ -360,9 +358,8 @@ describe("App", () => {
       ]);
 
       mockGetEntry.mockRejectedValue("Error in getEntry");
-      await act(async () => {
-        await render(<App />);
-      });
+      render(<App />);
+
       const eventText = await screen.findByText("Dance");
       expect(eventText).toBeInTheDocument();
       await act(async () => {
@@ -371,7 +368,6 @@ describe("App", () => {
       expect(await screen.findByRole("alert")).toBeVisible();
     });
 
-    // TODO: Fix 'A component is changing an uncontrolled input to be controlled' error
     it("updateEntry displays an error message", async () => {
       mockGetEntries.mockResolvedValueOnce([
         {
@@ -391,9 +387,7 @@ describe("App", () => {
 
       mockUpdateEntry.mockRejectedValue("Error in updateEntry");
 
-      await act(async () => {
-        await render(<App />);
-      });
+      render(<App />);
 
       const eventText = await screen.findByText("Dance");
       expect(eventText).toBeInTheDocument();
@@ -410,7 +404,7 @@ describe("App", () => {
 
       userEvent.click(screen.getByText("Save"));
       expect(await screen.findByRole("alert")).toBeVisible();
-    }, 20000);
+    });
 
     it("deleteEntry displays an error message", async () => {
       mockGetEntries.mockResolvedValueOnce([
@@ -447,9 +441,8 @@ describe("App", () => {
 
       mockDeleteEntry.mockRejectedValue("Error in deleteEntry");
 
-      await act(async () => {
-        await render(<App />);
-      });
+      render(<App />);
+
       expect(mockGetEntries).toHaveBeenCalledTimes(1);
       const eventText = await screen.findByText("Dance");
       expect(eventText).toBeInTheDocument();
