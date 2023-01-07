@@ -1,9 +1,5 @@
 import React, { useState } from "react";
-import {
-  formatDate,
-  getDateTimeString,
-  padNumberWith0Zero,
-} from "./lib";
+import { formatDate, getDateTimeString, padNumberWith0Zero } from "./lib";
 import { Checkbox, RadioGroup, Radio, Stack } from "@chakra-ui/react";
 import s from "./EventForm.module.css";
 
@@ -27,7 +23,7 @@ const EventForm = ({
   initialStartTime,
   initialEndTime,
   initialTitle,
-  initialDescription,
+  initialDescription = "",
   initialAllDay,
   initialRecurring,
   initialRecurrenceEnd,
@@ -40,6 +36,8 @@ const EventForm = ({
   const [endTime, setEndTime] = useState<string>(initialEndTime);
   const [error, setError] = useState<string | null>(null);
   const [title, setTitle] = useState<string>(initialTitle);
+  // `|| ""` prevents warning in tests
+  // "Warning: A component is changing an uncontrolled input of type text to be controlled."
   const [description, setDescription] = useState<string>(initialDescription);
   const [allDay, setAllDay] = useState<boolean>(initialAllDay);
   const [recurring, setRecurring] = useState<boolean>(initialRecurring);
@@ -48,7 +46,9 @@ const EventForm = ({
 
   const currentHour: number = new Date().getHours();
 
-  const DEFAULT_START_TIME: string = `${padNumberWith0Zero(currentHour + 1)}:00`;
+  const DEFAULT_START_TIME: string = `${padNumberWith0Zero(
+    currentHour + 1,
+  )}:00`;
   const DEFAULT_END_TIME: string = `${padNumberWith0Zero(currentHour + 2)}:00`;
 
   const recurrenceBeginDate = new Date(getDateTimeString(startDate, startTime));
