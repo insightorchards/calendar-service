@@ -22,7 +22,7 @@ const EventForm = ({
   initialEndDate,
   initialStartTime,
   initialEndTime,
-  initialTitle,
+  initialTitle = "",
   initialDescription = "",
   initialAllDay,
   initialRecurring,
@@ -36,8 +36,6 @@ const EventForm = ({
   const [endTime, setEndTime] = useState<string>(initialEndTime);
   const [error, setError] = useState<string | null>(null);
   const [title, setTitle] = useState<string>(initialTitle);
-  // `|| ""` prevents warning in tests
-  // "Warning: A component is changing an uncontrolled input of type text to be controlled."
   const [description, setDescription] = useState<string>(initialDescription);
   const [allDay, setAllDay] = useState<boolean>(initialAllDay);
   const [recurring, setRecurring] = useState<boolean>(initialRecurring);
