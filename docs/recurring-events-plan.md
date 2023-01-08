@@ -30,8 +30,6 @@ allDay
 startTimeUtc
 endTimeUtc
 
-TODO: Play around with rrule to see what's possible
-
 #### Create
 
 Frontend will send input to backend: start, end, recurring, recurring end date
@@ -46,9 +44,8 @@ Backend will return generated event
 
 #### Read of all events
 
-Frontend will request all events
-Backend will generate first 30 instances of every rule, (delete any deleted exceptions, and add in any updated exceptions) and include those events in the payload
-(Maybe different #s for different types of rules, i.e. first 120 instances for daily events)
+Frontend will request all events for a range of time (i.e. one month)
+Backend will generate instances within that time range for every rule, (delete any deleted exceptions, and add in any updated exceptions) and include those events in the payload
 
 #### Update of single event
 
@@ -72,6 +69,3 @@ Backend will return 200
 Frontend will request deletion of series
 Backend will delete event and any exceptions
 Backend will return 200
-
-Questions:
-When editing a single instance of a recurring event, should that event become detached from the series? Or is it still considered part of the series? (i.e. if I change the time and then later change the title, should I be able to change the title for the entire series? Or is that option no longer available)
