@@ -97,6 +97,10 @@ const App = () => {
   const [modalStartTime, setModalStartTime] =
     useState<string>(DEFAULT_START_TIME);
   const [modalEndTime, setModalEndTime] = useState<string>(DEFAULT_END_TIME);
+
+  const [modalStart, setModalStart] = useState<string>(formatDate(new Date()));
+  const [modalEnd, setModalEnd] = useState<string>(formatDate(new Date()));
+
   const [modalAllDay, setModalAllDay] = useState<boolean>(false);
   const [apiError, setApiError] = useState<boolean>(false);
 
@@ -364,6 +368,8 @@ const App = () => {
                       displayedEventData.startTimeUtc,
                     )}
                     initialEndTime={formatTime(displayedEventData.endTimeUtc)}
+                    initialStart={displayedEventData.startTimeUtc}
+                    initialEnd={displayedEventData.endTimeUtc}
                     initialAllDay={displayedEventData.allDay}
                     initialRecurring={displayedEventData.recurring}
                     initialRecurrenceEnd={formatDate(
@@ -387,6 +393,8 @@ const App = () => {
                     initialEndDate={modalEndDate}
                     initialStartTime={modalStartTime}
                     initialEndTime={modalEndTime}
+                    initialStart={displayedEventData.startTimeUtc}
+                    initialEnd={displayedEventData.endTimeUtc}
                     initialAllDay={modalAllDay}
                     initialRecurring={false}
                     initialRecurrenceEnd={formatDate(

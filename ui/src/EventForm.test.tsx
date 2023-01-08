@@ -31,6 +31,8 @@ describe("EventForm", () => {
         initialEndTime={`${padNumberWith0Zero(
           currentHour + 1,
         )}:${padNumberWith0Zero(currentMinute)}`}
+        initialStart={formatDate(new Date())}
+        initialEnd={formatDate(new Date())}
         initialTitle="Mary's Chicken Feast"
         initialDescription="A time to remember and appreciate chicken nuggets and more"
         initialAllDay={false}
@@ -66,6 +68,8 @@ describe("EventForm", () => {
         initialEndTime={`${padNumberWith0Zero(
           currentHour + 1,
         )}:${padNumberWith0Zero(currentMinute)}`}
+        initialStart={formatDate(new Date())}
+        initialEnd={formatDate(new Date())}
         initialTitle="Arty party"
         initialDescription="A time to remember and appreciate classic art and more"
         initialAllDay={false}
@@ -91,6 +95,8 @@ describe("EventForm", () => {
         initialEndTime={`${padNumberWith0Zero(
           currentHour + 1,
         )}:${padNumberWith0Zero(currentMinute)}`}
+        initialStart={formatDate(new Date())}
+        initialEnd={formatDate(new Date())}
         initialTitle="Arty party"
         initialDescription="A time to remember and appreciate classic art and more"
         initialAllDay={false}
@@ -126,6 +132,8 @@ describe("EventForm", () => {
         initialEndTime={`${padNumberWith0Zero(
           currentHour + 1,
         )}:${padNumberWith0Zero(currentMinute)}`}
+        initialStart={formatDate(new Date())}
+        initialEnd={formatDate(new Date())}
         initialTitle=""
         initialDescription="A time to remember and appreciate classic art and more"
         initialAllDay={false}
@@ -150,6 +158,8 @@ describe("EventForm", () => {
         initialEndTime={`${padNumberWith0Zero(
           currentHour + 1,
         )}:${padNumberWith0Zero(currentMinute)}`}
+        initialStart={formatDate(new Date())}
+        initialEnd={formatDate(new Date())}
         initialTitle="Arty party"
         initialDescription="A time to remember and appreciate classic art and more"
         initialAllDay={true}
@@ -182,6 +192,8 @@ describe("EventForm", () => {
           initialEndTime={`${padNumberWith0Zero(
             currentHour + 1,
           )}:${padNumberWith0Zero(currentMinute)}`}
+          initialStart={formatDate(new Date())}
+          initialEnd={formatDate(new Date())}
           initialTitle="Arty party"
           initialDescription="A time to remember and appreciate classic art and more"
           initialAllDay={false}
@@ -221,6 +233,8 @@ describe("EventForm", () => {
           initialEndTime={`${padNumberWith0Zero(
             currentHour + 1,
           )}:${padNumberWith0Zero(currentMinute)}`}
+          initialStart={formatDate(new Date())}
+          initialEnd={formatDate(new Date())}
           initialTitle="Mary's Chicken Feast"
           initialDescription="A time to remember and appreciate chicken nuggets and more"
           initialAllDay={false}
@@ -250,6 +264,8 @@ describe("EventForm", () => {
           initialEndTime={`${padNumberWith0Zero(
             currentHour + 1,
           )}:${padNumberWith0Zero(currentMinute)}`}
+          initialStart={formatDate(new Date())}
+          initialEnd={formatDate(new Date())}
           initialTitle="Mary's Chicken Feast"
           initialDescription="A time to remember and appreciate chicken nuggets and more"
           initialAllDay={false}

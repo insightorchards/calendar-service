@@ -8,6 +8,8 @@ interface FormProps {
   initialEndDate: string;
   initialStartTime: string;
   initialEndTime: string;
+  initialStart: string;
+  initialEnd: string;
   initialTitle: string;
   initialDescription: string;
   initialAllDay: boolean;
@@ -22,6 +24,8 @@ const EventForm = ({
   initialEndDate,
   initialStartTime,
   initialEndTime,
+  initialStart,
+  initialEnd,
   initialTitle = "",
   initialDescription = "",
   initialAllDay,
@@ -34,6 +38,10 @@ const EventForm = ({
   const [endDate, setEndDate] = useState<string>(initialEndDate);
   const [startTime, setStartTime] = useState<string>(initialStartTime);
   const [endTime, setEndTime] = useState<string>(initialEndTime);
+
+  const [start, setStart] = useState<string>(initialStart);
+  const [end, setEnd] = useState<string>(initialEnd);
+
   const [error, setError] = useState<string | null>(null);
   const [title, setTitle] = useState<string>(initialTitle);
   const [description, setDescription] = useState<string>(initialDescription);
