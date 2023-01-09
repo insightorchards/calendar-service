@@ -4,6 +4,7 @@ import { EventInputTransformer, EventInput } from "@fullcalendar/react";
 const padNumberWith0Zero: Function = (num: Number): string =>
   num.toString().padStart(2, "0");
 
+// ex. 2022-01-15
 const formatDate: Function = (date: Date): string => {
   return [
     date.getFullYear(),
@@ -33,12 +34,14 @@ const dateFormatWithYear = (date: Date) => {
   })} ${date.getDate()} ${date.getFullYear()}`;
 };
 
+// ex. 13:00
 const timeFormat = (date: Date) =>
   `${date.toLocaleTimeString("it-IT", {
     hour: "2-digit",
     minute: "2-digit",
   })}`;
 
+// ex. 01:00 PM
 const timeFormatAmPm = (date: Date) =>
   `${date.toLocaleTimeString("en-US", {
     hour: "2-digit",
@@ -83,14 +86,6 @@ const singleModalDateFormat: Function = (dateTimeUtc: string) => {
 
 const getDateTimeString = (date: string, time: string) => `${date}T${time}`;
 
-const applyTimeToDate = (date: string, time: string) => {
-  const dateTime = new Date(date);
-  const [hours, mins, _] = time.split(":");
-  dateTime.setHours(parseInt(hours));
-  dateTime.setMinutes(parseInt(mins));
-  return dateTime.toISOString();
-};
-
 const oneYearLater = (utcString: string) => {
   const newDate = new Date(utcString);
 
@@ -116,5 +111,4 @@ export {
   oneYearLater,
   singleModalDateFormat,
   dateFormatWithYear,
-  applyTimeToDate,
 };

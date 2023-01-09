@@ -9,13 +9,13 @@ import { Checkbox, RadioGroup, Radio, Stack } from "@chakra-ui/react";
 import s from "./EventForm.module.css";
 
 interface FormProps {
-  initialStart: string; //"2022-02-15T04:00"
-  initialEnd: string; //"2022-02-15T04:00"
+  initialStart: string; // ex. "2023-01-25T08:00:00.000Z"
+  initialEnd: string; // ex. "2023-01-25T09:00:00.000Z"
   initialTitle: string;
   initialDescription: string;
   initialAllDay: boolean;
   initialRecurring: boolean;
-  initialRecurrenceEnd: string;
+  initialRecurrenceEnd: string; // ex. "2023-01-25T08:00:00.000Z"
   onFormSubmit: Function;
   isCreate: boolean;
 }
@@ -31,6 +31,7 @@ const EventForm = ({
   onFormSubmit,
   isCreate,
 }: FormProps) => {
+  console.log(initialStart, initialEnd, initialRecurrenceEnd);
   const [startDate, setStartDate] = useState<string>(
     formatDate(new Date(initialStart)),
   );
