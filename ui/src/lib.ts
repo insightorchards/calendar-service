@@ -18,23 +18,29 @@ const dateMinusOneDay: Function = (date: Date): Date => {
   return date;
 };
 
-const dateFormat = (selectedEventDate: Date) =>
-  `${selectedEventDate.toLocaleString("default", {
+const dateFormat = (date: Date) =>
+  `${date.toLocaleString("default", {
     weekday: "short",
-  })}, ${selectedEventDate.toLocaleString("default", {
+  })}, ${date.toLocaleString("default", {
     month: "short",
-  })} ${selectedEventDate.getDate()}`;
+  })} ${date.getDate()}`;
 
-const dateFormatWithYear = (selectedEventDate: Date) => {
-  return `${selectedEventDate.toLocaleString("default", {
+const dateFormatWithYear = (date: Date) => {
+  return `${date.toLocaleString("default", {
     weekday: "short",
-  })}, ${selectedEventDate.toLocaleString("default", {
+  })}, ${date.toLocaleString("default", {
     month: "short",
-  })} ${selectedEventDate.getDate()} ${selectedEventDate.getFullYear()}`;
+  })} ${date.getDate()} ${date.getFullYear()}`;
 };
 
-const timeFormat = (selectedEventDate: Date) =>
-  `${selectedEventDate.toLocaleTimeString("default", {
+const timeFormat = (date: Date) =>
+  `${date.toLocaleTimeString("it-IT", {
+    hour: "2-digit",
+    minute: "2-digit",
+  })}`;
+
+const timeFormatAmPm = (date: Date) =>
+  `${date.toLocaleTimeString("en-US", {
     hour: "2-digit",
     minute: "2-digit",
   })}`;
@@ -58,20 +64,20 @@ const modalDateFormat: Function = ({
   if (startDate === endDate && allDay) {
     return `${startDate}`;
   } else if (startDate === endDate) {
-    return `${startDate} · ${timeFormat(start)} - ${timeFormat(end)}`;
+    return `${startDate} · ${timeFormatAmPm(start)} - ${timeFormatAmPm(end)}`;
   } else if (allDay) {
     return `${startDate} - ${endDate}`;
   } else {
-    return `${startDate}, ${timeFormat(start)} - ${endDate}, ${timeFormat(
-      end,
-    )}`;
+    return `${startDate}, ${timeFormatAmPm(
+      start,
+    )} - ${endDate}, ${timeFormatAmPm(end)}`;
   }
 };
 
 const singleModalDateFormat: Function = (dateTimeUtc: string) => {
   const date = new Date(dateTimeUtc);
   const formattedDate = dateFormatWithYear(date);
-  const formattedTime = timeFormat(date);
+  const formattedTime = timeFormatAmPm(date);
   return `${formattedDate}, ${formattedTime}`;
 };
 

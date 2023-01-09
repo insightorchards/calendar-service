@@ -1,5 +1,10 @@
 import React, { useState } from "react";
-import { formatDate, applyTimeToDate, padNumberWith0Zero } from "./lib";
+import {
+  formatDate,
+  getDateTimeString,
+  padNumberWith0Zero,
+  timeFormat,
+} from "./lib";
 import { Checkbox, RadioGroup, Radio, Stack } from "@chakra-ui/react";
 import s from "./EventForm.module.css";
 
@@ -33,10 +38,11 @@ const EventForm = ({
     formatDate(new Date(initialEnd)),
   );
   const [startTime, setStartTime] = useState<string>(
-    new Date(initialStart).toLocaleTimeString("it-IT"),
+    timeFormat(new Date(initialStart)),
   );
+
   const [endTime, setEndTime] = useState<string>(
-    new Date(initialEnd).toLocaleTimeString("it-IT"),
+    timeFormat(new Date(initialEnd)),
   );
 
   const [error, setError] = useState<string | null>(null);
@@ -54,16 +60,16 @@ const EventForm = ({
   )}:00`;
   const DEFAULT_END_TIME: string = `${padNumberWith0Zero(currentHour + 2)}:00`;
 
-  const recurrenceBeginDate = new Date(applyTimeToDate(startDate, startTime));
+  const recurrenceBeginDate = new Date(getDateTimeString(startDate, startTime));
 
   const [recurrenceEndDate, setRecurrenceEndDate] = useState<string>(
     formatDate(new Date(initialRecurrenceEnd)),
   );
 
   const handleFormSubmit = async (_: React.MouseEvent<HTMLButtonElement>) => {
-    const startDateAndTime: string = applyTimeToDate(startDate, startTime);
-    const endDateAndTime: string = applyTimeToDate(endDate, endTime);
-    const recurrenceEndDateAndTime: string = applyTimeToDate(
+    const startDateAndTime: string = getDateTimeString(startDate, startTime);
+    const endDateAndTime: string = getDateTimeString(endDate, endTime);
+    const recurrenceEndDateAndTime: string = getDateTimeString(
       recurrenceEndDate,
       startTime,
     );

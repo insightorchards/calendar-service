@@ -7,12 +7,11 @@ import FullCalendar, {
 } from "@fullcalendar/react";
 import {
   formatDate,
-  getDateTimeString,
   modalDateFormat,
   addDayToAllDayEvent,
   oneYearLater,
   dateMinusOneDay,
-  applyTimeToDate,
+  getDateTimeString,
 } from "./lib";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
@@ -92,10 +91,8 @@ const App = () => {
   const [inEditMode, setInEditMode] = useState<boolean>(false);
   const [inCreateMode, setInCreateMode] = useState<boolean>(false);
 
-  const [modalStart, setModalStart] = useState<string>(
-    new Date().toISOString(),
-  );
-  const [modalEnd, setModalEnd] = useState<string>(new Date().toISOString());
+  const [modalStart, setModalStart] = useState<string>(DEFAULT_START);
+  const [modalEnd, setModalEnd] = useState<string>(DEFAULT_END);
 
   const [modalAllDay, setModalAllDay] = useState<boolean>(false);
   const [apiError, setApiError] = useState<boolean>(false);
@@ -214,11 +211,11 @@ const App = () => {
     recurrenceEnds,
   }: FormEntryProps) => {
     const entryId = displayedEventData._id;
-    const startTimeUtc = new Date(applyTimeToDate(startDate, startTime));
-    const endTimeUtc = new Date(applyTimeToDate(endDate, endTime));
+    const startTimeUtc = new Date(getDateTimeString(startDate, startTime));
+    const endTimeUtc = new Date(getDateTimeString(endDate, endTime));
     let recurrenceEndUtc;
     if (recurrenceEnds) {
-      recurrenceEndUtc = new Date(applyTimeToDate(recurrenceEnds, startTime));
+      recurrenceEndUtc = new Date(getDateTimeString(recurrenceEnds, startTime));
     }
 
     updateEntry(entryId, {
@@ -374,7 +371,9 @@ const App = () => {
                     initialEnd={modalEnd}
                     initialAllDay={modalAllDay}
                     initialRecurring={false}
-                    initialRecurrenceEnd={formatDate(oneYearLater(modalStart))}
+                    initialRecurrenceEnd={oneYearLater(
+                      modalStart,
+                    ).toISOString()}
                     onFormSubmit={handleCreateEntry}
                     isCreate={true}
                   />
