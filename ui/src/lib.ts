@@ -80,7 +80,8 @@ const getDateTimeString = (date: string, time: string) => `${date}T${time}`;
 const applyTimeToDate = (date: string, time: string) => {
   const dateTime = new Date(date);
   const [hours, mins, _] = time.split(":");
-  dateTime.setHours(parseInt(hours), parseInt(mins));
+  dateTime.setHours(parseInt(hours));
+  dateTime.setMinutes(parseInt(mins));
   return dateTime.toISOString();
 };
 

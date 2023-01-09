@@ -26,22 +26,11 @@ const EventForm = ({
   onFormSubmit,
   isCreate,
 }: FormProps) => {
-  const getYearMonthDay = (date: Date) => {
-    const month =
-      (date.getMonth() + 1).toString().length < 2
-        ? `0${date.getMonth() + 1}`
-        : date.getMonth() + 1;
-    const day =
-      date.getDate().toString().length < 2
-        ? `0${date.getDate()}`
-        : date.getDate();
-    return `${date.getFullYear()}-${month}-${day}`;
-  };
   const [startDate, setStartDate] = useState<string>(
-    getYearMonthDay(new Date(initialStart)),
+    formatDate(new Date(initialStart)),
   );
   const [endDate, setEndDate] = useState<string>(
-    getYearMonthDay(new Date(initialEnd)),
+    formatDate(new Date(initialEnd)),
   );
   const [startTime, setStartTime] = useState<string>(
     new Date(initialStart).toLocaleTimeString("it-IT"),
@@ -68,7 +57,7 @@ const EventForm = ({
   const recurrenceBeginDate = new Date(applyTimeToDate(startDate, startTime));
 
   const [recurrenceEndDate, setRecurrenceEndDate] = useState<string>(
-    getYearMonthDay(new Date(initialRecurrenceEnd)),
+    formatDate(new Date(initialRecurrenceEnd)),
   );
 
   const handleFormSubmit = async (_: React.MouseEvent<HTMLButtonElement>) => {
@@ -153,7 +142,6 @@ const EventForm = ({
           min={formatDate(new Date())}
           type="date"
           onChange={(e) => {
-            console.log("e.target.value", e.target.value);
             setStartDate(e.target.value);
             setEndDate(e.target.value);
           }}

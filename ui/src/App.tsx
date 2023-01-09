@@ -12,6 +12,7 @@ import {
   addDayToAllDayEvent,
   oneYearLater,
   dateMinusOneDay,
+  applyTimeToDate,
 } from "./lib";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
@@ -80,8 +81,8 @@ const App = () => {
     return date;
   };
 
-  const DEFAULT_START = formatDate(datePlusHours(new Date(), 1));
-  const DEFAULT_END = formatDate(datePlusHours(new Date(), 2));
+  const DEFAULT_START = datePlusHours(new Date(), 1).toISOString();
+  const DEFAULT_END = datePlusHours(new Date(), 2).toISOString();
 
   const [events, setEvents] = useState<EventSourceInput>([]);
   const [displayedEventData, setDisplayedEventData] = useState(
@@ -91,8 +92,10 @@ const App = () => {
   const [inEditMode, setInEditMode] = useState<boolean>(false);
   const [inCreateMode, setInCreateMode] = useState<boolean>(false);
 
-  const [modalStart, setModalStart] = useState<string>(formatDate(new Date()));
-  const [modalEnd, setModalEnd] = useState<string>(formatDate(new Date()));
+  const [modalStart, setModalStart] = useState<string>(
+    new Date().toISOString(),
+  );
+  const [modalEnd, setModalEnd] = useState<string>(new Date().toISOString());
 
   const [modalAllDay, setModalAllDay] = useState<boolean>(false);
   const [apiError, setApiError] = useState<boolean>(false);
@@ -211,11 +214,11 @@ const App = () => {
     recurrenceEnds,
   }: FormEntryProps) => {
     const entryId = displayedEventData._id;
-    const startTimeUtc = new Date(getDateTimeString(startDate, startTime));
-    const endTimeUtc = new Date(getDateTimeString(endDate, endTime));
+    const startTimeUtc = new Date(applyTimeToDate(startDate, startTime));
+    const endTimeUtc = new Date(applyTimeToDate(endDate, endTime));
     let recurrenceEndUtc;
     if (recurrenceEnds) {
-      recurrenceEndUtc = new Date(getDateTimeString(recurrenceEnds, startTime));
+      recurrenceEndUtc = new Date(applyTimeToDate(recurrenceEnds, startTime));
     }
 
     updateEntry(entryId, {
@@ -367,10 +370,6 @@ const App = () => {
                   <EventForm
                     initialTitle=""
                     initialDescription=""
-                    // initialStartDate={modalStartDate}
-                    // initialEndDate={modalEndDate}
-                    // initialStartTime={modalStartTime}
-                    // initialEndTime={modalEndTime}
                     initialStart={modalStart}
                     initialEnd={modalEnd}
                     initialAllDay={modalAllDay}
