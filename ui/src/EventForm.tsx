@@ -1,15 +1,17 @@
 import React, { useState } from "react";
-import { formatDate, getDateTimeString, padNumberWith0Zero } from "./lib";
+import {
+  formatDate,
+  formatTime,
+  getDateTimeString,
+  applyTimeToDate,
+  padNumberWith0Zero,
+} from "./lib";
 import { Checkbox, RadioGroup, Radio, Stack } from "@chakra-ui/react";
 import s from "./EventForm.module.css";
 
 interface FormProps {
-  initialStartDate: string;
-  initialEndDate: string;
-  initialStartTime: string;
-  initialEndTime: string;
-  initialStart: string;
-  initialEnd: string;
+  initialStart: string; //"2022-02-15T04:00"
+  initialEnd: string; //"2022-02-15T04:00"
   initialTitle: string;
   initialDescription: string;
   initialAllDay: boolean;
@@ -20,10 +22,6 @@ interface FormProps {
 }
 
 const EventForm = ({
-  initialStartDate,
-  initialEndDate,
-  initialStartTime,
-  initialEndTime,
   initialStart,
   initialEnd,
   initialTitle = "",
@@ -34,13 +32,31 @@ const EventForm = ({
   onFormSubmit,
   isCreate,
 }: FormProps) => {
-  const [startDate, setStartDate] = useState<string>(initialStartDate);
-  const [endDate, setEndDate] = useState<string>(initialEndDate);
-  const [startTime, setStartTime] = useState<string>(initialStartTime);
-  const [endTime, setEndTime] = useState<string>(initialEndTime);
-
-  const [start, setStart] = useState<string>(initialStart);
-  const [end, setEnd] = useState<string>(initialEnd);
+  const getYearMonthDay = (date: Date) => {
+    const month =
+      (date.getMonth() + 1).toString().length < 2
+        ? `0${date.getMonth() + 1}`
+        : date.getMonth() + 1;
+    const day =
+      date.getDate().toString().length < 2
+        ? `0${date.getDate()}`
+        : date.getDate();
+    return `${date.getFullYear()}-${month}-${day}`;
+  };
+  console.log("initial start", initialStart);
+  const [startDate, setStartDate] = useState<string>(
+    getYearMonthDay(new Date(initialStart)),
+  );
+  console.log("startDate", startDate);
+  const [endDate, setEndDate] = useState<string>(
+    getYearMonthDay(new Date(initialEnd)),
+  );
+  const [startTime, setStartTime] = useState<string>(
+    new Date(initialStart).toLocaleTimeString("it-IT"),
+  );
+  const [endTime, setEndTime] = useState<string>(
+    new Date(initialEnd).toLocaleTimeString("it-IT"),
+  );
 
   const [error, setError] = useState<string | null>(null);
   const [title, setTitle] = useState<string>(initialTitle);
@@ -57,15 +73,16 @@ const EventForm = ({
   )}:00`;
   const DEFAULT_END_TIME: string = `${padNumberWith0Zero(currentHour + 2)}:00`;
 
-  const recurrenceBeginDate = new Date(getDateTimeString(startDate, startTime));
+  const recurrenceBeginDate = new Date(applyTimeToDate(startDate, startTime));
 
-  const [recurrenceEndDate, setRecurrenceEndDate] =
-    useState<string>(initialRecurrenceEnd);
+  const [recurrenceEndDate, setRecurrenceEndDate] = useState<string>(
+    getYearMonthDay(new Date(initialRecurrenceEnd)),
+  );
 
   const handleFormSubmit = async (_: React.MouseEvent<HTMLButtonElement>) => {
-    const startDateAndTime: string = getDateTimeString(startDate, startTime);
-    const endDateAndTime: string = getDateTimeString(endDate, endTime);
-    const recurrenceEndDateAndTime: string = getDateTimeString(
+    const startDateAndTime: string = applyTimeToDate(startDate, startTime);
+    const endDateAndTime: string = applyTimeToDate(endDate, endTime);
+    const recurrenceEndDateAndTime: string = applyTimeToDate(
       recurrenceEndDate,
       startTime,
     );
@@ -144,6 +161,7 @@ const EventForm = ({
           min={formatDate(new Date())}
           type="date"
           onChange={(e) => {
+            console.log("e.target.value", e.target.value);
             setStartDate(e.target.value);
             setEndDate(e.target.value);
           }}

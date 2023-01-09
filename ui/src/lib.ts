@@ -22,6 +22,12 @@ const formatDateMinusOneDay: Function = (date: Date): string => {
   ].join("-");
 };
 
+const dateMinusOneDay: Function = (date: Date): Date => {
+  // subtract a day from the given date
+  date.setDate(date.getDate() - 1);
+  return date;
+};
+
 const dateFormat = (selectedEventDate: Date) =>
   `${selectedEventDate.toLocaleString("default", {
     weekday: "short",
@@ -81,6 +87,13 @@ const singleModalDateFormat: Function = (dateTimeUtc: string) => {
 
 const getDateTimeString = (date: string, time: string) => `${date}T${time}`;
 
+const applyTimeToDate = (date: string, time: string) => {
+  const dateTime = new Date(date);
+  const [hours, mins, _] = time.split(":");
+  dateTime.setHours(parseInt(hours), parseInt(mins));
+  return dateTime.toISOString();
+};
+
 const formatTime = (utcString: string) =>
   `${padNumberWith0Zero(new Date(utcString).getHours())}:${padNumberWith0Zero(
     new Date(utcString).getMinutes(),
@@ -101,6 +114,7 @@ const addDayToAllDayEvent: EventInputTransformer = (event: EventInput) => {
 
 export {
   addDayToAllDayEvent,
+  dateMinusOneDay,
   formatDate,
   formatDateMinusOneDay,
   getDateTimeString,
@@ -112,4 +126,5 @@ export {
   oneYearLater,
   singleModalDateFormat,
   dateFormatWithYear,
+  applyTimeToDate,
 };
