@@ -1,11 +1,5 @@
 import React, { useState } from "react";
-import {
-  formatDate,
-  formatTime,
-  getDateTimeString,
-  applyTimeToDate,
-  padNumberWith0Zero,
-} from "./lib";
+import { formatDate, applyTimeToDate, padNumberWith0Zero } from "./lib";
 import { Checkbox, RadioGroup, Radio, Stack } from "@chakra-ui/react";
 import s from "./EventForm.module.css";
 
@@ -43,11 +37,9 @@ const EventForm = ({
         : date.getDate();
     return `${date.getFullYear()}-${month}-${day}`;
   };
-  console.log("initial start", initialStart);
   const [startDate, setStartDate] = useState<string>(
     getYearMonthDay(new Date(initialStart)),
   );
-  console.log("startDate", startDate);
   const [endDate, setEndDate] = useState<string>(
     getYearMonthDay(new Date(initialEnd)),
   );

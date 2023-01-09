@@ -12,16 +12,6 @@ const formatDate: Function = (date: Date): string => {
   ].join("-");
 };
 
-const formatDateMinusOneDay: Function = (date: Date): string => {
-  // subtract a day from the given date
-  date.setDate(date.getDate() - 1);
-  return [
-    date.getFullYear(),
-    padNumberWith0Zero(date.getMonth() + 1),
-    padNumberWith0Zero(date.getDate()),
-  ].join("-");
-};
-
 const dateMinusOneDay: Function = (date: Date): Date => {
   // subtract a day from the given date
   date.setDate(date.getDate() - 1);
@@ -94,11 +84,6 @@ const applyTimeToDate = (date: string, time: string) => {
   return dateTime.toISOString();
 };
 
-const formatTime = (utcString: string) =>
-  `${padNumberWith0Zero(new Date(utcString).getHours())}:${padNumberWith0Zero(
-    new Date(utcString).getMinutes(),
-  )}`;
-
 const oneYearLater = (utcString: string) => {
   const newDate = new Date(utcString);
 
@@ -116,11 +101,9 @@ export {
   addDayToAllDayEvent,
   dateMinusOneDay,
   formatDate,
-  formatDateMinusOneDay,
   getDateTimeString,
   padNumberWith0Zero,
   modalDateFormat,
-  formatTime,
   dateFormat,
   timeFormat,
   oneYearLater,

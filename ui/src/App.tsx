@@ -8,12 +8,9 @@ import FullCalendar, {
 import {
   formatDate,
   getDateTimeString,
-  formatTime,
   modalDateFormat,
   addDayToAllDayEvent,
-  formatDateMinusOneDay,
   oneYearLater,
-  padNumberWith0Zero,
   dateMinusOneDay,
 } from "./lib";
 import dayGridPlugin from "@fullcalendar/daygrid";
@@ -78,14 +75,6 @@ interface FormEntryProps {
 }
 
 const App = () => {
-  // const currentHour: number = new Date().getHours();
-
-  // const DEFAULT_START_TIME: string = `${padNumberWith0Zero(
-  //   currentHour + 1,
-  // )}:00`;
-  // const DEFAULT_END_TIME: string = `${padNumberWith0Zero(currentHour + 2)}:00`;
-  // const DEFAULT_DATE = formatDate(new Date());
-
   const datePlusHours: Function = (date: Date, hours: number): Date => {
     date.setHours(date.getHours() + hours);
     return date;
@@ -101,11 +90,6 @@ const App = () => {
   const [showOverlay, setShowOverlay] = useState<boolean>(false);
   const [inEditMode, setInEditMode] = useState<boolean>(false);
   const [inCreateMode, setInCreateMode] = useState<boolean>(false);
-  // const [modalStartDate, setModalStartDate] = useState<string>("");
-  // const [modalEndDate, setModalEndDate] = useState<string>("");
-  // const [modalStartTime, setModalStartTime] =
-  //   useState<string>(DEFAULT_START_TIME);
-  // const [modalEndTime, setModalEndTime] = useState<string>(DEFAULT_END_TIME);
 
   const [modalStart, setModalStart] = useState<string>(formatDate(new Date()));
   const [modalEnd, setModalEnd] = useState<string>(formatDate(new Date()));
@@ -277,10 +261,6 @@ const App = () => {
                     size="lg"
                     icon={<AddIcon boxSize={7} w={7} h={7} />}
                     onClick={() => {
-                      // setModalStartDate(DEFAULT_DATE);
-                      // setModalEndDate(DEFAULT_DATE);
-                      // setModalStartTime(DEFAULT_START_TIME);
-                      // setModalEndTime(DEFAULT_END_TIME);
                       setModalStart(DEFAULT_START);
                       setModalEnd(DEFAULT_END);
                       setInCreateMode(true);
@@ -307,20 +287,13 @@ const App = () => {
                 eventClick={openModal}
                 select={({ start, end, allDay }) => {
                   setModalAllDay(allDay);
-
-                  // setModalStartDate(formatDate(start));
                   setModalStart(start.toISOString());
 
                   if (allDay) {
-                    // setModalEndDate(formatDateMinusOneDay(end));
                     setModalEnd(dateMinusOneDay(end).toISOString());
                   } else {
-                    // setModalEndDate(formatDate(end));
                     setModalEnd(end.toISOString());
                   }
-
-                  // setModalStartTime(formatTime(start.toUTCString()));
-                  // setModalEndTime(formatTime(end.toUTCString()));
 
                   setInCreateMode(true);
                   setShowOverlay(true);
