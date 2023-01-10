@@ -31,7 +31,6 @@ const EventForm = ({
   onFormSubmit,
   isCreate,
 }: FormProps) => {
-  console.log(initialStart, initialEnd, initialRecurrenceEnd);
   const [startDate, setStartDate] = useState<string>(
     formatDate(new Date(initialStart)),
   );
