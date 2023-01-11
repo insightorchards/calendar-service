@@ -107,9 +107,16 @@
     width: 100%;
   }
 
-  :global(.fc-toolbar) {
+  /* :global(.fc-toolbar) {
     display: block !important;
     text-align: center;
+  } */
+
+  :global(.fc-button-group:nth-of-type(3)) {
+    background-color: blue;
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
   }
 
   :global(.fc-button-group) {
