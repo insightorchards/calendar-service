@@ -112,8 +112,8 @@
     text-align: center;
   } */
 
-  :global(.fc-button-group:nth-of-type(3)) {
-    background-color: blue;
+  :global(.fc-button-group:nth-of-type(1)) {
+    /* background-color: blue; */
     padding: 5px;
     display: flex;
     flex-direction: column;
@@ -122,6 +122,48 @@
   :global(.fc-button-group) {
     width: 200px;
   }
+
+  :global(.fc-prev-button) {
+    /* position: absolute;
+    right: 0;
+    top: 0; */
+    /* background-color: red; */
+    /* padding: 5px; */
+  }
+
+  :global(
+      #root
+        > div
+        > div
+        > div
+        > div
+        > div.fc.fc-media-screen.fc-direction-ltr.fc-theme-standard
+        > div.fc-header-toolbar.fc-toolbar.fc-toolbar-ltr
+        > div:nth-child(1)
+        > div
+        > button.fc-prev-button.fc-button.fc-button-primary
+    ) {
+    background-color: red;
+  }
+
+  :global(
+      #root
+        > div
+        > div
+        > div
+        > div
+        > div.fc.fc-media-screen.fc-direction-ltr.fc-theme-standard
+        > div.fc-header-toolbar.fc-toolbar.fc-toolbar-ltr
+        > div:nth-child(1)
+        > div
+        > button.fc-next-button.fc-button.fc-button-primary
+    ) {
+    background-color: red;
+  }
+
+  /* :global(.fc-button-group:nth-of-type(1)) {
+    background-color: red;
+  } */
 
   .buttonText {
     display: none;
