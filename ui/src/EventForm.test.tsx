@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import React from "react";
 
 import userEvent from "@testing-library/user-event";
-import { formatDate, getDateTimeString, padNumberWith0Zero } from "./lib";
+import { getDateTimeString } from "./lib";
 import EventForm from "./EventForm";
 
 describe("EventForm", () => {
@@ -23,19 +23,13 @@ describe("EventForm", () => {
   it("displays initial values", () => {
     render(
       <EventForm
-        initialStartDate={formatDate(new Date())}
-        initialEndDate={formatDate(new Date())}
-        initialStartTime={`${padNumberWith0Zero(
-          currentHour,
-        )}:${padNumberWith0Zero(currentMinute)}`}
-        initialEndTime={`${padNumberWith0Zero(
-          currentHour + 1,
-        )}:${padNumberWith0Zero(currentMinute)}`}
+        initialStart={new Date("2022-02-15T04:00").toISOString()}
+        initialEnd={new Date("2022-02-15T05:00").toISOString()}
         initialTitle="Mary's Chicken Feast"
         initialDescription="A time to remember and appreciate chicken nuggets and more"
         initialAllDay={false}
         initialRecurring={true}
-        initialRecurrenceEnd={formatDate(new Date("2022-06-15T04:00"))}
+        initialRecurrenceEnd={new Date("2022-06-15T04:00").toISOString()}
         onFormSubmit={() => {}}
         isCreate={true}
       />,
@@ -58,19 +52,13 @@ describe("EventForm", () => {
   it("displays `Save` button when `isCreate` is false", () => {
     render(
       <EventForm
-        initialStartDate={formatDate(new Date())}
-        initialEndDate={formatDate(new Date())}
-        initialStartTime={`${padNumberWith0Zero(
-          currentHour,
-        )}:${padNumberWith0Zero(currentMinute)}`}
-        initialEndTime={`${padNumberWith0Zero(
-          currentHour + 1,
-        )}:${padNumberWith0Zero(currentMinute)}`}
+        initialStart={new Date("2022-02-15T04:00").toISOString()}
+        initialEnd={new Date("2022-02-15T05:00").toISOString()}
         initialTitle="Arty party"
         initialDescription="A time to remember and appreciate classic art and more"
         initialAllDay={false}
         initialRecurring={false}
-        initialRecurrenceEnd={formatDate(new Date("2022-06-15T04:00"))}
+        initialRecurrenceEnd={new Date("2022-06-15T04:00").toISOString()}
         onFormSubmit={() => {}}
         isCreate={false}
       />,
@@ -83,19 +71,13 @@ describe("EventForm", () => {
     const onFormSubmitMock = jest.fn();
     render(
       <EventForm
-        initialStartDate={formatDate(new Date())}
-        initialEndDate={formatDate(new Date())}
-        initialStartTime={`${padNumberWith0Zero(
-          currentHour,
-        )}:${padNumberWith0Zero(currentMinute)}`}
-        initialEndTime={`${padNumberWith0Zero(
-          currentHour + 1,
-        )}:${padNumberWith0Zero(currentMinute)}`}
+        initialStart={new Date("2022-02-15T04:00").toISOString()}
+        initialEnd={new Date("2022-02-15T05:00").toISOString()}
         initialTitle="Arty party"
         initialDescription="A time to remember and appreciate classic art and more"
         initialAllDay={false}
         initialRecurring={false}
-        initialRecurrenceEnd={formatDate(new Date("2022-06-15T04:00"))}
+        initialRecurrenceEnd={new Date("2022-06-15T04:00").toISOString()}
         onFormSubmit={onFormSubmitMock}
         isCreate={false}
       />,
@@ -118,19 +100,13 @@ describe("EventForm", () => {
     const onFormSubmitMock = jest.fn();
     render(
       <EventForm
-        initialStartDate={formatDate(new Date())}
-        initialEndDate={formatDate(new Date())}
-        initialStartTime={`${padNumberWith0Zero(
-          currentHour,
-        )}:${padNumberWith0Zero(currentMinute)}`}
-        initialEndTime={`${padNumberWith0Zero(
-          currentHour + 1,
-        )}:${padNumberWith0Zero(currentMinute)}`}
+        initialStart={new Date("2022-02-15T04:00").toISOString()}
+        initialEnd={new Date("2022-02-15T05:00").toISOString()}
         initialTitle=""
         initialDescription="A time to remember and appreciate classic art and more"
         initialAllDay={false}
         initialRecurring={false}
-        initialRecurrenceEnd={formatDate(new Date("2022-06-15T04:00"))}
+        initialRecurrenceEnd={new Date("2022-06-15T04:00").toISOString()}
         onFormSubmit={onFormSubmitMock}
         isCreate={false}
       />,
@@ -142,19 +118,13 @@ describe("EventForm", () => {
   it("hides time sections when all day is selected", () => {
     render(
       <EventForm
-        initialStartDate={formatDate(new Date())}
-        initialEndDate={formatDate(new Date())}
-        initialStartTime={`${padNumberWith0Zero(
-          currentHour,
-        )}:${padNumberWith0Zero(currentMinute)}`}
-        initialEndTime={`${padNumberWith0Zero(
-          currentHour + 1,
-        )}:${padNumberWith0Zero(currentMinute)}`}
+        initialStart={new Date("2022-02-15T04:00").toISOString()}
+        initialEnd={new Date("2022-02-15T05:00").toISOString()}
         initialTitle="Arty party"
         initialDescription="A time to remember and appreciate classic art and more"
         initialAllDay={true}
         initialRecurring={false}
-        initialRecurrenceEnd={formatDate(new Date("2022-06-15T04:00"))}
+        initialRecurrenceEnd={new Date("2022-06-15T04:00").toISOString()}
         onFormSubmit={() => {}}
         isCreate={false}
       />,
@@ -174,19 +144,13 @@ describe("EventForm", () => {
       const onFormSubmitMock = jest.fn();
       render(
         <EventForm
-          initialStartDate={formatDate(new Date())}
-          initialEndDate={formatDate(new Date())}
-          initialStartTime={`${padNumberWith0Zero(
-            currentHour,
-          )}:${padNumberWith0Zero(currentMinute)}`}
-          initialEndTime={`${padNumberWith0Zero(
-            currentHour + 1,
-          )}:${padNumberWith0Zero(currentMinute)}`}
+          initialStart={new Date("2022-02-15T04:00").toISOString()}
+          initialEnd={new Date("2022-02-15T05:00").toISOString()}
           initialTitle="Arty party"
           initialDescription="A time to remember and appreciate classic art and more"
           initialAllDay={false}
           initialRecurring={true}
-          initialRecurrenceEnd={formatDate(new Date("2023-02-15T04:00"))}
+          initialRecurrenceEnd={new Date("2023-02-15T04:00").toISOString()}
           onFormSubmit={onFormSubmitMock}
           isCreate={false}
         />,
@@ -209,23 +173,15 @@ describe("EventForm", () => {
     });
 
     it("displays recurring defaults when recurring is selected", () => {
-      const startDate = formatDate(new Date());
-      const startTime = `${padNumberWith0Zero(
-        currentHour,
-      )}:${padNumberWith0Zero(currentMinute)}`;
       render(
         <EventForm
-          initialStartDate={startDate}
-          initialEndDate={startDate}
-          initialStartTime={startTime}
-          initialEndTime={`${padNumberWith0Zero(
-            currentHour + 1,
-          )}:${padNumberWith0Zero(currentMinute)}`}
+          initialStart={new Date("2022-02-15T04:00").toISOString()}
+          initialEnd={new Date("2022-02-15T05:00").toISOString()}
           initialTitle="Mary's Chicken Feast"
           initialDescription="A time to remember and appreciate chicken nuggets and more"
           initialAllDay={false}
           initialRecurring={true}
-          initialRecurrenceEnd={formatDate(new Date("2023-02-15T04:00"))}
+          initialRecurrenceEnd={new Date("2023-02-15T04:00").toISOString()}
           onFormSubmit={() => {}}
           isCreate={true}
         />,
@@ -238,23 +194,15 @@ describe("EventForm", () => {
     });
 
     it("allows user to choose between monthly and weekly recurrence", () => {
-      const startDate = formatDate(new Date());
-      const startTime = `${padNumberWith0Zero(
-        currentHour,
-      )}:${padNumberWith0Zero(currentMinute)}`;
       render(
         <EventForm
-          initialStartDate={startDate}
-          initialEndDate={startDate}
-          initialStartTime={startTime}
-          initialEndTime={`${padNumberWith0Zero(
-            currentHour + 1,
-          )}:${padNumberWith0Zero(currentMinute)}`}
+          initialStart={new Date("2022-02-15T04:00").toISOString()}
+          initialEnd={new Date("2022-02-15T05:00").toISOString()}
           initialTitle="Mary's Chicken Feast"
           initialDescription="A time to remember and appreciate chicken nuggets and more"
           initialAllDay={false}
           initialRecurring={true}
-          initialRecurrenceEnd={formatDate(new Date("2023-02-15T04:00"))}
+          initialRecurrenceEnd={new Date("2023-02-15T04:00").toISOString()}
           onFormSubmit={() => {}}
           isCreate={true}
         />,

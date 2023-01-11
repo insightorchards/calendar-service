@@ -1,28 +1,29 @@
 import React, { useState } from "react";
-import { formatDate, getDateTimeString, padNumberWith0Zero } from "./lib";
+import {
+  formatDate,
+  getDateTimeString,
+  padNumberWith0Zero,
+  timeFormat,
+} from "./lib";
 import { Checkbox, RadioGroup, Radio, Stack } from "@chakra-ui/react";
 import s from "./EventForm.module.css";
 
 interface FormProps {
-  initialStartDate: string;
-  initialEndDate: string;
-  initialStartTime: string;
-  initialEndTime: string;
+  initialStart: string; // ex. "2023-01-25T08:00:00.000Z"
+  initialEnd: string; // ex. "2023-01-25T09:00:00.000Z"
   initialTitle: string;
   initialDescription: string;
   initialAllDay: boolean;
   initialRecurring: boolean;
-  initialRecurrenceEnd: string;
+  initialRecurrenceEnd: string; // ex. "2023-01-25T08:00:00.000Z"
   onFormSubmit: Function;
   isCreate: boolean;
 }
 
 const EventForm = ({
-  initialStartDate,
-  initialEndDate,
-  initialStartTime,
-  initialEndTime,
-  initialTitle,
+  initialStart,
+  initialEnd,
+  initialTitle = "",
   initialDescription = "",
   initialAllDay,
   initialRecurring,
@@ -30,14 +31,22 @@ const EventForm = ({
   onFormSubmit,
   isCreate,
 }: FormProps) => {
-  const [startDate, setStartDate] = useState<string>(initialStartDate);
-  const [endDate, setEndDate] = useState<string>(initialEndDate);
-  const [startTime, setStartTime] = useState<string>(initialStartTime);
-  const [endTime, setEndTime] = useState<string>(initialEndTime);
+  const [startDate, setStartDate] = useState<string>(
+    formatDate(new Date(initialStart)),
+  );
+  const [endDate, setEndDate] = useState<string>(
+    formatDate(new Date(initialEnd)),
+  );
+  const [startTime, setStartTime] = useState<string>(
+    timeFormat(new Date(initialStart)),
+  );
+
+  const [endTime, setEndTime] = useState<string>(
+    timeFormat(new Date(initialEnd)),
+  );
+
   const [error, setError] = useState<string | null>(null);
   const [title, setTitle] = useState<string>(initialTitle);
-  // `|| ""` prevents warning in tests
-  // "Warning: A component is changing an uncontrolled input of type text to be controlled."
   const [description, setDescription] = useState<string>(initialDescription);
   const [allDay, setAllDay] = useState<boolean>(initialAllDay);
   const [recurring, setRecurring] = useState<boolean>(initialRecurring);
@@ -53,8 +62,9 @@ const EventForm = ({
 
   const recurrenceBeginDate = new Date(getDateTimeString(startDate, startTime));
 
-  const [recurrenceEndDate, setRecurrenceEndDate] =
-    useState<string>(initialRecurrenceEnd);
+  const [recurrenceEndDate, setRecurrenceEndDate] = useState<string>(
+    formatDate(new Date(initialRecurrenceEnd)),
+  );
 
   const handleFormSubmit = async (_: React.MouseEvent<HTMLButtonElement>) => {
     const startDateAndTime: string = getDateTimeString(startDate, startTime);
