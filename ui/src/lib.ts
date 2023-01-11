@@ -34,6 +34,11 @@ const dateFormatWithYear = (date: Date) => {
   })} ${date.getDate()} ${date.getFullYear()}`;
 };
 
+const datePlusHours: Function = (date: Date, hours: number): Date => {
+  date.setHours(date.getHours() + hours);
+  return date;
+};
+
 // Returns a string in the miltary format hh:mm
 // ex. 13:00
 const timeFormat = (date: Date): string =>
@@ -103,14 +108,15 @@ const addDayToAllDayEvent: EventInputTransformer = (event: EventInput) => {
 
 export {
   addDayToAllDayEvent,
+  dateFormat,
+  dateFormatWithYear,
   dateMinusOneDay,
+  datePlusHours,
   formatDate,
   getDateTimeString,
-  padNumberWith0Zero,
   modalDateFormat,
-  dateFormat,
-  timeFormat,
   oneYearLater,
+  padNumberWith0Zero,
   singleModalDateFormat,
-  dateFormatWithYear,
+  timeFormat,
 };

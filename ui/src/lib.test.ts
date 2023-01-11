@@ -4,6 +4,7 @@ import {
   oneYearLater,
   singleModalDateFormat,
   dateFormatWithYear,
+  datePlusHours,
 } from "./lib";
 
 describe("lib functions", () => {
@@ -85,8 +86,21 @@ describe("lib functions", () => {
       const date = new Date("2022-02-15T04:00");
 
       expect(oneYearLater(date.toUTCString())).toEqual(
-        new Date("2023-02-15T04:00")
+        new Date("2023-02-15T04:00"),
       );
+    });
+  });
+
+  describe("datePlusHours", () => {
+    it("returns a date plus `x` hours, where `x` is positive", () => {
+      const date = new Date("2022-02-15T04:00");
+
+      expect(datePlusHours(date, 1)).toEqual(new Date("2022-02-15T05:00"));
+    });
+    it("returns a date plus `x` hours, where `x` is negative", () => {
+      const date = new Date("2022-02-15T04:00");
+
+      expect(datePlusHours(date, -2)).toEqual(new Date("2022-02-15T02:00"));
     });
   });
 });

@@ -6,12 +6,13 @@ import FullCalendar, {
   EventSourceInput,
 } from "@fullcalendar/react";
 import {
-  formatDate,
-  modalDateFormat,
   addDayToAllDayEvent,
-  oneYearLater,
   dateMinusOneDay,
+  datePlusHours,
+  formatDate,
   getDateTimeString,
+  modalDateFormat,
+  oneYearLater,
 } from "./lib";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
@@ -75,11 +76,6 @@ interface FormEntryProps {
 }
 
 const App = () => {
-  const datePlusHours: Function = (date: Date, hours: number): Date => {
-    date.setHours(date.getHours() + hours);
-    return date;
-  };
-
   const DEFAULT_START = datePlusHours(new Date(), 1).toISOString();
   const DEFAULT_END = datePlusHours(new Date(), 2).toISOString();
 
