@@ -4,6 +4,7 @@ import { EventInputTransformer, EventInput } from "@fullcalendar/react";
 const padNumberWith0Zero: Function = (num: Number): string =>
   num.toString().padStart(2, "0");
 
+// Returns a string of the format yyyy-mm-dd
 // ex. 2022-01-15
 const formatDate: Function = (date: Date): string => {
   return [
@@ -14,7 +15,6 @@ const formatDate: Function = (date: Date): string => {
 };
 
 const dateMinusOneDay: Function = (date: Date): Date => {
-  // subtract a day from the given date
   date.setDate(date.getDate() - 1);
   return date;
 };
@@ -34,15 +34,17 @@ const dateFormatWithYear = (date: Date) => {
   })} ${date.getDate()} ${date.getFullYear()}`;
 };
 
+// Returns a string in the miltary format hh:mm
 // ex. 13:00
-const timeFormat = (date: Date) =>
+const timeFormat = (date: Date): string =>
   `${date.toLocaleTimeString("it-IT", {
     hour: "2-digit",
     minute: "2-digit",
   })}`;
 
+// Returns a string in the format hh:mm (AM/PM)
 // ex. 01:00 PM
-const timeFormatAmPm = (date: Date) =>
+const timeFormatAmPm = (date: Date): string =>
   `${date.toLocaleTimeString("en-US", {
     hour: "2-digit",
     minute: "2-digit",
