@@ -107,13 +107,7 @@
     width: 100%;
   }
 
-  /* :global(.fc-toolbar) {
-    display: block !important;
-    text-align: center;
-  } */
-
   :global(.fc-button-group:nth-of-type(1)) {
-    /* background-color: blue; */
     padding: 5px;
     display: flex;
     flex-direction: column;
@@ -121,14 +115,6 @@
 
   :global(.fc-button-group) {
     width: 200px;
-  }
-
-  :global(.fc-prev-button) {
-    /* position: absolute;
-    right: 0;
-    top: 0; */
-    /* background-color: red; */
-    /* padding: 5px; */
   }
 
   :global(
@@ -156,9 +142,48 @@
         > div.fc-header-toolbar.fc-toolbar.fc-toolbar-ltr
         > div:nth-child(1)
         > div
+    ) {
+    background-color: blue;
+    /* position: relative; */
+    display: flex;
+    flex-direction: row;
+    /* width: 100%; */
+  }
+
+  :global(
+      #root
+        > div
+        > div
+        > div
+        > div
+        > div.fc.fc-media-screen.fc-direction-ltr.fc-theme-standard
+        > div.fc-header-toolbar.fc-toolbar.fc-toolbar-ltr
+        > div:nth-child(1)
+        > div
         > button.fc-next-button.fc-button.fc-button-primary
     ) {
     background-color: red;
+    /* position: absolute; */
+    /* left: 0; */
+    flex-direction: space-between;
+  }
+
+  :global(
+      #root
+        > div
+        > div
+        > div
+        > div
+        > div.fc.fc-media-screen.fc-direction-ltr.fc-theme-standard
+        > div.fc-header-toolbar.fc-toolbar.fc-toolbar-ltr
+        > div:nth-child(1)
+        > div
+        > button.fc-next-button.fc-button.fc-button-primary
+    ) {
+    background-color: yellow;
+    /* position: absolute; */
+    /* right: 0; */
+    flex-direction: space-between;
   }
 
   /* :global(.fc-button-group:nth-of-type(1)) {
