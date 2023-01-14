@@ -28,7 +28,7 @@ describe("client functions", () => {
               recurring: true,
               startTimeUtc: "2024-06-06T01:07:00.000Z",
               endTimeUtc: "2024-06-06T05:07:00.000Z",
-              recurrenceEnd: "2024-06-06T05:07:00.000Z",
+              recurrenceEndsUtc: "2024-06-06T05:07:00.000Z",
               createdAt: "2022-12-05T05:27:52.212Z",
               updatedAt: "2022-12-05T05:27:52.212Z",
               __v: 0,
@@ -41,7 +41,9 @@ describe("client functions", () => {
         .spyOn(window, "fetch")
         .mockResolvedValue(mockResponse);
 
-      const result = await getEntries();
+      const start = "2023-01-01T08:00:00.000Z";
+      const end = "2023-02-12T08:00:00.000Z";
+      const result = await getEntries(start, end);
       expect(fetchSpy).toHaveBeenCalled();
       expect(result).toEqual([
         {
@@ -65,7 +67,10 @@ describe("client functions", () => {
       } as Response;
 
       jest.spyOn(window, "fetch").mockResolvedValue(mockResponse);
-      expect(() => getEntries()).rejects.toThrowError(
+
+      const start = "2023-01-01T08:00:00.000Z";
+      const end = "2023-02-12T08:00:00.000Z";
+      expect(() => getEntries(start, end)).rejects.toThrowError(
         new Error("Get entries request failed"),
       );
     });
@@ -194,7 +199,7 @@ describe("client functions", () => {
             allDay: false,
             recurring: true,
             recurrenceBegins: "2024-06-06T01:07:00.000Z",
-            recurrenceEndUtc: "2025-06-06T01:07:00.000Z",
+            recurrenceEndsUtc: "2025-06-06T01:07:00.000Z",
             startTimeUtc: "2024-06-06T01:07:00.000Z",
             endTimeUtc: "2024-06-06T05:07:00.000Z",
             createdAt: "2022-12-05T05:27:52.212Z",
@@ -229,7 +234,7 @@ describe("client functions", () => {
         allDay: false,
         recurring: true,
         recurrenceBegins: "2024-06-06T01:07:00.000Z",
-        recurrenceEndUtc: "2025-06-06T01:07:00.000Z",
+        recurrenceEndsUtc: "2025-06-06T01:07:00.000Z",
         startTimeUtc: "2024-06-06T01:07:00.000Z",
         endTimeUtc: "2024-06-06T05:07:00.000Z",
         createdAt: "2022-12-05T05:27:52.212Z",
@@ -328,7 +333,7 @@ describe("client functions", () => {
             allDay: false,
             recurring: true,
             recurrenceBegins: "2024-06-06T01:07:00.000Z",
-            recurrenceEndUtc: "2025-06-06T01:07:00.000Z",
+            recurrenceEndsUtc: "2025-06-06T01:07:00.000Z",
             startTimeUtc: "2024-06-06T01:07:00.000Z",
             endTimeUtc: "2024-06-06T05:07:00.000Z",
             createdAt: "2022-12-05T05:27:52.212Z",
@@ -363,7 +368,7 @@ describe("client functions", () => {
         allDay: false,
         recurring: true,
         recurrenceBegins: "2024-06-06T01:07:00.000Z",
-        recurrenceEndUtc: "2025-06-06T01:07:00.000Z",
+        recurrenceEndsUtc: "2025-06-06T01:07:00.000Z",
         startTimeUtc: "2024-06-06T01:07:00.000Z",
         endTimeUtc: "2024-06-06T05:07:00.000Z",
         createdAt: "2022-12-05T05:27:52.212Z",
