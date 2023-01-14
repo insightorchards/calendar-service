@@ -64,7 +64,7 @@ const expandRecurringEntry = (entry, start, end) => {
   const recurrences = rruleSet.between(new Date(start), new Date(end));
   return recurrences.map((date) => {
     return {
-      id: entry.id,
+      _id: entry._id,
       eventId: entry.eventId,
       creatorId: entry.creatorId,
       title: entry.title,
