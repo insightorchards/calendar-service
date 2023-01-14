@@ -88,7 +88,7 @@ describe("App", () => {
       await act(async () => {
         await render(<App />);
       });
-      expect(mockGetEntries).toHaveBeenCalledTimes(1);
+      expect(mockGetEntries).toHaveBeenCalledTimes(2);
       userEvent.click(screen.getByLabelText("add event"));
       userEvent.click(screen.getByLabelText("Title"));
       userEvent.type(
@@ -154,7 +154,7 @@ describe("App", () => {
       ]);
 
       render(<App />);
-      expect(mockGetEntries).toHaveBeenCalledTimes(1);
+      expect(mockGetEntries).toHaveBeenCalledTimes(2);
       const eventText = await screen.findByText("Dance");
       expect(eventText).toBeInTheDocument();
       eventText.click();
@@ -166,7 +166,7 @@ describe("App", () => {
     });
 
     it("deletes entry when delete button is clicked", async () => {
-      mockGetEntries.mockResolvedValueOnce([
+      mockGetEntries.mockResolvedValue([
         {
           _id: "123",
           end: "2022-02-27T05:43:37.868Z",
@@ -203,7 +203,7 @@ describe("App", () => {
       await act(async () => {
         await render(<App />);
       });
-      expect(mockGetEntries).toHaveBeenCalledTimes(1);
+      expect(mockGetEntries).toHaveBeenCalledTimes(2);
       const eventText = await screen.findByText("Dance");
       expect(eventText).toBeInTheDocument();
       await act(async () => {
@@ -348,7 +348,7 @@ describe("App", () => {
     });
 
     it("getEntry error displays error message", async () => {
-      mockGetEntries.mockResolvedValueOnce([
+      mockGetEntries.mockResolvedValue([
         {
           _id: "123",
           end: "2022-02-27T05:43:37.868Z",
@@ -369,7 +369,7 @@ describe("App", () => {
     });
 
     it("updateEntry displays an error message", async () => {
-      mockGetEntries.mockResolvedValueOnce([
+      mockGetEntries.mockResolvedValue([
         {
           _id: "123",
           end: "2022-02-27T05:43:37.868Z",
@@ -407,7 +407,7 @@ describe("App", () => {
     });
 
     it("deleteEntry displays an error message", async () => {
-      mockGetEntries.mockResolvedValueOnce([
+      mockGetEntries.mockResolvedValue([
         {
           _id: "123",
           end: "2022-02-27T05:43:37.868Z",
@@ -443,7 +443,7 @@ describe("App", () => {
 
       render(<App />);
 
-      expect(mockGetEntries).toHaveBeenCalledTimes(1);
+      expect(mockGetEntries).toHaveBeenCalledTimes(2);
       const eventText = await screen.findByText("Dance");
       expect(eventText).toBeInTheDocument();
       await act(async () => {

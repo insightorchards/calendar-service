@@ -14,8 +14,8 @@ const notOk = (status: number) => {
   return !status.toString().match(/2\d+/);
 };
 
-const getEntries = async () => {
-  return fetch("http://localhost:4000/entries", {
+const getEntries = async (start: string, end: string) => {
+  return fetch(`http://localhost:4000/entries?start=${start}&end=${end}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -36,7 +36,7 @@ const getEntries = async () => {
           end: event.endTimeUtc,
           allDay: event.allDay,
           recurring: event.recurring,
-          recurrenceEnd: event.recurrenceEnd,
+          recurrenceEnd: event.recurrenceEndsUtc,
         };
       });
       return result;
@@ -86,7 +86,7 @@ const createEntry = async ({
         recurring,
         frequency,
         recurrenceBegins: recurrenceBegins?.toISOString(),
-        recurrenceEnds: recurrenceEndUtc?.toISOString(),
+        recurrenceEndsUtc: recurrenceEndUtc?.toISOString(),
       }),
     });
   } else {

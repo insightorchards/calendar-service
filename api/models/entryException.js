@@ -1,9 +1,18 @@
 const mongoose = require("mongoose");
 
-const calendarEntrySchema = new mongoose.Schema(
+const entryExceptionSchema = new mongoose.Schema(
   {
-    eventId: {
-      type: String,
+    deleted: {
+      type: Boolean,
+      required: true,
+    },
+    modified: {
+      type: Boolean,
+      required: true,
+    },
+    entryId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "CalendarEntry",
       required: true,
     },
     creatorId: {
@@ -30,32 +39,16 @@ const calendarEntrySchema = new mongoose.Schema(
       type: Date,
       required: true,
     },
-    recurring: {
-      type: Boolean,
-      required: true,
-    },
-    recurrenceEndsUtc: {
-      type: Date,
-      required: false,
-    },
-    recurrencePattern: {
-      type: String,
-      required: false,
-    },
-    frequency: {
-      type: String,
-      required: false,
-    },
   },
   {
     timestamps: true,
   },
 );
 
-const CalendarEntry = mongoose.model(
-  "CalendarEntry",
-  calendarEntrySchema,
-  "calendarEntries",
+const EntryException = mongoose.model(
+  "EntryException",
+  entryExceptionSchema,
+  "entryExceptions",
 );
 
-module.exports = { CalendarEntry };
+module.exports = { EntryException };
