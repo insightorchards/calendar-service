@@ -240,7 +240,7 @@ describe("GET /entries?start=<start-time>&end=<end-time>", () => {
   });
 });
 
-describe("GET /entry/:entryId", () => {
+describe("GET /entry/:entryId?start=<start-time>", () => {
   let newEntry;
   const today = new Date();
   beforeEach(async () => {
@@ -270,6 +270,54 @@ describe("GET /entry/:entryId", () => {
         recurring: false,
         startTimeUtc: today.toISOString(),
         endTimeUtc: dayAfter(today).toISOString(),
+      }),
+    );
+  });
+
+  it.only("returns the requested recurring entry", async () => {
+    const date = new Date("04 January 2023 14:48 UTC");
+    const oneYearLater = yearAfter(date);
+
+    const createdEventData = await supertest(app)
+      .post("/entries")
+      .send({
+        eventId: "123",
+        creatorId: "456",
+        title: "Happy day",
+        description: "and a happy night too",
+        startTimeUtc: date,
+        endTimeUtc: dayAfter(date),
+        allDay: false,
+        recurring: true,
+        frequency: "monthly",
+        recurrenceEndsUtc: oneYearLater,
+      })
+      .expect(201);
+    const createdEvent = JSON.parse(createdEventData.text);
+
+    const rule = new RRule({
+      freq: RRule.MONTHLY,
+      dtstart: date,
+      until: oneYearLater,
+    });
+
+    const recurrences = rule.all();
+
+    const februaryFourth = recurrences[1];
+
+    const response = await supertest(app)
+      .get(`/entries/${createdEvent._id}?start=${februaryFourth}`)
+      .expect(200);
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        eventId: "634b339218b3b892b312e5ca",
+        creatorId: "424b339218b3b892b312e5cb",
+        title: "Birthday party",
+        description: "Let's celebrate Janie!",
+        allDay: false,
+        recurring: false,
+        startTimeUtc: februaryFourth.toISOString(),
+        endTimeUtc: dayAfter(februaryFourth).toISOString(),
       }),
     );
   });
