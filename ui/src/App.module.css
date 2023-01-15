@@ -107,49 +107,40 @@
     width: 100%;
   }
 
-  :global(.fc-button-group:nth-of-type(1)) {
-    padding: 5px;
-    display: flex;
+  /* DIV FC TOOLBAR CHUNK */
+  :global(#root > div > div > div > div > div.fc.fc-media-screen.fc-direction-ltr.fc-theme-standard > div.fc-header-toolbar.fc-toolbar.fc-toolbar-ltr > div:nth-child(1)) {
+    height: 0px;
+  }
+
+  /* WRAPPER FOR ALL TOOLBAR BUTTONS AND TITLE */
+  :global(.fc-header-toolbar) {
+    display: flex; 
     flex-direction: column;
+    position: relative;
+    /* height: 0px; */
   }
 
-  :global(.fc-button-group) {
-    width: 200px;
+  /* TOOLBAR TITLE */
+  :global(.fc-toolbar-title) {
+    padding-bottom: 50px;
   }
 
+ /* WRAPPER FOR ARROWS AND TODAY UNSET BECAUSE IT IS POSITION RELATIVE*/
+  :global(#root > div > div > div > div > div.fc.fc-media-screen.fc-direction-ltr.fc-theme-standard > div.fc-header-toolbar.fc-toolbar.fc-toolbar-ltr > div:nth-child(1) > div) {
+    position: unset;
+  }
+
+/* LEFT ARROW */
   :global(
-      #root
-        > div
-        > div
-        > div
-        > div
-        > div.fc.fc-media-screen.fc-direction-ltr.fc-theme-standard
-        > div.fc-header-toolbar.fc-toolbar.fc-toolbar-ltr
-        > div:nth-child(1)
-        > div
-        > button.fc-prev-button.fc-button.fc-button-primary
+    #root > div > div > div > div > div.fc.fc-media-screen.fc-direction-ltr.fc-theme-standard > div.fc-header-toolbar.fc-toolbar.fc-toolbar-ltr > div:nth-child(1) > div > button.fc-prev-button.fc-button.fc-button-primary
     ) {
-    background-color: red;
+    position: absolute;
+    width: 50px;
+    top: 0;
+    left:0;
   }
 
-  :global(
-      #root
-        > div
-        > div
-        > div
-        > div
-        > div.fc.fc-media-screen.fc-direction-ltr.fc-theme-standard
-        > div.fc-header-toolbar.fc-toolbar.fc-toolbar-ltr
-        > div:nth-child(1)
-        > div
-    ) {
-    background-color: blue;
-    /* position: relative; */
-    display: flex;
-    flex-direction: row;
-    /* width: 100%; */
-  }
-
+/* RIGHT ARROW */
   :global(
       #root
         > div
@@ -162,33 +153,56 @@
         > div
         > button.fc-next-button.fc-button.fc-button-primary
     ) {
-    background-color: red;
-    /* position: absolute; */
-    /* left: 0; */
-    flex-direction: space-between;
+    position: absolute;
+    right: 0;
+    width: 50px;
+    top: 0;
   }
 
-  :global(
-      #root
-        > div
-        > div
-        > div
-        > div
-        > div.fc.fc-media-screen.fc-direction-ltr.fc-theme-standard
-        > div.fc-header-toolbar.fc-toolbar.fc-toolbar-ltr
-        > div:nth-child(1)
-        > div
-        > button.fc-next-button.fc-button.fc-button-primary
-    ) {
-    background-color: yellow;
-    /* position: absolute; */
-    /* right: 0; */
-    flex-direction: space-between;
+  /* TODAY BUTTON */
+  :global(#root > div > div > div > div > div.fc.fc-media-screen.fc-direction-ltr.fc-theme-standard > div.fc-header-toolbar.fc-toolbar.fc-toolbar-ltr > div:nth-child(1) > button) {
+    position: absolute;
+    bottom: 0;
+    width: 100px;
+    margin: 0;
+    border-radius: 5px 0 0 5px;
+    left: 0;
   }
 
-  /* :global(.fc-button-group:nth-of-type(1)) {
-    background-color: red;
-  } */
+  /* PARENT DIV WRAPPER FOR MONTH DAY AND WEEK WITH DEFAULT RELATIVE POSITIONING */
+  :global(#root > div > div > div > div > div.fc.fc-media-screen.fc-direction-ltr.fc-theme-standard > div.fc-header-toolbar.fc-toolbar.fc-toolbar-ltr > div:nth-child(3) > div) {
+    position: unset;
+  }
+
+  /* MONTH BUTTON */
+  :global(#root > div > div > div > div > div.fc.fc-media-screen.fc-direction-ltr.fc-theme-standard > div.fc-header-toolbar.fc-toolbar.fc-toolbar-ltr > div:nth-child(3) > div > button.fc-dayGridMonth-button.fc-button.fc-button-primary) {
+    position: absolute;
+    width: 100px;
+    left:100px;
+    /* border-radius: 5px; */
+    border-radius: 0;
+    bottom: 0;
+  }
+
+  /* WEEK BUTTON */
+  :global(#root > div > div > div > div > div.fc.fc-media-screen.fc-direction-ltr.fc-theme-standard > div.fc-header-toolbar.fc-toolbar.fc-toolbar-ltr > div:nth-child(3) > div > button.fc-timeGridWeek-button.fc-button.fc-button-primary) {
+    position: absolute;
+    width: 100px;
+    left: 200px;
+    /* border-radius: 5px; */
+    bottom: 0;
+  }
+
+
+  /* DAY BUTTON */
+  :global(#root > div > div > div > div > div.fc.fc-media-screen.fc-direction-ltr.fc-theme-standard > div.fc-header-toolbar.fc-toolbar.fc-toolbar-ltr > div:nth-child(3) > div > button.fc-timeGridDay-button.fc-button.fc-button-primary) {
+    position: absolute;
+    width: 100px;
+    left: 300px;
+    border-radius: 5px;
+    border-radius: 0 5px 5px 0;
+    bottom: 0;
+  }
 
   .buttonText {
     display: none;
