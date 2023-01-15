@@ -4,6 +4,8 @@ import {
   dayAfter,
   getMillisecondsBetween,
   addMillisecondsToDate,
+  fiveMinutesBefore,
+  fiveMinutesAfter,
 } from "../lib/dateHelpers";
 import { RRule, RRuleSet, rrulestr } from "rrule";
 
@@ -201,9 +203,22 @@ export const getCalendarEntry = async (
   _next: NextFunction,
 ) => {
   const { id } = req.params;
+  const { start } = req.query;
   try {
     const entry = await CalendarEntry.findById(id);
-    res.status(200).json(entry);
+    if (isRecurringEntry(entry)) {
+      const startDate = new Date(start as string);
+      const fiveMinBefore = fiveMinutesBefore(startDate);
+      const fiveMinAfter = fiveMinutesAfter(startDate);
+      const expandedEntry = expandRecurringEntry(
+        entry,
+        fiveMinBefore,
+        fiveMinAfter,
+      );
+      res.status(200).json(expandedEntry[0]);
+    } else {
+      res.status(200).json(entry);
+    }
   } catch (err) {
     res.status(400);
     res.send({ message: err.message });

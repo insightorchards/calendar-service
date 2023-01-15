@@ -274,7 +274,7 @@ describe("GET /entry/:entryId?start=<start-time>", () => {
     );
   });
 
-  it.only("returns the requested recurring entry", async () => {
+  it("returns the requested recurring entry", async () => {
     const date = new Date("04 January 2023 14:48 UTC");
     const oneYearLater = yearAfter(date);
 
@@ -308,14 +308,15 @@ describe("GET /entry/:entryId?start=<start-time>", () => {
     const response = await supertest(app)
       .get(`/entries/${createdEvent._id}?start=${februaryFourth}`)
       .expect(200);
+
     expect(response.body).toEqual(
       expect.objectContaining({
-        eventId: "634b339218b3b892b312e5ca",
-        creatorId: "424b339218b3b892b312e5cb",
-        title: "Birthday party",
-        description: "Let's celebrate Janie!",
+        eventId: "123",
+        creatorId: "456",
+        title: "Happy day",
+        description: "and a happy night too",
         allDay: false,
-        recurring: false,
+        recurring: true,
         startTimeUtc: februaryFourth.toISOString(),
         endTimeUtc: dayAfter(februaryFourth).toISOString(),
       }),
