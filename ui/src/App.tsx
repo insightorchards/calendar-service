@@ -55,7 +55,7 @@ interface DisplayedEventData {
   endTimeUtc: string;
   allDay: boolean;
   recurring: boolean;
-  recurrenceEnds: string;
+  recurrenceEndsUtc: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -353,7 +353,7 @@ const App = () => {
                     initialAllDay={displayedEventData.allDay}
                     initialRecurring={displayedEventData.recurring}
                     initialRecurrenceEnd={formatDate(
-                      new Date(displayedEventData.recurrenceEnds),
+                      new Date(displayedEventData.recurrenceEndsUtc),
                     )}
                     onFormSubmit={handleSaveChanges}
                     isCreate={false}
