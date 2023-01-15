@@ -103,7 +103,7 @@ const App = () => {
   useEffect(() => {
     getEntries(rangeStart, rangeEnd)
       .then((entries) => {
-        setEvents(entries);
+        setEventsWithExtraFields(entries);
       })
       .catch(() => {
         flashApiErrorMessage();
@@ -145,7 +145,7 @@ const App = () => {
     });
     getEntries(rangeStart, rangeEnd)
       .then((entries) => {
-        setEvents(entries);
+        setEventsWithExtraFields(entries);
         setShowOverlay(false);
         setInCreateMode(false);
       })
@@ -154,8 +154,8 @@ const App = () => {
       });
   };
 
-  const getEntryDetails = (entryId: string) => {
-    getEntry(entryId)
+  const getEntryDetails = (entryId: string, start?: string) => {
+    getEntry(entryId, start)
       .then((data) => {
         setDisplayedEventData(data);
         setShowOverlay(true);
@@ -169,7 +169,24 @@ const App = () => {
 
   const openModal = (arg: EventClickArg) => {
     const entryId = arg.event._def.extendedProps._id;
-    getEntryDetails(entryId);
+    const start = arg.event._def.extendedProps.entryStart;
+    getEntryDetails(entryId, start);
+  };
+
+  const setEventsWithExtraFields = (entries: any) => {
+    // We need to manually set the entryStart field
+    // so we can read it off the object later
+    // See https://fullcalendar.io/docs/event-parsing
+    // Can't use the 'start' field because it gets truncated
+    // for all day events when coming back from FullCalendar
+    const expandedEntries = entries.map((entry: any) => {
+      return {
+        ...entry,
+        entryStart: entry.start,
+      };
+    });
+
+    setEvents(expandedEntries);
   };
 
   const handleDeleteEntry = async (e: MouseEvent<HTMLButtonElement>) => {
@@ -177,7 +194,7 @@ const App = () => {
     deleteEntry(displayedEventData._id!)
       .then(() => {
         getEntries(rangeStart, rangeEnd).then((entries) => {
-          setEvents(entries);
+          setEventsWithExtraFields(entries);
           setShowOverlay(false);
         });
       })
@@ -230,7 +247,7 @@ const App = () => {
       .then(() => {
         getEntryDetails(entryId);
         getEntries(rangeStart, rangeEnd).then((entries) => {
-          setEvents(entries);
+          setEventsWithExtraFields(entries);
         });
       })
       .catch(() => {

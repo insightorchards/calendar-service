@@ -158,7 +158,10 @@ describe("App", () => {
       const eventText = await screen.findByText("Dance");
       expect(eventText).toBeInTheDocument();
       eventText.click();
-      expect(mockGetEntry).toHaveBeenCalledTimes(1);
+      expect(mockGetEntry).toHaveBeenCalledWith(
+        "345",
+        "2022-02-24T05:43:37.868Z",
+      );
       const modal = await screen.findByRole("dialog");
       expect(modal).toBeVisible();
       expect(await within(modal).findByText("Edit")).toBeVisible();

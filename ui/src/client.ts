@@ -43,8 +43,8 @@ const getEntries = async (start: string, end: string) => {
     });
 };
 
-const getEntry = async (entryId: string) => {
-  return fetch(`http://localhost:4000/entries/${entryId}`, {
+const getEntry = async (entryId: string, start?: string) => {
+  return fetch(`http://localhost:4000/entries/${entryId}?start=${start}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
