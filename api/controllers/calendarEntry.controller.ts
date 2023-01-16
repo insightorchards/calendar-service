@@ -260,7 +260,7 @@ export const deleteCalendarEntry = async (
         startTimeUtc: start,
       });
     } else {
-      await CalendarEntry.deleteOne({ _id: id });
+      entryToDelete.remove();
     }
     res.sendStatus(200);
   } catch (err) {
