@@ -422,6 +422,32 @@ describe("client functions", () => {
       });
     });
 
+    it("succeeds for recurring events", async () => {
+      const mockResponse = {
+        status: 200,
+      } as Response;
+
+      const startTime = "2024-06-06T01:07:00.000Z";
+
+      const fetchSpy = jest
+        .spyOn(window, "fetch")
+        .mockResolvedValue(mockResponse);
+
+      const result = await deleteEntry(
+        "638d815856e5c70955565b7e",
+        startTime,
+        false,
+      );
+      expect(fetchSpy).toHaveBeenCalled();
+      expect(fetchSpy.mock.calls[0][1]).toEqual(
+        expect.objectContaining({ method: "DELETE" }),
+      );
+
+      expect(result).toEqual({
+        status: 200,
+      });
+    });
+
     it("throws an error on failure", async () => {
       const mockResponse = {
         status: 400,

@@ -17,11 +17,11 @@ const entryExceptionSchema = new mongoose.Schema(
     },
     creatorId: {
       type: String,
-      required: true,
+      required: false,
     },
     title: {
       type: String,
-      required: true,
+      required: false,
     },
     description: {
       type: String,
@@ -29,7 +29,7 @@ const entryExceptionSchema = new mongoose.Schema(
     },
     allDay: {
       type: Boolean,
-      required: true,
+      required: false,
     },
     startTimeUtc: {
       type: Date,
@@ -37,7 +37,7 @@ const entryExceptionSchema = new mongoose.Schema(
     },
     endTimeUtc: {
       type: Date,
-      required: true,
+      required: false,
     },
   },
   {

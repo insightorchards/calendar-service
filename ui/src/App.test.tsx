@@ -220,6 +220,63 @@ describe("App", () => {
       });
     });
 
+    it("allows for deletion of a single recurring instance", async () => {
+      mockGetEntries.mockResolvedValue([
+        {
+          _id: "123",
+          end: "2022-02-27T05:43:37.868Z",
+          start: "2022-02-27T05:43:37.868Z",
+          title: "Berta goes to the baseball game!",
+          recurring: true,
+        },
+        {
+          _id: "345",
+          end: "2022-02-24T05:43:37.868Z",
+          start: "2022-02-24T05:43:37.868Z",
+          title: "Dance",
+          recurring: true,
+        },
+      ]);
+
+      mockGetEntry.mockResolvedValue({
+        _id: "345",
+        end: "2022-02-24T05:43:37.868Z",
+        startTimeUtc: "2022-02-24T05:43:37.868Z",
+        title: "Dance",
+        description: "fun times",
+        recurring: true,
+      });
+
+      mockDeleteEntry.mockResolvedValue(new Response());
+
+      await act(async () => {
+        await render(<App />);
+      });
+      const eventText = await screen.findByText("Dance");
+      expect(eventText).toBeInTheDocument();
+      await act(async () => {
+        await eventText.click();
+      });
+      expect(mockGetEntry).toHaveBeenCalledTimes(1);
+      const deleteButton = await screen.findByText("Delete");
+      await act(async () => {
+        await deleteButton.click();
+      });
+      expect(
+        await screen.findByText(
+          "Would you like to delete the entire recurring series or just this event?",
+        ),
+      ).toBeInTheDocument();
+      await act(async () => {
+        await userEvent.click(screen.getByText("Delete this one event"));
+      });
+      expect(mockDeleteEntry).toHaveBeenCalledWith(
+        "345",
+        "2022-02-24T05:43:37.868Z",
+        false,
+      );
+    });
+
     it("automatically sets end date when start date is selected", async () => {
       mockCreateEntry.mockResolvedValue({});
       mockGetEntries.mockResolvedValue([]);
@@ -316,7 +373,7 @@ describe("App", () => {
     });
   });
 
-  describe("Backend interaction errors", () => {
+  describe("backend interaction errors", () => {
     it("getEntries error displays error message", async () => {
       mockGetEntries.mockRejectedValue("Error in getEntry");
       render(<App />);

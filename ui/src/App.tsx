@@ -84,6 +84,8 @@ const App = () => {
     {} as DisplayedEventData,
   );
   const [showOverlay, setShowOverlay] = useState<boolean>(false);
+  const [showDeletionSelectionScreen, setShowDeletionSelectionScreen] =
+    useState<boolean>(false);
   const [inEditMode, setInEditMode] = useState<boolean>(false);
   const [inCreateMode, setInCreateMode] = useState<boolean>(false);
 
@@ -189,19 +191,71 @@ const App = () => {
     setEvents(expandedEvents);
   };
 
-  const handleDeleteEntry = async (e: MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    deleteEntry(displayedEventData._id!)
+  const setEventsWithExtraFields = (entries: any) => {
+    // We need to manually set the entryStart field
+    // so we can read it off the object later
+    // See https://fullcalendar.io/docs/event-parsing
+    // Can't use the 'start' field because it gets truncated
+    // for all day events when coming back from FullCalendar
+    const expandedEntries = entries.map((entry: any) => {
+      return {
+        ...entry,
+        entryStart: entry.start,
+      };
+    });
+
+    setEvents(expandedEntries);
+  };
+
+  const handleDeleteSeries = () => {
+    deleteEntry(displayedEventData._id!, displayedEventData.startTimeUtc, true)
       .then(() => {
         getEntries(rangeStart, rangeEnd).then((entries) => {
           setEventsWithStart(entries);
+          setShowDeletionSelectionScreen(false);
           setShowOverlay(false);
         });
       })
       .catch(() => {
         setShowOverlay(false);
+        setShowDeletionSelectionScreen(false);
         flashApiErrorMessage();
       });
+  };
+
+  const handleDeleteRecurringInstance = () => {
+    deleteEntry(displayedEventData._id!, displayedEventData.startTimeUtc, false)
+      .then(() => {
+        getEntries(rangeStart, rangeEnd).then((entries) => {
+          setEventsWithExtraFields(entries);
+          setShowDeletionSelectionScreen(false);
+          setShowOverlay(false);
+        });
+      })
+      .catch(() => {
+        setShowOverlay(false);
+        setShowDeletionSelectionScreen(false);
+        flashApiErrorMessage();
+      });
+  };
+
+  const handleDeleteEntry = async (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    if (displayedEventData.recurring) {
+      setShowDeletionSelectionScreen(true);
+    } else {
+      deleteEntry(displayedEventData._id!)
+        .then(() => {
+          getEntries(rangeStart, rangeEnd).then((entries) => {
+            setEventsWithExtraFields(entries);
+            setShowOverlay(false);
+          });
+        })
+        .catch(() => {
+          setShowOverlay(false);
+          flashApiErrorMessage();
+        });
+    }
   };
 
   const handleEditEntry = () => setInEditMode(true);
@@ -210,6 +264,7 @@ const App = () => {
     setShowOverlay(false);
     setInEditMode(false);
     setInCreateMode(false);
+    setShowDeletionSelectionScreen(false);
   };
 
   const handleSaveChanges = async ({
@@ -328,7 +383,7 @@ const App = () => {
         <Modal isOpen={showOverlay} onClose={closeOverlay}>
           <ModalOverlay />
           <ModalContent>
-            {!inEditMode && !inCreateMode && (
+            {!inEditMode && !inCreateMode && !showDeletionSelectionScreen && (
               <>
                 <ModalHeader>{displayedEventData.title}</ModalHeader>
                 <ModalCloseButton />
@@ -353,6 +408,29 @@ const App = () => {
                   </Button>
                   <Button onClick={handleDeleteEntry} variant="ghost">
                     Delete
+                  </Button>
+                </ModalFooter>
+              </>
+            )}
+            {showDeletionSelectionScreen && (
+              <>
+                <ModalHeader>{displayedEventData.title}</ModalHeader>
+                <ModalCloseButton />
+                <ModalBody>
+                  <p>
+                    Would you like to delete the entire recurring series or just
+                    this event?
+                  </p>
+                </ModalBody>
+                <ModalFooter>
+                  <Button onClick={handleDeleteSeries} variant="ghost">
+                    Delete series
+                  </Button>
+                  <Button
+                    onClick={handleDeleteRecurringInstance}
+                    variant="ghost"
+                  >
+                    Delete this one event
                   </Button>
                 </ModalFooter>
               </>

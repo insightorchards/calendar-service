@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { CalendarEntry } from "../models/calendarEntry";
+import { EntryException } from "../models/entryException";
 import {
   dayAfter,
   getMillisecondsBetween,
@@ -56,27 +57,37 @@ const isRecurringEntry = (entry) => {
   return (entry as RecurringEntry).recurring === true;
 };
 
-const expandRecurringEntry = (entry, start, end) => {
-  const duration = getMillisecondsBetween(entry.startTimeUtc, entry.endTimeUtc);
-  const rule = rrulestr(entry.recurrencePattern);
+const expandRecurringEntry = async (calendarEntry, start, end) => {
+  const duration = getMillisecondsBetween(
+    calendarEntry.startTimeUtc,
+    calendarEntry.endTimeUtc,
+  );
+  const rule = rrulestr(calendarEntry.recurrencePattern);
   const rruleSet = new RRuleSet();
 
   rruleSet.rrule(rule);
 
+  const exceptions = await EntryException.find({ entryId: calendarEntry._id });
+
+  exceptions.forEach((exception) => {
+    rruleSet.exdate(exception.startTimeUtc);
+  });
+
   const recurrences = rruleSet.between(new Date(start), new Date(end));
+
   return recurrences.map((date) => {
     return {
-      _id: entry._id,
-      eventId: entry.eventId,
-      creatorId: entry.creatorId,
-      title: entry.title,
-      description: entry.description,
-      allDay: entry.allDay,
+      _id: calendarEntry._id,
+      eventId: calendarEntry.eventId,
+      creatorId: calendarEntry.creatorId,
+      title: calendarEntry.title,
+      description: calendarEntry.description,
+      allDay: calendarEntry.allDay,
       startTimeUtc: date,
       endTimeUtc: addMillisecondsToDate(date, duration),
       recurring: true,
-      frequency: entry.frequency,
-      recurrenceEndsUtc: entry.recurrenceEndsUtc,
+      frequency: calendarEntry.frequency,
+      recurrenceEndsUtc: calendarEntry.recurrenceEndsUtc,
     };
   });
 };
@@ -183,10 +194,16 @@ export const getCalendarEntries = async (
       ...recurringEntriesBeginsBefore,
     ];
     let allRecurrences = [];
-    allRecurringEntries.forEach((recurringEntry) => {
-      const expandedEntries = expandRecurringEntry(recurringEntry, start, end);
+
+    for (const recurringEntry of allRecurringEntries) {
+      const expandedEntries = await expandRecurringEntry(
+        recurringEntry,
+        start,
+        end,
+      );
+
       allRecurrences.push(...expandedEntries);
-    });
+    }
 
     const allEntries = [...nonRecurringEntries, ...allRecurrences];
 
@@ -231,9 +248,20 @@ export const deleteCalendarEntry = async (
   _next: NextFunction,
 ) => {
   const { id } = req.params;
+  const { start, applyToSeries } = req.query;
+
   try {
     const entryToDelete = await CalendarEntry.findById(id);
-    await CalendarEntry.deleteOne({ _id: id });
+    if (isRecurringEntry(entryToDelete) && applyToSeries === "false") {
+      await EntryException.create({
+        deleted: true,
+        modified: false,
+        entryId: entryToDelete._id,
+        startTimeUtc: start,
+      });
+    } else {
+      await CalendarEntry.deleteOne({ _id: id });
+    }
     res.sendStatus(200);
   } catch (err) {
     res.status(400);
