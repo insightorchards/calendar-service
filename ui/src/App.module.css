@@ -1,6 +1,7 @@
 .mainContainer {
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 
 .allDay {
@@ -25,14 +26,8 @@
   display: block;
 }
 
-.leftSidePanel {
-  display: flex;
-  margin-bottom: 10px;
-  width: 15vw;
-}
-
 .addEventButton {
-  display: none;
+  margin-bottom: 15px;
 }
 
 .closeButton {
@@ -87,11 +82,10 @@
 
 @media (max-width: 600px) {
   .addEventButton {
-    display: block;
-    max-width: 0%;
-    position: absolute;
-    right: 16px;
-    top: 9px;
+    bottom: 0;
+    position: fixed;
+    right: 20px;
+    z-index: 2;
   }
 
   .createEventButton {
@@ -125,8 +119,8 @@
   :global(.fc-header-toolbar) {
     display: flex;
     flex-direction: column;
+    margin-top: 25px;
     position: relative;
-    /* height: 0px; */
   }
 
   /* TOOLBAR TITLE */
@@ -162,10 +156,10 @@
         > div
         > button.fc-prev-button.fc-button.fc-button-primary
     ) {
-    position: absolute;
-    width: 50px;
-    top: 0;
     left: 0;
+    position: absolute;
+    top: 0;
+    width: 50px;
   }
 
   /* RIGHT ARROW */
@@ -183,8 +177,8 @@
     ) {
     position: absolute;
     right: 0;
-    width: 50px;
     top: 0;
+    width: 50px;
   }
 
   /* TODAY BUTTON */
@@ -199,12 +193,12 @@
         > div:nth-child(1)
         > button
     ) {
-    position: absolute;
-    bottom: 0;
-    width: 25%;
-    margin: 0;
     border-radius: 5px 0 0 5px;
+    bottom: 0;
     left: 0;
+    margin: 0;
+    position: absolute;
+    width: 25%;
   }
 
   /* PARENT DIV WRAPPER FOR MONTH DAY AND WEEK WITH DEFAULT RELATIVE POSITIONING */
@@ -235,11 +229,11 @@
         > div
         > button.fc-dayGridMonth-button.fc-button.fc-button-primary
     ) {
-    position: absolute;
-    width: 25%;
-    left: 25%;
     border-radius: 0;
     bottom: 0;
+    left: 25%;
+    position: absolute;
+    width: 25%;
   }
 
   /* WEEK BUTTON */
@@ -255,10 +249,10 @@
         > div
         > button.fc-timeGridWeek-button.fc-button.fc-button-primary
     ) {
+    bottom: 0;
+    left: 50%;
     position: absolute;
     width: 25%;
-    left: 50%;
-    bottom: 0;
   }
 
   /* DAY BUTTON */
@@ -274,12 +268,12 @@
         > div
         > button.fc-timeGridDay-button.fc-button.fc-button-primary
     ) {
+    border-radius: 0 5px 5px 0;
+    border-radius: 5px;
+    bottom: 0;
+    left: 75%;
     position: absolute;
     width: 25%;
-    left: 75%;
-    border-radius: 5px;
-    border-radius: 0 5px 5px 0;
-    bottom: 0;
   }
 
   .buttonText {
