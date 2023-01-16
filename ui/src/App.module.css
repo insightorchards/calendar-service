@@ -156,6 +156,7 @@
         > div
         > button.fc-prev-button.fc-button.fc-button-primary
     ) {
+    border-radius: 5px;
     left: 0;
     position: absolute;
     top: 0;
@@ -175,6 +176,7 @@
         > div
         > button.fc-next-button.fc-button.fc-button-primary
     ) {
+    border-radius: 5px;
     position: absolute;
     right: 0;
     top: 0;
@@ -269,7 +271,6 @@
         > button.fc-timeGridDay-button.fc-button.fc-button-primary
     ) {
     border-radius: 0 5px 5px 0;
-    border-radius: 5px;
     bottom: 0;
     left: 75%;
     position: absolute;

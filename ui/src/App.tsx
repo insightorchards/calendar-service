@@ -19,7 +19,6 @@ import interactionPlugin from "@fullcalendar/interaction";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import listPlugin from "@fullcalendar/list";
 import { AddIcon } from "@chakra-ui/icons";
-
 import {
   Alert,
   AlertIcon,
@@ -310,6 +309,7 @@ const App = () => {
             <div className={s.fullCalendarUI}>
               <div className={s.addEventButton}>
                 <IconButton
+                  backgroundColor="gray.300"
                   aria-label="add event"
                   size="lg"
                   icon={<AddIcon boxSize={7} w={7} h={7} />}
