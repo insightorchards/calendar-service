@@ -416,7 +416,61 @@ describe("DELETE / entry", () => {
     expect(updatedResponse.body.length).toEqual(10);
   });
 
-  it("catches and returns an error from CalendarEntry.deleteOne", async () => {
+  it("cascades deletion to entry exceptions when recurring event is deleted", async () => {
+    const date = new Date("04 January 2023 14:48 UTC");
+    const oneYearLater = yearAfter(date);
+
+    const createdEventData = await supertest(app)
+      .post("/entries")
+      .send({
+        eventId: "123",
+        creatorId: "456",
+        title: "Happy day",
+        description: "and a happy night too",
+        startTimeUtc: date,
+        endTimeUtc: dayAfter(date),
+        allDay: false,
+        recurring: true,
+        frequency: "monthly",
+        recurrenceEndsUtc: oneYearLater,
+      })
+      .expect(201);
+    const createdEvent = JSON.parse(createdEventData.text);
+
+    const rule = new RRule({
+      freq: RRule.MONTHLY,
+      dtstart: date,
+      until: oneYearLater,
+    });
+
+    const recurrences = rule.all();
+
+    const februaryFourth = recurrences[1];
+
+    await supertest(app)
+      .delete(
+        `/entries/${
+          createdEvent._id
+        }?start=${februaryFourth.toISOString()}&applyToSeries=false`,
+      )
+      .expect(200);
+
+    const exceptionCount = await EntryException.countDocuments();
+    expect(exceptionCount).toEqual(1);
+
+    await supertest(app)
+      .delete(
+        `/entries/${
+          createdEvent._id
+        }?start=${februaryFourth.toISOString()}&applyToSeries=true`,
+      )
+      .expect(200);
+
+    const updatedExceptionCount = await EntryException.countDocuments();
+    expect(updatedExceptionCount).toEqual(0);
+  });
+
+  it("catches and returns an error from CalendarEntry.deleteCalendarEntry", async () => {
     const data = await CalendarEntry.create({
       eventId: "123",
       creatorId: "456",
@@ -427,15 +481,15 @@ describe("DELETE / entry", () => {
       startTimeUtc: startTime,
       endTimeUtc: endTime,
     });
-    const deleteMock = jest
-      .spyOn(CalendarEntry, "deleteOne")
+    const findMock = jest
+      .spyOn(CalendarEntry, "findById")
       .mockRejectedValue({ message: "error occurred" });
 
     const response = await supertest(app)
       .delete(`/entries/${data._id}`)
       .expect(400);
     expect(response.text).toEqual('{"message":"error occurred"}');
-    deleteMock.mockRestore();
+    findMock.mockRestore();
   });
 });
 
