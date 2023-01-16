@@ -55,7 +55,7 @@ interface DisplayedEventData {
   endTimeUtc: string;
   allDay: boolean;
   recurring: boolean;
-  recurrenceEnds: string;
+  recurrenceEndsUtc: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -103,7 +103,7 @@ const App = () => {
   useEffect(() => {
     getEntries(rangeStart, rangeEnd)
       .then((entries) => {
-        setEvents(entries);
+        setEventsWithStart(entries);
       })
       .catch(() => {
         flashApiErrorMessage();
@@ -145,7 +145,7 @@ const App = () => {
     });
     getEntries(rangeStart, rangeEnd)
       .then((entries) => {
-        setEvents(entries);
+        setEventsWithStart(entries);
         setShowOverlay(false);
         setInCreateMode(false);
       })
@@ -154,8 +154,8 @@ const App = () => {
       });
   };
 
-  const getEntryDetails = (entryId: string) => {
-    getEntry(entryId)
+  const getEntryDetails = (entryId: string, start?: string) => {
+    getEntry(entryId, start)
       .then((data) => {
         setDisplayedEventData(data);
         setShowOverlay(true);
@@ -169,7 +169,24 @@ const App = () => {
 
   const openModal = (arg: EventClickArg) => {
     const entryId = arg.event._def.extendedProps._id;
-    getEntryDetails(entryId);
+    const start = arg.event._def.extendedProps.entryStart;
+    getEntryDetails(entryId, start);
+  };
+
+  const setEventsWithStart = (events: any) => {
+    // We need to manually set the entryStart field
+    // so we can read it off the object later
+    // See https://fullcalendar.io/docs/event-parsing
+    // Can't use the 'start' field because it gets truncated
+    // for all day events when coming back from FullCalendar
+    const expandedEvents = events.map((event: any) => {
+      return {
+        ...event,
+        entryStart: event.start,
+      };
+    });
+
+    setEvents(expandedEvents);
   };
 
   const handleDeleteEntry = async (e: MouseEvent<HTMLButtonElement>) => {
@@ -177,7 +194,7 @@ const App = () => {
     deleteEntry(displayedEventData._id!)
       .then(() => {
         getEntries(rangeStart, rangeEnd).then((entries) => {
-          setEvents(entries);
+          setEventsWithStart(entries);
           setShowOverlay(false);
         });
       })
@@ -230,7 +247,7 @@ const App = () => {
       .then(() => {
         getEntryDetails(entryId);
         getEntries(rangeStart, rangeEnd).then((entries) => {
-          setEvents(entries);
+          setEventsWithStart(entries);
         });
       })
       .catch(() => {
@@ -353,7 +370,7 @@ const App = () => {
                     initialAllDay={displayedEventData.allDay}
                     initialRecurring={displayedEventData.recurring}
                     initialRecurrenceEnd={formatDate(
-                      new Date(displayedEventData.recurrenceEnds),
+                      new Date(displayedEventData.recurrenceEndsUtc),
                     )}
                     onFormSubmit={handleSaveChanges}
                     isCreate={false}

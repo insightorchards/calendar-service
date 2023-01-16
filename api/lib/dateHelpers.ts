@@ -5,6 +5,16 @@ export const yearAfter = (date) => {
   return new Date(copiedDate.setFullYear(date.getFullYear() + 1));
 };
 
+export const dateMinusMinutes = (date, numMinutes) => {
+  const copiedDate = new Date(date.getTime());
+  return new Date(copiedDate.setMinutes(date.getMinutes() - numMinutes));
+};
+
+export const datePlusMinutes = (date, numMinutes) => {
+  const copiedDate = new Date(date.getTime());
+  return new Date(copiedDate.setMinutes(date.getMinutes() + numMinutes));
+};
+
 export const getMillisecondsBetween = (startDateUtc, endDateUtc) => {
   const end = new Date(endDateUtc);
   const start = new Date(startDateUtc);

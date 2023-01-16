@@ -78,6 +78,7 @@ describe("client functions", () => {
 
   describe("getEntry", () => {
     it("succeeds", async () => {
+      const startTime = "2024-06-06T01:07:00.000Z";
       const mockResponse = {
         status: 200,
         json: () => {
@@ -89,7 +90,7 @@ describe("client functions", () => {
             description: "Ange is turning 13!",
             allDay: false,
             recurring: false,
-            startTimeUtc: "2024-06-06T01:07:00.000Z",
+            startTimeUtc: startTime,
             endTimeUtc: "2024-06-06T05:07:00.000Z",
             createdAt: "2022-12-05T05:27:52.212Z",
             updatedAt: "2022-12-05T05:27:52.212Z",
@@ -102,7 +103,7 @@ describe("client functions", () => {
         .spyOn(window, "fetch")
         .mockResolvedValue(mockResponse);
 
-      const result = await getEntry("638d815856e5c70955565b7e");
+      const result = await getEntry("638d815856e5c70955565b7e", startTime);
       expect(fetchSpy).toHaveBeenCalled();
       expect(result).toEqual({
         _id: "638d815856e5c70955565b7e",

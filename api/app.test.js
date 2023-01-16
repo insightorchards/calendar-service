@@ -240,7 +240,7 @@ describe("GET /entries?start=<start-time>&end=<end-time>", () => {
   });
 });
 
-describe("GET /entry/:entryId", () => {
+describe("GET /entry/:entryId?start=<start-time>", () => {
   let newEntry;
   const today = new Date();
   beforeEach(async () => {
@@ -270,6 +270,55 @@ describe("GET /entry/:entryId", () => {
         recurring: false,
         startTimeUtc: today.toISOString(),
         endTimeUtc: dayAfter(today).toISOString(),
+      }),
+    );
+  });
+
+  it("returns the requested recurring entry", async () => {
+    const date = new Date("04 January 2023 14:48 UTC");
+    const oneYearLater = yearAfter(date);
+
+    const createdEventData = await supertest(app)
+      .post("/entries")
+      .send({
+        eventId: "123",
+        creatorId: "456",
+        title: "Happy day",
+        description: "and a happy night too",
+        startTimeUtc: date,
+        endTimeUtc: dayAfter(date),
+        allDay: false,
+        recurring: true,
+        frequency: "monthly",
+        recurrenceEndsUtc: oneYearLater,
+      })
+      .expect(201);
+    const createdEvent = JSON.parse(createdEventData.text);
+
+    const rule = new RRule({
+      freq: RRule.MONTHLY,
+      dtstart: date,
+      until: oneYearLater,
+    });
+
+    const recurrences = rule.all();
+
+    const februaryFourth = recurrences[1];
+
+    const response = await supertest(app)
+      .get(`/entries/${createdEvent._id}?start=${februaryFourth}`)
+      .expect(200);
+
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        eventId: "123",
+        creatorId: "456",
+        title: "Happy day",
+        description: "and a happy night too",
+        allDay: false,
+        recurring: true,
+        startTimeUtc: februaryFourth.toISOString(),
+        endTimeUtc: dayAfter(februaryFourth).toISOString(),
       }),
     );
   });
@@ -312,35 +361,6 @@ describe("DELETE / entry", () => {
     const newCount = await CalendarEntry.countDocuments();
     expect(newCount).toEqual(0);
   });
-
-  // it("deletes recurring events from the database", async () => {
-  //   await supertest(app)
-  //     .patch(`/entries/${data._id}`)
-  //     .send({
-  //       eventId: "345",
-  //       creatorId: "678",
-  //       title: "Listen to Sweet Surrender",
-  //       startTimeUtc: startTime,
-  //       endTimeUtc: endTime,
-  //       description: "by John Denver",
-  //       recurring: true,
-  //       frequency: "monthly",
-  //       recurrenceBegins: startTime,
-  //       recurrenceEnds: oneYearLater,
-  //     })
-  //     .expect(200);
-
-  //   const recurringEvents = await CalendarEntry.find({
-  //     recurringEventId: data._id,
-  //   });
-
-  //   expect(recurringEvents.length).toBe(12);
-
-  //   await supertest(app).delete(`/entries/${data._id}`).expect(200);
-
-  //   const newCount = await CalendarEntry.countDocuments();
-  //   expect(newCount).toEqual(0);
-  // });
 
   it("catches and returns an error from CalendarEntry.deleteOne", async () => {
     const deleteMock = jest
@@ -402,190 +422,6 @@ describe("PATCH / entry", () => {
       }),
     );
   });
-
-  // it("creates recurring events for edited event as needed", async () => {
-  //   const newStart = new Date("05 July 2011 14:48 UTC");
-  //   const newEnd = dayAfter(newStart);
-  //   const oneYearLater = yearAfter(newStart);
-  //   await supertest(app)
-  //     .patch(`/entries/${data._id}`)
-  //     .send({
-  //       eventId: "345",
-  //       creatorId: "678",
-  //       title: "Listen to Sweet Surrender",
-  //       startTimeUtc: newStart,
-  //       endTimeUtc: newEnd,
-  //       description: "by John Denver",
-  //       recurring: true,
-  //       frequency: "monthly",
-  //       recurrenceBegins: newStart,
-  //       recurrenceEnds: oneYearLater,
-  //     })
-  //     .expect(200);
-
-  //   const editedEntry = await CalendarEntry.findById(data._id);
-
-  //   const recurringEvents = await CalendarEntry.find({
-  //     recurringEventId: data._id,
-  //   });
-
-  //   expect(editedEntry).toEqual(
-  //     expect.objectContaining({
-  //       _id: expect.anything(),
-  //       eventId: "345",
-  //       creatorId: "678",
-  //       title: "Listen to Sweet Surrender",
-  //       startTimeUtc: newStart,
-  //       endTimeUtc: newEnd,
-  //       recurring: true,
-  //       description: "by John Denver",
-  //     }),
-  //   );
-
-  //   expect(recurringEvents.length).toBe(12);
-  // });
-
-  // it("deletes recurring events for edited event as needed", async () => {
-  //   const newStart = new Date("05 July 2011 14:48 UTC");
-  //   const newEnd = dayAfter(newStart);
-  //   const oneYearLater = yearAfter(newStart);
-  //   await supertest(app)
-  //     .patch(`/entries/${data._id}`)
-  //     .send({
-  //       eventId: "345",
-  //       creatorId: "678",
-  //       title: "Listen to Sweet Surrender",
-  //       startTimeUtc: newStart,
-  //       endTimeUtc: newEnd,
-  //       description: "by John Denver",
-  //       recurring: true,
-  //       frequency: "monthly",
-  //       recurrenceBegins: newStart,
-  //       recurrenceEnds: oneYearLater,
-  //     })
-  //     .expect(200);
-
-  //   const recurringEvents = await CalendarEntry.find({
-  //     recurringEventId: data._id,
-  //   });
-
-  //   expect(recurringEvents.length).toBe(12);
-
-  //   await supertest(app)
-  //     .patch(`/entries/${data._id}`)
-  //     .send({
-  //       eventId: "345",
-  //       creatorId: "678",
-  //       title: "Listen to Sweet Surrender",
-  //       startTimeUtc: newStart,
-  //       endTimeUtc: newEnd,
-  //       description: "by John Denver",
-  //       recurring: false,
-  //     })
-  //     .expect(200);
-
-  //   const updatedRecurringEvents = await CalendarEntry.find({
-  //     recurringEventId: data._id,
-  //   });
-
-  //   expect(updatedRecurringEvents.length).toBe(0);
-  // });
-
-  // it("cascades changes to child recurring events when parent is edited", async () => {
-  //   const newStart = new Date("05 July 2011 14:48 UTC");
-  //   const newEnd = dayAfter(newStart);
-  //   const oneYearLater = yearAfter(newStart);
-  //   const recurringEventData = await supertest(app).post("/entries").send({
-  //     eventId: "123",
-  //     creatorId: "456",
-  //     title: "Happy day",
-  //     startTimeUtc: newStart,
-  //     endTimeUtc: newEnd,
-  //     allDay: false,
-  //     recurring: true,
-  //     frequency: "monthly",
-  //     recurrenceBegins: newStart,
-  //     recurrenceEnds: oneYearLater,
-  //     description: "and a happy night too",
-  //   });
-
-  //   const recurringEvent = JSON.parse(recurringEventData.text);
-
-  //   const recurringEvents = await CalendarEntry.find({
-  //     recurringEventId: recurringEvent._id,
-  //   });
-
-  //   expect(recurringEvents.length).toBe(12);
-  //   expect(recurringEvents[0].title).toEqual("Happy day");
-  //   const updatedStart = new Date("05 August 2011 14:48 UTC");
-  //   const updatedEnd = dayAfter(updatedStart);
-  //   const updatedOneYearLater = yearAfter(updatedStart);
-  //   const updatedEventData = await supertest(app)
-  //     .patch(`/entries/${recurringEvent._id}`)
-  //     .send({
-  //       eventId: "123",
-  //       creatorId: "456",
-  //       title: "Listen to Sweet Surrender",
-  //       startTimeUtc: updatedStart,
-  //       endTimeUtc: updatedEnd,
-  //       description: "by John Denver",
-  //       recurring: true,
-  //       frequency: "weekly",
-  //       recurrenceBegins: updatedStart,
-  //       recurrenceEnds: updatedOneYearLater,
-  //     });
-
-  //   const updatedParentEvent = JSON.parse(updatedEventData.text);
-
-  //   expect(new Date(updatedParentEvent.startTimeUtc)).toEqual(
-  //     new Date(updatedStart),
-  //   );
-  //   expect(new Date(updatedParentEvent.endTimeUtc)).toEqual(
-  //     new Date(updatedEnd),
-  //   );
-  //   expect(new Date(updatedParentEvent.recurrenceBegins)).toEqual(
-  //     new Date(updatedStart),
-  //   );
-  //   expect(new Date(updatedParentEvent.recurrenceEnds)).toEqual(
-  //     new Date(updatedOneYearLater),
-  //   );
-
-  //   expect(updatedParentEvent).toEqual(
-  //     expect.objectContaining({
-  //       eventId: "123",
-  //       creatorId: "456",
-  //       title: "Listen to Sweet Surrender",
-  //       description: "by John Denver",
-  //       allDay: false,
-  //       recurring: true,
-  //       frequency: "weekly",
-  //     }),
-  //   );
-
-  //   const updatedChildEvents = await CalendarEntry.find({
-  //     recurringEventId: recurringEvent._id,
-  //   });
-  //   const updatedChildEvent = updatedChildEvents[0];
-  //   const updatedChildEventStart = new Date("12 August 2011 14:48 UTC");
-  //   expect(updatedChildEvents.length).toBe(52);
-
-  //   expect(new Date(updatedChildEvent.startTimeUtc)).toEqual(
-  //     new Date(updatedChildEventStart),
-  //   );
-  //   expect(new Date(updatedChildEvent.endTimeUtc)).toEqual(
-  //     new Date(new Date(dayAfter(updatedChildEventStart))),
-  //   );
-
-  //   expect(updatedChildEvent.title).toEqual("Listen to Sweet Surrender");
-  //   expect(updatedChildEvent.description).toEqual("by John Denver");
-  //   expect(updatedChildEvent.recurring).toEqual(true);
-  //   expect(`${updatedChildEvent.recurringEventId}`).toEqual(
-  //     `${recurringEvent._id}`,
-  //   );
-  //   expect(new Date(updatedChildEvent.recurrenceEnds)).toEqual(
-  //     new Date(updatedOneYearLater),
-  //   );
-  // });
 
   it("catches and returns an error from CalendarEntry.findByIdAndUpdate", async () => {
     const updateMock = jest

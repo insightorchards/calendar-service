@@ -4,6 +4,8 @@ import {
   dayAfter,
   getMillisecondsBetween,
   addMillisecondsToDate,
+  dateMinusMinutes,
+  datePlusMinutes,
 } from "../lib/dateHelpers";
 import { RRule, RRuleSet, rrulestr } from "rrule";
 
@@ -64,7 +66,7 @@ const expandRecurringEntry = (entry, start, end) => {
   const recurrences = rruleSet.between(new Date(start), new Date(end));
   return recurrences.map((date) => {
     return {
-      id: entry.id,
+      _id: entry._id,
       eventId: entry.eventId,
       creatorId: entry.creatorId,
       title: entry.title,
@@ -201,9 +203,22 @@ export const getCalendarEntry = async (
   _next: NextFunction,
 ) => {
   const { id } = req.params;
+  const { start } = req.query;
   try {
     const entry = await CalendarEntry.findById(id);
-    res.status(200).json(entry);
+    if (isRecurringEntry(entry)) {
+      const startDate = new Date(start as string);
+      const oneMinBefore = dateMinusMinutes(startDate, 1);
+      const oneMinAfter = datePlusMinutes(startDate, 1);
+      const expandedEntry = expandRecurringEntry(
+        entry,
+        oneMinBefore,
+        oneMinAfter,
+      );
+      res.status(200).json(expandedEntry[0]);
+    } else {
+      res.status(200).json(entry);
+    }
   } catch (err) {
     res.status(400);
     res.send({ message: err.message });
