@@ -5,14 +5,14 @@ export const yearAfter = (date) => {
   return new Date(copiedDate.setFullYear(date.getFullYear() + 1));
 };
 
-export const fiveMinutesBefore = (date) => {
+export const dateMinusMinutes = (date, numMinutes) => {
   const copiedDate = new Date(date.getTime());
-  return new Date(copiedDate.setMinutes(date.getMinutes() - 5));
+  return new Date(copiedDate.setMinutes(date.getMinutes() - numMinutes));
 };
 
-export const fiveMinutesAfter = (date) => {
+export const datePlusMinutes = (date, numMinutes) => {
   const copiedDate = new Date(date.getTime());
-  return new Date(copiedDate.setMinutes(date.getMinutes() + 5));
+  return new Date(copiedDate.setMinutes(date.getMinutes() + numMinutes));
 };
 
 export const getMillisecondsBetween = (startDateUtc, endDateUtc) => {

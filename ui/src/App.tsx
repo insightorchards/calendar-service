@@ -103,7 +103,7 @@ const App = () => {
   useEffect(() => {
     getEntries(rangeStart, rangeEnd)
       .then((entries) => {
-        setEventsWithExtraFields(entries);
+        setEventsWithStart(entries);
       })
       .catch(() => {
         flashApiErrorMessage();
@@ -145,7 +145,7 @@ const App = () => {
     });
     getEntries(rangeStart, rangeEnd)
       .then((entries) => {
-        setEventsWithExtraFields(entries);
+        setEventsWithStart(entries);
         setShowOverlay(false);
         setInCreateMode(false);
       })
@@ -173,20 +173,20 @@ const App = () => {
     getEntryDetails(entryId, start);
   };
 
-  const setEventsWithExtraFields = (entries: any) => {
+  const setEventsWithStart = (events: any) => {
     // We need to manually set the entryStart field
     // so we can read it off the object later
     // See https://fullcalendar.io/docs/event-parsing
     // Can't use the 'start' field because it gets truncated
     // for all day events when coming back from FullCalendar
-    const expandedEntries = entries.map((entry: any) => {
+    const expandedEvents = events.map((event: any) => {
       return {
-        ...entry,
-        entryStart: entry.start,
+        ...event,
+        entryStart: event.start,
       };
     });
 
-    setEvents(expandedEntries);
+    setEvents(expandedEvents);
   };
 
   const handleDeleteEntry = async (e: MouseEvent<HTMLButtonElement>) => {
@@ -194,7 +194,7 @@ const App = () => {
     deleteEntry(displayedEventData._id!)
       .then(() => {
         getEntries(rangeStart, rangeEnd).then((entries) => {
-          setEventsWithExtraFields(entries);
+          setEventsWithStart(entries);
           setShowOverlay(false);
         });
       })
@@ -247,7 +247,7 @@ const App = () => {
       .then(() => {
         getEntryDetails(entryId);
         getEntries(rangeStart, rangeEnd).then((entries) => {
-          setEventsWithExtraFields(entries);
+          setEventsWithStart(entries);
         });
       })
       .catch(() => {

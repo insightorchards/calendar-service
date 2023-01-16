@@ -2,8 +2,8 @@ const {
   addMillisecondsToDate,
   getMillisecondsBetween,
   yearAfter,
-  fiveMinutesBefore,
-  fiveMinutesAfter,
+  dateMinusMinutes,
+  datePlusMinutes,
 } = require("./dateHelpers");
 
 describe("yearAfter", () => {
@@ -13,19 +13,19 @@ describe("yearAfter", () => {
   });
 });
 
-describe("fiveMinutesBefore", () => {
+describe("dateMinusMinutes", () => {
   it("returns a date five minutes in the past", () => {
     const date = new Date("05 October 2011 14:02 UTC");
-    expect(fiveMinutesBefore(date)).toEqual(
+    expect(dateMinusMinutes(date, 5)).toEqual(
       new Date("05 October 2011 13:57 UTC"),
     );
   });
 });
 
-describe("fiveMinutesAfter", () => {
+describe("datePlusMinutes", () => {
   it("returns a date five minutes in the future", () => {
     const date = new Date("05 October 2011 14:58 UTC");
-    expect(fiveMinutesAfter(date)).toEqual(
+    expect(datePlusMinutes(date, 5)).toEqual(
       new Date("05 October 2011 15:03 UTC"),
     );
   });
