@@ -227,7 +227,7 @@ export const getCalendarEntry = async (
       const startDate = new Date(start as string);
       const oneMinBefore = dateMinusMinutes(startDate, 1);
       const oneMinAfter = datePlusMinutes(startDate, 1);
-      const expandedEntry = expandRecurringEntry(
+      const expandedEntry = await expandRecurringEntry(
         entry,
         oneMinBefore,
         oneMinAfter,
