@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { EntryException } = require("./entryException");
 
 const calendarEntrySchema = new mongoose.Schema(
   {
@@ -51,6 +52,11 @@ const calendarEntrySchema = new mongoose.Schema(
     timestamps: true,
   },
 );
+
+calendarEntrySchema.pre("remove", { document: true }, function (next) {
+  EntryException.remove({ entryId: this._id }).exec();
+  next();
+});
 
 const CalendarEntry = mongoose.model(
   "CalendarEntry",

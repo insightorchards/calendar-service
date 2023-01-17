@@ -174,13 +174,20 @@ const updateEntry = async (
   return result;
 };
 
-const deleteEntry = async (entryId: string) => {
-  const response = await fetch(`http://localhost:4000/entries/${entryId}`, {
-    method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
+const deleteEntry = async (
+  entryId: string,
+  start?: string,
+  applyToSeries?: boolean,
+) => {
+  const response = await fetch(
+    `http://localhost:4000/entries/${entryId}?start=${start}&applyToSeries=${applyToSeries}`,
+    {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
     },
-  });
+  );
   const result = await response;
   if (notOk(response.status)) {
     throw new Error("Delete entry request failed");

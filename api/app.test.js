@@ -4,6 +4,7 @@ const supertest = require("supertest");
 const { app } = require("./app");
 const { dayAfter, yearAfter } = require("./lib/dateHelpers");
 const { RRule, RRuleSet, rrulestr } = require("rrule");
+const { EntryException } = require("./models/entryException");
 
 beforeAll(async () => {
   await connectDB();
@@ -342,7 +343,7 @@ describe("DELETE / entry", () => {
   const endTime = new Date("05 July 2011 14:48 UTC");
   const oneYearLater = yearAfter(startTime);
 
-  beforeEach(async () => {
+  it("deletes the selected entry from the database", async () => {
     data = await CalendarEntry.create({
       eventId: "123",
       creatorId: "456",
@@ -353,25 +354,142 @@ describe("DELETE / entry", () => {
       startTimeUtc: startTime,
       endTimeUtc: endTime,
     });
-  });
-
-  it("deletes the selected entry from the database", async () => {
     await supertest(app).delete(`/entries/${data._id}`).expect(200);
 
     const newCount = await CalendarEntry.countDocuments();
     expect(newCount).toEqual(0);
   });
 
-  it("catches and returns an error from CalendarEntry.deleteOne", async () => {
-    const deleteMock = jest
-      .spyOn(CalendarEntry, "deleteOne")
+  it("deletes a single instance of a recurring event", async () => {
+    const date = new Date("04 January 2023 14:48 UTC");
+    const oneYearLater = yearAfter(date);
+
+    const createdEventData = await supertest(app)
+      .post("/entries")
+      .send({
+        eventId: "123",
+        creatorId: "456",
+        title: "Happy day",
+        description: "and a happy night too",
+        startTimeUtc: date,
+        endTimeUtc: dayAfter(date),
+        allDay: false,
+        recurring: true,
+        frequency: "monthly",
+        recurrenceEndsUtc: oneYearLater,
+      })
+      .expect(201);
+    const createdEvent = JSON.parse(createdEventData.text);
+
+    const rule = new RRule({
+      freq: RRule.MONTHLY,
+      dtstart: date,
+      until: oneYearLater,
+    });
+
+    const recurrences = rule.all();
+
+    const februaryFourth = recurrences[1];
+
+    const exceptionCount = await EntryException.countDocuments();
+    expect(exceptionCount).toEqual(0);
+
+    const response = await supertest(app)
+      .get(`/entries?start=${date}&end=${oneYearLater}`)
+      .expect(200);
+    expect(response.body.length).toEqual(11);
+
+    await supertest(app)
+      .delete(
+        `/entries/${
+          createdEvent._id
+        }?start=${februaryFourth.toISOString()}&applyToSeries=false`,
+      )
+      .expect(200);
+
+    const updatedExceptionCount = await EntryException.countDocuments();
+    expect(updatedExceptionCount).toEqual(1);
+
+    const updatedResponse = await supertest(app)
+      .get(`/entries?start=${date}&end=${oneYearLater}`)
+      .expect(200);
+    expect(updatedResponse.body.length).toEqual(10);
+  });
+
+  it("cascades deletion to entry exceptions when recurring series is deleted", async () => {
+    const date = new Date("04 January 2023 14:48 UTC");
+    const oneYearLater = yearAfter(date);
+
+    const createdEventData = await supertest(app)
+      .post("/entries")
+      .send({
+        eventId: "123",
+        creatorId: "456",
+        title: "Happy day",
+        description: "and a happy night too",
+        startTimeUtc: date,
+        endTimeUtc: dayAfter(date),
+        allDay: false,
+        recurring: true,
+        frequency: "monthly",
+        recurrenceEndsUtc: oneYearLater,
+      })
+      .expect(201);
+    const createdEvent = JSON.parse(createdEventData.text);
+
+    const rule = new RRule({
+      freq: RRule.MONTHLY,
+      dtstart: date,
+      until: oneYearLater,
+    });
+
+    const recurrences = rule.all();
+
+    const februaryFourth = recurrences[1];
+
+    await supertest(app)
+      .delete(
+        `/entries/${
+          createdEvent._id
+        }?start=${februaryFourth.toISOString()}&applyToSeries=false`,
+      )
+      .expect(200);
+
+    const exceptionCount = await EntryException.countDocuments();
+    expect(exceptionCount).toEqual(1);
+
+    await supertest(app)
+      .delete(
+        `/entries/${
+          createdEvent._id
+        }?start=${februaryFourth.toISOString()}&applyToSeries=true`,
+      )
+      .expect(200);
+
+    const updatedExceptionCount = await EntryException.countDocuments();
+    expect(updatedExceptionCount).toEqual(0);
+  });
+
+  it("catches and returns an error from CalendarEntry.deleteCalendarEntry", async () => {
+    const data = await CalendarEntry.create({
+      eventId: "123",
+      creatorId: "456",
+      title: "Happy day",
+      description: "and a happy night too",
+      allDay: false,
+      recurring: false,
+      startTimeUtc: startTime,
+      endTimeUtc: endTime,
+    });
+    const findMock = jest
+      .spyOn(CalendarEntry, "findById")
       .mockRejectedValue({ message: "error occurred" });
 
     const response = await supertest(app)
       .delete(`/entries/${data._id}`)
       .expect(400);
     expect(response.text).toEqual('{"message":"error occurred"}');
-    deleteMock.mockRestore();
+    findMock.mockRestore();
   });
 });
 
