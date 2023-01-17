@@ -86,15 +86,18 @@ const expandRecurringEntry = async (calendarEntry, start, end) => {
 
   rruleSet.rrule(rule);
 
-  const exceptions = await EntryException.find({ entryId: calendarEntry._id });
+  const deletedExceptions = await EntryException.find({
+    entryId: calendarEntry._id,
+    deleted: true,
+  });
 
-  exceptions.forEach((exception) => {
+  deletedExceptions.forEach((exception) => {
     rruleSet.exdate(exception.startTimeUtc);
   });
 
   const recurrences = rruleSet.between(new Date(start), new Date(end));
 
-  return recurrences.map((date) => {
+  const expandedRecurringEntries = recurrences.map((date) => {
     return {
       _id: calendarEntry._id,
       eventId: calendarEntry.eventId,
@@ -109,6 +112,17 @@ const expandRecurringEntry = async (calendarEntry, start, end) => {
       recurrenceEndsUtc: calendarEntry.recurrenceEndsUtc,
     };
   });
+
+  const modifiedExceptions = await EntryException.find({
+    entryId: calendarEntry._id,
+    modified: true,
+  });
+
+  modifiedExceptions.map((exception) => {
+    return expandModifiedEntryException(exception, calendarEntry);
+  });
+
+  return expandedRecurringEntries.concat(modifiedExceptions);
 };
 
 export const seedDatabaseWithEntry = async (
