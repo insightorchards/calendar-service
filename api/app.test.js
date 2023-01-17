@@ -538,7 +538,7 @@ describe("PATCH / entry", () => {
     );
   });
 
-  it.only("can edit a recurring event", async () => {
+  it("can edit a recurring event", async () => {
     const date = new Date("04 January 2023 14:48 UTC");
     const oneYearLater = yearAfter(date);
 
@@ -670,20 +670,20 @@ describe("PATCH / entry", () => {
       .expect(200);
 
     const updatedExceptionCount = await EntryException.countDocuments();
-    expect(updatedExceptionCount).toEqual(1);
+    expect(updatedExceptionCount).toEqual(2);
 
-    const entryException = await EntryException.find();
-    expect(entryException).toEqual(
-      expect.objectContaining({
-        _id: expect.anything(),
-        eventId: "345",
-        creatorId: "678",
-        title: "Listen to Sweet Surrender",
-        startTimeUtc: updatedStartDate,
-        endTimeUtc: updatedEndDate,
-        description: "by John Denver",
-      }),
+    const entryException = await EntryException.find()
+      .sort({ _id: -1 })
+      .limit(1);
+
+    const modifiedEntryException = entryException[0];
+    expect(modifiedEntryException.entryId.toString()).toEqual(
+      createdEvent._id.toString(),
     );
+    expect(modifiedEntryException.title).toEqual("Listen to Sweet Surrender");
+    expect(modifiedEntryException.description).toEqual("by John Denver");
+    expect(modifiedEntryException.startTimeUtc).toEqual(updatedStartDate);
+    expect(modifiedEntryException.endTimeUtc).toEqual(updatedEndDate);
   });
 
   it("catches and returns an error from CalendarEntry.findByIdAndUpdate", async () => {

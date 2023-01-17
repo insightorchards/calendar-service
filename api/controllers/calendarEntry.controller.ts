@@ -297,8 +297,26 @@ export const updateCalendarEntry = async (
       updatedEntry.save();
       res.status(200).json(updatedEntry);
     } else if (isRecurringEntry(entryToUpdate) && applyToSeries === "false") {
-      // create exception with fields filled out
-      // update getAll to deal with modified exceptions
+      await EntryException.create({
+        deleted: true,
+        modified: false,
+        entryId: entryToUpdate._id,
+        startTimeUtc: start,
+      });
+
+      const updatedEntry = await EntryException.create({
+        deleted: false,
+        modified: true,
+        entryId: entryToUpdate._id,
+        startTimeUtc: req.body.startTimeUtc,
+        creatorId: req.body.creatorId,
+        title: req.body.title,
+        description: req.body.description,
+        allDay: req.body.allDay,
+        endTimeUtc: req.body.endTimeUtc,
+      });
+      // EB_TODO: we should be returning an expanded instance here, not the exception object
+      res.status(200).json(updatedEntry);
     } else {
       const updatedEntry = await CalendarEntry.findByIdAndUpdate(
         id,
