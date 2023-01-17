@@ -32,7 +32,7 @@ type NonRecurringEntry = {
 };
 
 type RecurringEntry = {
-  id: string;
+  _id: string;
   eventId: string;
   creatorId: string;
   title: string;
@@ -55,6 +55,25 @@ const isNonRecurringEntry = (entry) => {
 
 const isRecurringEntry = (entry) => {
   return (entry as RecurringEntry).recurring === true;
+};
+
+const expandModifiedEntryException = async (
+  entryException: EntryException,
+  parentCalendarEntry: RecurringEntry,
+) => {
+  return {
+    _id: entryException._id,
+    eventId: entryException.eventId,
+    creatorId: entryException.creatorId,
+    title: entryException.title,
+    description: entryException.description,
+    allDay: entryException.allDay,
+    startTimeUtc: entryException.startTimeUtc,
+    endTimeUtc: entryException.endTimeUtc,
+    recurring: true,
+    frequency: entryException.frequency,
+    recurrenceEndsUtc: parentCalendarEntry.recurrenceEndsUtc,
+  };
 };
 
 const expandRecurringEntry = async (calendarEntry, start, end) => {
@@ -304,7 +323,7 @@ export const updateCalendarEntry = async (
         startTimeUtc: start,
       });
 
-      const updatedEntry = await EntryException.create({
+      const updatedEntryException = await EntryException.create({
         deleted: false,
         modified: true,
         entryId: entryToUpdate._id,
@@ -315,7 +334,11 @@ export const updateCalendarEntry = async (
         allDay: req.body.allDay,
         endTimeUtc: req.body.endTimeUtc,
       });
-      // EB_TODO: we should be returning an expanded instance here, not the exception object
+
+      const updatedEntry = expandModifiedEntryException(
+        updatedEntryException,
+        entryToUpdate,
+      );
       res.status(200).json(updatedEntry);
     } else {
       const updatedEntry = await CalendarEntry.findByIdAndUpdate(
