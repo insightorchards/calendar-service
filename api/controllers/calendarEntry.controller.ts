@@ -279,11 +279,15 @@ export const updateCalendarEntry = async (
   _next: NextFunction,
 ) => {
   const { id } = req.params;
+  const { start, applyToSeries } = req.query;
   try {
-    await CalendarEntry.findByIdAndUpdate(id, req.body as CalendarEntry);
-    const updatedEntry = await CalendarEntry.findById(id);
-    res.status(200).json(updatedEntry);
-    if (isRecurringEntry(updatedEntry)) {
+    const entryToUpdate = await CalendarEntry.findById(id);
+    if (isRecurringEntry(entryToUpdate) && applyToSeries === "true") {
+      const updatedEntry = await CalendarEntry.findByIdAndUpdate(
+        id,
+        req.body as CalendarEntry,
+        { returnDocument: "after" },
+      );
       const rule = new RRule({
         freq: FREQUENCY_MAPPING[updatedEntry.frequency],
         dtstart: updatedEntry.startTimeUtc,
@@ -291,6 +295,17 @@ export const updateCalendarEntry = async (
       });
       updatedEntry.recurrencePattern = rule.toString();
       updatedEntry.save();
+      res.status(200).json(updatedEntry);
+    } else if (isRecurringEntry(entryToUpdate) && applyToSeries === "false") {
+      // create exception with fields filled out
+      // update getAll to deal with modified exceptions
+    } else {
+      const updatedEntry = await CalendarEntry.findByIdAndUpdate(
+        id,
+        req.body as CalendarEntry,
+        { returnDocument: "after" },
+      );
+      res.status(200).json(updatedEntry);
     }
   } catch (err) {
     res.status(400);
