@@ -283,6 +283,15 @@ export const updateCalendarEntry = async (
     await CalendarEntry.findByIdAndUpdate(id, req.body as CalendarEntry);
     const updatedEntry = await CalendarEntry.findById(id);
     res.status(200).json(updatedEntry);
+    if (isRecurringEntry(updatedEntry)) {
+      const rule = new RRule({
+        freq: FREQUENCY_MAPPING[updatedEntry.frequency],
+        dtstart: updatedEntry.startTimeUtc,
+        until: updatedEntry.recurrenceEndsUtc,
+      });
+      updatedEntry.recurrencePattern = rule.toString();
+      updatedEntry.save();
+    }
   } catch (err) {
     res.status(400);
     res.send({ message: err.message });

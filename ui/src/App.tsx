@@ -284,10 +284,10 @@ const App = () => {
       recurrenceEndUtc,
     })
       .then(() => {
-        getEntryDetails(entryId);
         getEntries(rangeStart, rangeEnd).then((entries) => {
           setEventsWithStart(entries);
         });
+        setShowOverlay(false);
       })
       .catch(() => {
         setShowOverlay(false);

@@ -538,7 +538,85 @@ describe("PATCH / entry", () => {
     );
   });
 
-  it.only("can edit a single instance of a recurring event", async () => {
+  it.only("can edit a recurring event", async () => {
+    const date = new Date("04 January 2023 14:48 UTC");
+    const oneYearLater = yearAfter(date);
+
+    const createdEventData = await supertest(app)
+      .post("/entries")
+      .send({
+        eventId: "123",
+        creatorId: "456",
+        title: "Happy day",
+        description: "and a happy night too",
+        startTimeUtc: date,
+        endTimeUtc: dayAfter(date),
+        allDay: false,
+        recurring: true,
+        frequency: "monthly",
+        recurrenceEndsUtc: oneYearLater,
+      })
+      .expect(201);
+    const createdEvent = JSON.parse(createdEventData.text);
+
+    const rule = new RRule({
+      freq: RRule.MONTHLY,
+      dtstart: date,
+      until: oneYearLater,
+    });
+
+    const recurrences = rule.all();
+
+    const februaryFourth = recurrences[1];
+
+    const updatedStartDate = new Date("05 February 2023 14:48 UTC");
+    const updatedEndDate = dayAfter(updatedStartDate);
+    const updatedRecurrenceEnd = yearAfter(updatedStartDate);
+
+    await supertest(app)
+      .patch(
+        `/entries/${
+          createdEvent._id
+        }?start=${februaryFourth.toISOString()}&applyToSeries=true`,
+      )
+      .send({
+        eventId: "345",
+        creatorId: "678",
+        title: "Listen to Sweet Surrender",
+        startTimeUtc: updatedStartDate,
+        endTimeUtc: updatedEndDate,
+        description: "by John Denver",
+        frequency: "weekly",
+        recurrenceEndsUtc: updatedRecurrenceEnd,
+      })
+      .expect(200);
+
+    const editedEntry = await CalendarEntry.findById(createdEvent._id);
+
+    const updatedRule = new RRule({
+      freq: RRule.WEEKLY,
+      dtstart: updatedStartDate,
+      until: updatedRecurrenceEnd,
+    });
+
+    expect(editedEntry).toEqual(
+      expect.objectContaining({
+        _id: expect.anything(),
+        eventId: "345",
+        creatorId: "678",
+        title: "Listen to Sweet Surrender",
+        startTimeUtc: updatedStartDate,
+        endTimeUtc: updatedEndDate,
+        description: "by John Denver",
+        frequency: "weekly",
+        allDay: false,
+        recurrencePattern: updatedRule.toString(),
+        recurrenceEndsUtc: updatedRecurrenceEnd,
+      }),
+    );
+  });
+
+  it("can edit a single instance of a recurring event", async () => {
     const date = new Date("04 January 2023 14:48 UTC");
     const oneYearLater = yearAfter(date);
 
