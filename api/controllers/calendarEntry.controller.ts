@@ -232,7 +232,11 @@ export const getCalendarEntry = async (
         oneMinBefore,
         oneMinAfter,
       );
-      res.status(200).json(expandedEntry[0]);
+      if (expandedEntry.length > 0) {
+        res.status(200).json(expandedEntry[0]);
+      } else {
+        res.status(200).json({});
+      }
     } else {
       res.status(200).json(entry);
     }
