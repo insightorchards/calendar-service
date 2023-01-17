@@ -191,22 +191,6 @@ const App = () => {
     setEvents(expandedEvents);
   };
 
-  const setEventsWithExtraFields = (entries: any) => {
-    // We need to manually set the entryStart field
-    // so we can read it off the object later
-    // See https://fullcalendar.io/docs/event-parsing
-    // Can't use the 'start' field because it gets truncated
-    // for all day events when coming back from FullCalendar
-    const expandedEntries = entries.map((entry: any) => {
-      return {
-        ...entry,
-        entryStart: entry.start,
-      };
-    });
-
-    setEvents(expandedEntries);
-  };
-
   const handleDeleteSeries = () => {
     deleteEntry(displayedEventData._id!, displayedEventData.startTimeUtc, true)
       .then(() => {
@@ -227,7 +211,7 @@ const App = () => {
     deleteEntry(displayedEventData._id!, displayedEventData.startTimeUtc, false)
       .then(() => {
         getEntries(rangeStart, rangeEnd).then((entries) => {
-          setEventsWithExtraFields(entries);
+          setEventsWithStart(entries);
           setShowDeletionSelectionScreen(false);
           setShowOverlay(false);
         });
@@ -247,7 +231,7 @@ const App = () => {
       deleteEntry(displayedEventData._id!)
         .then(() => {
           getEntries(rangeStart, rangeEnd).then((entries) => {
-            setEventsWithExtraFields(entries);
+            setEventsWithStart(entries);
             setShowOverlay(false);
           });
         })

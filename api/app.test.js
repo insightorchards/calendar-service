@@ -416,7 +416,7 @@ describe("DELETE / entry", () => {
     expect(updatedResponse.body.length).toEqual(10);
   });
 
-  it("cascades deletion to entry exceptions when recurring event is deleted", async () => {
+  it("cascades deletion to entry exceptions when recurring series is deleted", async () => {
     const date = new Date("04 January 2023 14:48 UTC");
     const oneYearLater = yearAfter(date);
 
