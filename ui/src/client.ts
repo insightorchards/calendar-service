@@ -127,28 +127,33 @@ const updateEntry = async (
     recurrenceBegins,
     recurrenceEndUtc,
   }: CalendarEntryInput,
+  start?: string,
+  applyToSeries?: boolean,
 ) => {
   let response;
   if (recurring) {
-    response = await fetch(`http://localhost:4000/entries/${entryId}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
+    response = await fetch(
+      `http://localhost:4000/entries/${entryId}?start=${start}&applyToSeries=${applyToSeries}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          description: description,
+          title: title,
+          creatorId: "1234",
+          eventId: "5678",
+          startTimeUtc: startTimeUtc.toISOString(),
+          endTimeUtc: endTimeUtc.toISOString(),
+          allDay,
+          recurring,
+          frequency,
+          recurrenceBegins: recurrenceBegins?.toISOString(),
+          recurrenceEnds: recurrenceEndUtc?.toISOString(),
+        }),
       },
-      body: JSON.stringify({
-        description: description,
-        title: title,
-        creatorId: "1234",
-        eventId: "5678",
-        startTimeUtc: startTimeUtc.toISOString(),
-        endTimeUtc: endTimeUtc.toISOString(),
-        allDay,
-        recurring,
-        frequency,
-        recurrenceBegins: recurrenceBegins?.toISOString(),
-        recurrenceEnds: recurrenceEndUtc?.toISOString(),
-      }),
-    });
+    );
   } else {
     response = await fetch(`http://localhost:4000/entries/${entryId}`, {
       method: "PATCH",
