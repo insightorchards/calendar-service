@@ -1,6 +1,7 @@
 .mainContainer {
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 
 .allDay {
@@ -25,14 +26,8 @@
   display: block;
 }
 
-.leftSidePanel {
-  display: flex;
-  margin-bottom: 10px;
-  width: 15vw;
-}
-
 .addEventButton {
-  display: none;
+  margin-bottom: 15px;
 }
 
 .closeButton {
@@ -81,17 +76,12 @@
   top: 20px;
 }
 
-.buttonText {
-  display: block;
-}
-
 @media (max-width: 600px) {
   .addEventButton {
-    display: block;
-    max-width: 0%;
-    position: absolute;
-    right: 16px;
-    top: 9px;
+    bottom: 0;
+    position: fixed;
+    right: 20px;
+    z-index: 2;
   }
 
   .createEventButton {
@@ -107,16 +97,93 @@
     width: 100%;
   }
 
-  :global(.fc-toolbar) {
-    display: block !important;
-    text-align: center;
+  /* WRAPPER FOR ALL TOOLBAR BUTTONS AND TITLE */
+  :global(.fc-header-toolbar) {
+    display: flex;
+    flex-direction: column;
+    margin-top: 25px;
+    position: relative;
   }
 
-  :global(.fc-button-group) {
-    width: 200px;
+  /* TOOLBAR TITLE */
+  :global(.fc-toolbar-title) {
+    padding-bottom: 50px;
   }
 
-  .buttonText {
-    display: none;
+  /* DIV FC TOOLBAR CHUNK */
+  :global(div.fc-header-toolbar.fc-toolbar.fc-toolbar-ltr > div:nth-child(1)) {
+    height: 0px;
+  }
+
+  /* WRAPPER FOR ARROWS AND TODAY BUTTON UNSET BECAUSE IT IS POSITION RELATIVE*/
+  :global(
+      div.fc-header-toolbar.fc-toolbar.fc-toolbar-ltr > div:nth-child(1) > div
+    ) {
+    position: unset;
+  }
+
+  /* PARENT DIV WRAPPER FOR MONTH DAY AND WEEK WITH DEFAULT RELATIVE POSITIONING */
+  :global(
+      div.fc-header-toolbar.fc-toolbar.fc-toolbar-ltr > div:nth-child(3) > div
+    ) {
+    position: unset;
+  }
+
+  /* LEFT ARROW */
+  :global(button.fc-prev-button.fc-button.fc-button-primary) {
+    border-radius: 5px;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 50px;
+  }
+
+  /* RIGHT ARROW */
+  :global(button.fc-next-button.fc-button.fc-button-primary) {
+    border-radius: 5px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 50px;
+  }
+
+  /* TODAY BUTTON */
+  :global(
+      div.fc-header-toolbar.fc-toolbar.fc-toolbar-ltr
+        > div:nth-child(1)
+        > button
+    ) {
+    border-radius: 5px;
+    bottom: 0;
+    left: 0;
+    margin: 0;
+    position: absolute;
+    width: 23%;
+  }
+
+  /* MONTH BUTTON */
+  :global(button.fc-dayGridMonth-button.fc-button.fc-button-primary) {
+    border-radius: 5px 0 0 5px;
+    bottom: 0;
+    left: 25%;
+    position: absolute;
+    width: 25%;
+  }
+
+  /* WEEK BUTTON */
+  :global(button.fc-timeGridWeek-button.fc-button.fc-button-primary) {
+    bottom: 0;
+    left: 50%;
+    position: absolute;
+    width: 25%;
+  }
+
+  /* DAY BUTTON */
+  :global(button.fc-timeGridDay-button.fc-button.fc-button-primary) {
+    border-radius: 0 5px 5px 0;
+    bottom: 0;
+    left: 75%;
+    position: absolute;
+    width: 25%;
   }
 }
