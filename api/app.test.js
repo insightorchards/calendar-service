@@ -337,7 +337,7 @@ describe("GET /entry/:entryId?start=<start-time>", () => {
   });
 });
 
-describe("DELETE / entry", () => {
+describe("DELETE / entry?start=<start-time>&applyToSeries=<boolean>", () => {
   let data;
   const startTime = new Date("05 July 2011 14:48 UTC");
   const endTime = new Date("05 July 2011 14:48 UTC");
@@ -493,7 +493,7 @@ describe("DELETE / entry", () => {
   });
 });
 
-describe("PATCH / entry", () => {
+describe("PATCH / entry?start=<start-time>&applyToSeries=<boolean>", () => {
   let data;
   const startTime = new Date();
   const endTime = new Date();

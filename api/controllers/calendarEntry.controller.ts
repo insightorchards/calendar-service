@@ -48,11 +48,6 @@ type RecurringEntry = {
   updatedAt: Date;
 };
 
-// not used right now but will be used in the future
-const isNonRecurringEntry = (entry) => {
-  return (entry as NonRecurringEntry).recurring === false;
-};
-
 const isRecurringEntry = (entry) => {
   return (entry as RecurringEntry).recurring === true;
 };
@@ -71,7 +66,7 @@ const expandModifiedEntryException = async (
     startTimeUtc: entryException.startTimeUtc,
     endTimeUtc: entryException.endTimeUtc,
     recurring: true,
-    frequency: entryException.frequency,
+    frequency: parentCalendarEntry.frequency,
     recurrenceEndsUtc: parentCalendarEntry.recurrenceEndsUtc,
   };
 };
@@ -118,11 +113,11 @@ const expandRecurringEntry = async (calendarEntry, start, end) => {
     modified: true,
   });
 
-  modifiedExceptions.map((exception) => {
+  const expandedExceptionEntries = modifiedExceptions.map((exception) => {
     return expandModifiedEntryException(exception, calendarEntry);
   });
 
-  return expandedRecurringEntries.concat(modifiedExceptions);
+  return expandedRecurringEntries.concat(expandedExceptionEntries);
 };
 
 export const seedDatabaseWithEntry = async (
