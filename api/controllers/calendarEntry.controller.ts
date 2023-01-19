@@ -113,9 +113,11 @@ const expandRecurringEntry = async (calendarEntry, start, end) => {
     modified: true,
   });
 
-  const expandedExceptionEntries = modifiedExceptions.map((exception) => {
+  const promises = modifiedExceptions.map(async (exception) => {
     return expandModifiedEntryException(exception, calendarEntry);
   });
+
+  const expandedExceptionEntries = await Promise.all(promises);
 
   return expandedRecurringEntries.concat(expandedExceptionEntries);
 };

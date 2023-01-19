@@ -42,6 +42,7 @@ import {
   createEntry,
   deleteEntry,
   updateEntry,
+  CalendarEntryInput,
 } from "./client";
 import s from "./App.module.css";
 
@@ -86,6 +87,8 @@ const App = () => {
   const [showOverlay, setShowOverlay] = useState<boolean>(false);
   const [showDeletionSelectionScreen, setShowDeletionSelectionScreen] =
     useState<boolean>(false);
+  const [showEditSelectionScreen, setShowEditSelectionScreen] =
+    useState<boolean>(false);
   const [inEditMode, setInEditMode] = useState<boolean>(false);
   const [inCreateMode, setInCreateMode] = useState<boolean>(false);
 
@@ -96,6 +99,7 @@ const App = () => {
   const [apiError, setApiError] = useState<boolean>(false);
   const [rangeStart, setRangeStart] = useState<string>("");
   const [rangeEnd, setRangeEnd] = useState<string>("");
+  const [pendingEdits, setPendingEdits] = useState({} as CalendarEntryInput);
 
   const flashApiErrorMessage = () => {
     setApiError(true);
@@ -249,6 +253,7 @@ const App = () => {
     setInEditMode(false);
     setInCreateMode(false);
     setShowDeletionSelectionScreen(false);
+    setShowEditSelectionScreen(false);
   };
 
   const handleSaveChanges = async ({
@@ -264,7 +269,6 @@ const App = () => {
     recurrenceBegins,
     recurrenceEnds,
   }: FormEntryProps) => {
-    const entryId = displayedEventData._id;
     const startTimeUtc = new Date(getDateTimeString(startDate, startTime));
     const endTimeUtc = new Date(getDateTimeString(endDate, endTime));
     let recurrenceEndUtc;
@@ -272,7 +276,7 @@ const App = () => {
       recurrenceEndUtc = new Date(getDateTimeString(recurrenceEnds, startTime));
     }
 
-    updateEntry(entryId, {
+    setPendingEdits({
       title,
       description,
       startTimeUtc,
@@ -282,15 +286,73 @@ const App = () => {
       frequency,
       recurrenceBegins,
       recurrenceEndUtc,
-    })
+    });
+    setShowEditSelectionScreen(true);
+    setInEditMode(false);
+  };
+
+  const handleEditSeries = () => {
+    const entryId = displayedEventData._id;
+
+    updateEntry(
+      entryId,
+      {
+        title: pendingEdits.title,
+        description: pendingEdits.description,
+        startTimeUtc: pendingEdits.startTimeUtc,
+        endTimeUtc: pendingEdits.endTimeUtc,
+        allDay: pendingEdits.allDay,
+        recurring: pendingEdits.recurring,
+        frequency: pendingEdits.frequency,
+        recurrenceBegins: pendingEdits.recurrenceBegins,
+        recurrenceEndUtc: pendingEdits.recurrenceEndUtc,
+      },
+      displayedEventData.startTimeUtc,
+      true,
+    )
       .then(() => {
         getEntries(rangeStart, rangeEnd).then((entries) => {
           setEventsWithStart(entries);
         });
         setShowOverlay(false);
+        setShowEditSelectionScreen(false);
       })
       .catch(() => {
         setShowOverlay(false);
+        setShowEditSelectionScreen(false);
+        flashApiErrorMessage();
+      });
+  };
+
+  const handleEditRecurringInstance = () => {
+    const entryId = displayedEventData._id;
+
+    updateEntry(
+      entryId,
+      {
+        title: pendingEdits.title,
+        description: pendingEdits.description,
+        startTimeUtc: pendingEdits.startTimeUtc,
+        endTimeUtc: pendingEdits.endTimeUtc,
+        allDay: pendingEdits.allDay,
+        recurring: pendingEdits.recurring,
+        frequency: pendingEdits.frequency,
+        recurrenceBegins: pendingEdits.recurrenceBegins,
+        recurrenceEndUtc: pendingEdits.recurrenceEndUtc,
+      },
+      displayedEventData.startTimeUtc,
+      false,
+    )
+      .then(() => {
+        getEntries(rangeStart, rangeEnd).then((entries) => {
+          setEventsWithStart(entries);
+        });
+        setShowOverlay(false);
+        setShowEditSelectionScreen(false);
+      })
+      .catch(() => {
+        setShowOverlay(false);
+        setShowEditSelectionScreen(false);
         flashApiErrorMessage();
       });
   };
@@ -367,35 +429,38 @@ const App = () => {
         <Modal isOpen={showOverlay} onClose={closeOverlay}>
           <ModalOverlay />
           <ModalContent>
-            {!inEditMode && !inCreateMode && !showDeletionSelectionScreen && (
-              <>
-                <ModalHeader>{displayedEventData.title}</ModalHeader>
-                <ModalCloseButton />
-                <ModalBody>
-                  <div className={s.eventDetails}>
-                    <p>{displayedEventData.description}</p>
-                    <p className={s.eventDetailsTime}>
-                      {modalDateFormat({
-                        startTimeUtc: displayedEventData.startTimeUtc,
-                        endTimeUtc: displayedEventData.endTimeUtc,
-                        allDay: displayedEventData.allDay,
-                      })}
-                    </p>
-                    <div className={s.allDay}>
-                      {displayedEventData.allDay ? "All Day" : ""}
+            {!inEditMode &&
+              !inCreateMode &&
+              !showDeletionSelectionScreen &&
+              !showEditSelectionScreen && (
+                <>
+                  <ModalHeader>{displayedEventData.title}</ModalHeader>
+                  <ModalCloseButton />
+                  <ModalBody>
+                    <div className={s.eventDetails}>
+                      <p>{displayedEventData.description}</p>
+                      <p className={s.eventDetailsTime}>
+                        {modalDateFormat({
+                          startTimeUtc: displayedEventData.startTimeUtc,
+                          endTimeUtc: displayedEventData.endTimeUtc,
+                          allDay: displayedEventData.allDay,
+                        })}
+                      </p>
+                      <div className={s.allDay}>
+                        {displayedEventData.allDay ? "All Day" : ""}
+                      </div>
                     </div>
-                  </div>
-                </ModalBody>
-                <ModalFooter>
-                  <Button onClick={handleEditEntry} variant="ghost">
-                    Edit
-                  </Button>
-                  <Button onClick={handleDeleteEntry} variant="ghost">
-                    Delete
-                  </Button>
-                </ModalFooter>
-              </>
-            )}
+                  </ModalBody>
+                  <ModalFooter>
+                    <Button onClick={handleEditEntry} variant="ghost">
+                      Edit
+                    </Button>
+                    <Button onClick={handleDeleteEntry} variant="ghost">
+                      Delete
+                    </Button>
+                  </ModalFooter>
+                </>
+              )}
             {showDeletionSelectionScreen && (
               <>
                 <ModalHeader>{displayedEventData.title}</ModalHeader>
@@ -415,6 +480,26 @@ const App = () => {
                     variant="ghost"
                   >
                     Delete this one event
+                  </Button>
+                </ModalFooter>
+              </>
+            )}
+            {showEditSelectionScreen && (
+              <>
+                <ModalHeader>{displayedEventData.title}</ModalHeader>
+                <ModalCloseButton />
+                <ModalBody>
+                  <p>
+                    Would you like to edit the entire recurring series or just
+                    this event?
+                  </p>
+                </ModalBody>
+                <ModalFooter>
+                  <Button onClick={handleEditSeries} variant="ghost">
+                    Edit series
+                  </Button>
+                  <Button onClick={handleEditRecurringInstance} variant="ghost">
+                    Edit this one event
                   </Button>
                 </ModalFooter>
               </>

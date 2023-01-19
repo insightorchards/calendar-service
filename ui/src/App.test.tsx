@@ -325,6 +325,7 @@ describe("App", () => {
 
         await (await screen.findByText("Save")).click();
       });
+
       expect(
         await screen.findByText(
           "Would you like to edit the entire recurring series or just this event?",

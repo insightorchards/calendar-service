@@ -1,4 +1,4 @@
-interface CalendarEntryInput {
+export interface CalendarEntryInput {
   title: string;
   description: string;
   startTimeUtc: Date;
