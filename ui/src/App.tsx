@@ -276,85 +276,68 @@ const App = () => {
       recurrenceEndUtc = new Date(getDateTimeString(recurrenceEnds, startTime));
     }
 
-    setPendingEdits({
-      title,
-      description,
-      startTimeUtc,
-      endTimeUtc,
-      allDay,
-      recurring,
-      frequency,
-      recurrenceBegins,
-      recurrenceEndUtc,
-    });
-    setShowEditSelectionScreen(true);
-    setInEditMode(false);
+    if (displayedEventData.recurring) {
+      setPendingEdits({
+        title,
+        description,
+        startTimeUtc,
+        endTimeUtc,
+        allDay,
+        recurring,
+        frequency,
+        recurrenceBegins,
+        recurrenceEndUtc,
+      });
+      setShowEditSelectionScreen(true);
+      setInEditMode(false);
+    } else {
+      // do the normal update
+    }
+  };
+
+  const handleEditRecurring = ({
+    applyToSeries,
+  }: {
+    applyToSeries: boolean;
+  }) => {
+    const entryId = displayedEventData._id;
+
+    updateEntry(
+      entryId,
+      {
+        title: pendingEdits.title,
+        description: pendingEdits.description,
+        startTimeUtc: pendingEdits.startTimeUtc,
+        endTimeUtc: pendingEdits.endTimeUtc,
+        allDay: pendingEdits.allDay,
+        recurring: pendingEdits.recurring,
+        frequency: pendingEdits.frequency,
+        recurrenceBegins: pendingEdits.recurrenceBegins,
+        recurrenceEndUtc: pendingEdits.recurrenceEndUtc,
+      },
+      displayedEventData.startTimeUtc,
+      applyToSeries,
+    )
+      .then(() => {
+        getEntries(rangeStart, rangeEnd).then((entries) => {
+          setEventsWithStart(entries);
+        });
+        setShowOverlay(false);
+        setShowEditSelectionScreen(false);
+      })
+      .catch(() => {
+        setShowOverlay(false);
+        setShowEditSelectionScreen(false);
+        flashApiErrorMessage();
+      });
   };
 
   const handleEditSeries = () => {
-    const entryId = displayedEventData._id;
-
-    updateEntry(
-      entryId,
-      {
-        title: pendingEdits.title,
-        description: pendingEdits.description,
-        startTimeUtc: pendingEdits.startTimeUtc,
-        endTimeUtc: pendingEdits.endTimeUtc,
-        allDay: pendingEdits.allDay,
-        recurring: pendingEdits.recurring,
-        frequency: pendingEdits.frequency,
-        recurrenceBegins: pendingEdits.recurrenceBegins,
-        recurrenceEndUtc: pendingEdits.recurrenceEndUtc,
-      },
-      displayedEventData.startTimeUtc,
-      true,
-    )
-      .then(() => {
-        getEntries(rangeStart, rangeEnd).then((entries) => {
-          setEventsWithStart(entries);
-        });
-        setShowOverlay(false);
-        setShowEditSelectionScreen(false);
-      })
-      .catch(() => {
-        setShowOverlay(false);
-        setShowEditSelectionScreen(false);
-        flashApiErrorMessage();
-      });
+    handleEditRecurring({ applyToSeries: true });
   };
 
   const handleEditRecurringInstance = () => {
-    const entryId = displayedEventData._id;
-
-    updateEntry(
-      entryId,
-      {
-        title: pendingEdits.title,
-        description: pendingEdits.description,
-        startTimeUtc: pendingEdits.startTimeUtc,
-        endTimeUtc: pendingEdits.endTimeUtc,
-        allDay: pendingEdits.allDay,
-        recurring: pendingEdits.recurring,
-        frequency: pendingEdits.frequency,
-        recurrenceBegins: pendingEdits.recurrenceBegins,
-        recurrenceEndUtc: pendingEdits.recurrenceEndUtc,
-      },
-      displayedEventData.startTimeUtc,
-      false,
-    )
-      .then(() => {
-        getEntries(rangeStart, rangeEnd).then((entries) => {
-          setEventsWithStart(entries);
-        });
-        setShowOverlay(false);
-        setShowEditSelectionScreen(false);
-      })
-      .catch(() => {
-        setShowOverlay(false);
-        setShowEditSelectionScreen(false);
-        flashApiErrorMessage();
-      });
+    handleEditRecurring({ applyToSeries: false });
   };
 
   return (

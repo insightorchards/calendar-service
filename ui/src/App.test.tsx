@@ -299,9 +299,11 @@ describe("App", () => {
         _id: "345",
         end: "2022-02-24T05:43:37.868Z",
         startTimeUtc: "2022-02-24T05:43:37.868Z",
+        endTimeUtc: "2022-02-25T05:43:37.868Z",
         title: "Dance",
         description: "fun times",
         recurring: true,
+        recurrenceEndUtc: "2023-02-24T05:43:37.868Z",
       });
 
       mockUpdateEntry.mockResolvedValue(new Response());
@@ -316,14 +318,20 @@ describe("App", () => {
       expect(mockGetEntry).toHaveBeenCalledTimes(1);
 
       const editButton = await screen.findByText("Edit");
+      expect(editButton).toBeInTheDocument();
       await act(async () => {
         await editButton.click();
-        userEvent.type(
-          screen.getByLabelText("Description"),
-          " at the grand royale",
-        );
+      });
 
-        await (await screen.findByText("Save")).click();
+      userEvent.type(
+        screen.getByLabelText("Description"),
+        " at the grand royale",
+      );
+
+      const saveButton = await screen.findByText("Save");
+      expect(saveButton).toBeInTheDocument();
+      await act(async () => {
+        await saveButton.click();
       });
 
       expect(
@@ -336,7 +344,10 @@ describe("App", () => {
       });
       expect(mockUpdateEntry).toHaveBeenCalledWith(
         "345",
-        { here: "should break" },
+        expect.objectContaining({
+          title: "Dance",
+          description: "fun times at the grand royale",
+        }),
         "2022-02-24T05:43:37.868Z",
         false,
       );
