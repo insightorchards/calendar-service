@@ -207,7 +207,7 @@ describe("EventForm", () => {
           isCreate={true}
         />,
       );
-
+      expect(screen.getByText("Daily")).toBeVisible();
       expect(screen.getByText("Monthly")).toBeVisible();
       expect(screen.getByText("Weekly")).toBeVisible();
     });

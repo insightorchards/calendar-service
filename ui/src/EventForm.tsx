@@ -232,6 +232,7 @@ const EventForm = ({
               <Stack direction="row">
                 <Radio value="monthly">Monthly</Radio>
                 <Radio value="weekly">Weekly</Radio>
+                <Radio value="daily">Daily</Radio>
               </Stack>
             </RadioGroup>
           </label>

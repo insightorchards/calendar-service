@@ -13,6 +13,7 @@ import { RRule, RRuleSet, rrulestr } from "rrule";
 const FREQUENCY_MAPPING = {
   monthly: RRule.MONTHLY,
   weekly: RRule.WEEKLY,
+  daily: RRule.DAILY,
 };
 
 type CalendarEntry = NonRecurringEntry | RecurringEntry;
