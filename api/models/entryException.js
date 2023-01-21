@@ -15,10 +15,6 @@ const entryExceptionSchema = new mongoose.Schema(
       ref: "CalendarEntry",
       required: true,
     },
-    creatorId: {
-      type: String,
-      required: false,
-    },
     title: {
       type: String,
       required: false,

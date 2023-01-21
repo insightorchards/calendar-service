@@ -57,15 +57,15 @@ const expandModifiedEntryException = async (
   parentCalendarEntry: RecurringEntry,
 ) => {
   return {
-    _id: entryException._id,
-    eventId: entryException.eventId,
-    creatorId: entryException.creatorId,
+    _id: parentCalendarEntry._id,
     title: entryException.title,
     description: entryException.description,
     allDay: entryException.allDay,
     startTimeUtc: entryException.startTimeUtc,
     endTimeUtc: entryException.endTimeUtc,
     recurring: true,
+    eventId: parentCalendarEntry.eventId,
+    creatorId: parentCalendarEntry.creatorId,
     frequency: parentCalendarEntry.frequency,
     recurrenceEndsUtc: parentCalendarEntry.recurrenceEndsUtc,
   };
@@ -111,7 +111,11 @@ const expandRecurringEntry = async (calendarEntry, start, end) => {
   const modifiedExceptions = await EntryException.find({
     entryId: calendarEntry._id,
     modified: true,
-  });
+  })
+    .where("startTimeUtc")
+    .gte(start)
+    .where("startTimeUtc")
+    .lt(end);
 
   const promises = modifiedExceptions.map(async (exception) => {
     return expandModifiedEntryException(exception, calendarEntry);
@@ -339,7 +343,6 @@ export const updateCalendarEntry = async (
         modified: true,
         entryId: entryToUpdate._id,
         startTimeUtc: req.body.startTimeUtc,
-        creatorId: req.body.creatorId,
         title: req.body.title,
         description: req.body.description,
         allDay: req.body.allDay,
