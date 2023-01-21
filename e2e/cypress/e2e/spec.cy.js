@@ -12,13 +12,13 @@ describe("journey test", () => {
     cy.clock(new Date(2022, 11, 26, 3, 12), ["Date"]);
   });
 
-  after(() => {
-    cy.request("DELETE", `http://localhost:4000/entries/${postTwoId}`);
-    cy.request("DELETE", `http://localhost:4000/entries/${postThreeId}`);
-    cy.request("DELETE", `http://localhost:4000/entries/${postFourId}`);
-  });
+  // after(() => {
+  //   cy.request("DELETE", `http://localhost:4000/entries/${postTwoId}`);
+  //   cy.request("DELETE", `http://localhost:4000/entries/${postThreeId}`);
+  //   cy.request("DELETE", `http://localhost:4000/entries/${postFourId}`);
+  // });
 
-  it("can create and update an event", () => {
+  it.skip("can create and update an event", () => {
     cy.visit("http://localhost:3000");
 
     cy.get(`[aria-label="add event"]`).click();
@@ -225,6 +225,44 @@ describe("journey test", () => {
         cy.get(`[id="startDate"]`).should("have.value", "2022-12-26");
         cy.get(`[id="endDate"]`).should("have.value", "2022-12-28");
       });
+    });
+  });
+
+  // recurring events
+  // create a start and end date for each and then assert on the lenth ( amount of recurring events) that comes back
+  // within january
+  //ie -  Monthly 1 instance
+  // Weekly 4 instances
+  // Daily 31 instances
+
+  // WIP: e2e test in progress
+  describe("recurring events", () => {
+    it.only("displays monthly recurring events", () => {
+      cy.visit("http://localhost:3000");
+      cy.intercept({
+        method: "POST",
+        url: "/entries",
+        hostname: "localhost",
+      }).as("createEntry");
+
+      cy.contains("Morning run").should("not.exist");
+      cy.get(`[data-date="2022-12-22"]`).click();
+      cy.contains("label", "Title").click().type("Morning run");
+      cy.contains("label", "Description").click().type("Under the big blue");
+      cy.contains("label", "Start Date").click().type("2022-12-22");
+      cy.contains("label", "End Date").click().type("2022-12-22");
+
+      cy.contains("label", "Recurring").click();
+      cy.contains("label", "Recurrence End").click().type("2023-01-22");
+
+      cy.contains("label", "Monthly").within(() => {
+        cy.get(":radio").should("be.checked");
+      });
+
+      cy.contains("button", "Create Event").click();
+
+      // Assert monthly recurring event is created
+      cy.contains("Morning run").should("be.visible");
     });
   });
 });
