@@ -291,7 +291,28 @@ const App = () => {
       setShowEditSelectionScreen(true);
       setInEditMode(false);
     } else {
-      // do the normal update
+      updateEntry(displayedEventData._id, {
+        title,
+        description,
+        startTimeUtc,
+        endTimeUtc,
+        allDay,
+        recurring,
+        frequency,
+        recurrenceBegins,
+        recurrenceEndUtc,
+      })
+        .then(() => {
+          getEntries(rangeStart, rangeEnd).then((entries) => {
+            setEventsWithStart(entries);
+          });
+          setShowOverlay(false);
+          setInEditMode(false);
+        })
+        .catch(() => {
+          setShowOverlay(false);
+          flashApiErrorMessage();
+        });
     }
   };
 
