@@ -253,6 +253,10 @@ export const deleteCalendarEntry = async (
 
   try {
     const entryToDelete = await CalendarEntry.findById(id);
+    if (!entryToDelete) {
+      throw new Error("Entry to delete is not found");
+    }
+    console.log({ entryToDelete });
     if (isRecurringEntry(entryToDelete) && applyToSeries === "false") {
       await EntryException.create({
         deleted: true,
