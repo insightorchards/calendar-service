@@ -228,16 +228,9 @@ describe("journey test", () => {
     });
   });
 
-  // recurring events
-  // create a start and end date for each and then assert on the lenth ( amount of recurring events) that comes back
-  // within january
-  //ie -  Monthly 1 instance
-  // Weekly 4 instances
-  // Daily 31 instances
-
   // WIP: e2e test in progress
   describe("recurring events", () => {
-    it.only("displays monthly recurring events", () => {
+    it("displays monthly recurring events", () => {
       cy.visit("http://localhost:3000");
       cy.intercept({
         method: "POST",
@@ -261,19 +254,25 @@ describe("journey test", () => {
 
       cy.contains("button", "Create Event").click();
 
-      // Assert monthly recurring event is created
+      // Assert monthly recurring events is created
       cy.findByText("December 2022").should("be.visible");
       cy.contains("Morning run").should("be.visible");
 
-      // assert the an event was also created on 01/22/2023
+      // Assert an event was also created in the next month
       cy.get(`[title="Next month"]`).click();
       cy.findByText("January 2023").should("be.visible");
       cy.findByText("December 2022").should("not.exist");
       cy.contains("Morning run").should("be.visible");
+
+      // Deletes recurrence series
+      cy.contains("Morning run").click();
+      cy.contains("Delete").click();
+      cy.contains("Delete series").click();
+      cy.findByText("Morning run").should("not.exist");
     });
   });
 
-  it.only("creates weekly recurring events", () => {
+  it("creates weekly recurring events", () => {
     cy.visit("http://localhost:3000");
     cy.intercept({
       method: "POST",
@@ -281,8 +280,7 @@ describe("journey test", () => {
       hostname: "localhost",
     }).as("createEntry");
 
-    // weekly recurring events
-
+    // Assert weekly recurring events are created
     cy.contains("Sunset hike").should("not.exist");
     cy.get(`[data-date="2022-12-01"]`).click();
     cy.contains("label", "Title").click().type("Sunset hike");
@@ -296,10 +294,48 @@ describe("journey test", () => {
 
     cy.contains("button", "Create Event").click();
 
-    // assert that 5 instances of Sunset hike are created in December
-
+    // Assert that 5 instances of an event are created, one for each week in December
     cy.get(".fc-dayGridMonth-view")
       .find(".fc-event-title")
       .should("have.length", 5);
+
+    // Deletes recurrence series
+    cy.contains("Sunset hike").click();
+    cy.contains("Delete").click();
+    cy.contains("Delete series").click();
+    cy.findByText("Sunset hike").should("not.exist");
+  });
+
+  it("Create daily recurring events", () => {
+    cy.visit("http://localhost:3000");
+    cy.intercept({
+      method: "POST",
+      url: "/entries",
+      hostname: "localhost",
+    }).as("createEntry");
+
+    // Asserts daily recurring events are created
+    cy.contains("Morning meditation").should("not.exist");
+    cy.get(`[data-date="2022-12-01"]`).click();
+    cy.contains("label", "Title").click().type("Morning meditation");
+    cy.contains("label", "Description").click().type("Merge with light");
+    cy.contains("label", "Start Date").click().type("2022-12-01");
+    cy.contains("label", "End Date").click().type("2022-12-01");
+
+    cy.contains("label", "Recurring").click();
+    cy.contains("label", "Daily").click();
+    cy.contains("label", "Recurrence End").click().type("2022-12-31");
+
+    cy.contains("button", "Create Event").click();
+
+    cy.get(".fc-dayGridMonth-view")
+      .find(".fc-event-title")
+      .should("have.length", 31);
+
+    // Deletes recurrence series
+    cy.contains("Morning meditation").click();
+    cy.contains("Delete").click();
+    cy.contains("Delete series").click();
+    cy.findByText("Morning meditation").should("not.exist");
   });
 });
