@@ -272,4 +272,34 @@ describe("journey test", () => {
       cy.contains("Morning run").should("be.visible");
     });
   });
+
+  it.only("creates weekly recurring events", () => {
+    cy.visit("http://localhost:3000");
+    cy.intercept({
+      method: "POST",
+      url: "/entries",
+      hostname: "localhost",
+    }).as("createEntry");
+
+    // weekly recurring events
+
+    cy.contains("Sunset hike").should("not.exist");
+    cy.get(`[data-date="2022-12-01"]`).click();
+    cy.contains("label", "Title").click().type("Sunset hike");
+    cy.contains("label", "Description").click().type("On Mt Tam");
+    cy.contains("label", "Start Date").click().type("2022-12-01");
+    cy.contains("label", "End Date").click().type("2022-12-01");
+
+    cy.contains("label", "Recurring").click();
+    cy.contains("label", "Weekly").click();
+    cy.contains("label", "Recurrence End").click().type("2022-12-31");
+
+    cy.contains("button", "Create Event").click();
+
+    // assert that 5 instances of Sunset hike are created in December
+
+    cy.get(".fc-dayGridMonth-view")
+      .find(".fc-event-title")
+      .should("have.length", 5);
+  });
 });
