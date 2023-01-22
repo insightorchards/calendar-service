@@ -12,11 +12,11 @@ describe("journey test", () => {
     cy.clock(new Date(2022, 11, 26, 3, 12), ["Date"]);
   });
 
-  // after(() => {
-  //   cy.request("DELETE", `http://localhost:4000/entries/${postTwoId}`);
-  //   cy.request("DELETE", `http://localhost:4000/entries/${postThreeId}`);
-  //   cy.request("DELETE", `http://localhost:4000/entries/${postFourId}`);
-  // });
+  after(() => {
+    cy.request("DELETE", `http://localhost:4000/entries/${postTwoId}`);
+    cy.request("DELETE", `http://localhost:4000/entries/${postThreeId}`);
+    cy.request("DELETE", `http://localhost:4000/entries/${postFourId}`);
+  });
 
   it.skip("can create and update an event", () => {
     cy.visit("http://localhost:3000");
@@ -79,6 +79,9 @@ describe("journey test", () => {
     cy.contains("It's a beautiful night").should("be.visible");
     cy.findByText("Wed, Dec 14").should("exist");
     cy.findByText("All Day").should("exist");
+
+    cy.contains("button", "Delete").click();
+    cy.findByText("Bye").should("not.exist");
   });
 
   it("shows correct default time when uncreated event is changed to not be `allDay`", () => {
@@ -228,9 +231,10 @@ describe("journey test", () => {
     });
   });
 
-  // WIP: e2e test in progress
+  // Testing Recurring events
+
   describe("recurring events", () => {
-    it("displays monthly recurring events", () => {
+    it.only("displays monthly recurring events", () => {
       cy.visit("http://localhost:3000");
       cy.intercept({
         method: "POST",
@@ -272,7 +276,7 @@ describe("journey test", () => {
     });
   });
 
-  it("creates weekly recurring events", () => {
+  it.only("displays weekly recurring events", () => {
     cy.visit("http://localhost:3000");
     cy.intercept({
       method: "POST",
@@ -306,7 +310,7 @@ describe("journey test", () => {
     cy.findByText("Sunset hike").should("not.exist");
   });
 
-  it("Create daily recurring events", () => {
+  it.only("displays daily recurring events", () => {
     cy.visit("http://localhost:3000");
     cy.intercept({
       method: "POST",
