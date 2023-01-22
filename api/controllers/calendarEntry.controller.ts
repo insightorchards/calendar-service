@@ -291,12 +291,27 @@ export const deleteCalendarEntry = async (
   try {
     const entryToDelete = await CalendarEntry.findById(id);
     if (isRecurringEntry(entryToDelete) && applyToSeries === "false") {
-      await EntryException.create({
-        deleted: true,
-        modified: false,
+      const startDate = new Date(start as string);
+      const oneMinBefore = dateMinusMinutes(startDate, 1);
+      const oneMinAfter = datePlusMinutes(startDate, 1);
+      const existingModifiedExceptions = await EntryException.find({
         entryId: entryToDelete._id,
-        startTimeUtc: start,
-      });
+        modified: true,
+      })
+        .where("startTimeUtc")
+        .gte(oneMinBefore)
+        .where("startTimeUtc")
+        .lt(oneMinAfter);
+      if (existingModifiedExceptions.length > 0) {
+        existingModifiedExceptions[0].remove();
+      } else {
+        await EntryException.create({
+          deleted: true,
+          modified: false,
+          entryId: entryToDelete._id,
+          startTimeUtc: start,
+        });
+      }
     } else {
       entryToDelete.remove();
     }

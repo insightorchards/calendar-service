@@ -483,6 +483,70 @@ describe("DELETE / entry?start=<start-time>&applyToSeries=<boolean>", () => {
     expect(updatedResponse.body.length).toEqual(10);
   });
 
+  it("deletes an entry exception from a recurring series", async () => {
+    const date = new Date("04 January 2023 14:48 UTC");
+    const oneYearLater = yearAfter(date);
+
+    const createdEventData = await supertest(app)
+      .post("/entries")
+      .send({
+        eventId: "123",
+        creatorId: "456",
+        title: "Happy day",
+        description: "and a happy night too",
+        startTimeUtc: date,
+        endTimeUtc: dayAfter(date),
+        allDay: false,
+        recurring: true,
+        frequency: "monthly",
+        recurrenceEndsUtc: oneYearLater,
+      })
+      .expect(201);
+    const createdEvent = JSON.parse(createdEventData.text);
+
+    const rule = new RRule({
+      freq: RRule.MONTHLY,
+      dtstart: date,
+      until: oneYearLater,
+    });
+
+    const recurrences = rule.all();
+
+    const februaryFourth = recurrences[1];
+
+    const updatedStartDate = new Date("05 February 2023 14:48 UTC");
+    const updatedEndDate = dayAfter(updatedStartDate);
+
+    await supertest(app)
+      .patch(
+        `/entries/${
+          createdEvent._id
+        }?start=${februaryFourth.toISOString()}&applyToSeries=false`,
+      )
+      .send({
+        title: "Listen to Sweet Surrender",
+        startTimeUtc: updatedStartDate,
+        endTimeUtc: updatedEndDate,
+        description: "by John Denver",
+        allDay: false,
+      })
+      .expect(200);
+
+    const exceptionCount = await EntryException.countDocuments();
+    expect(exceptionCount).toEqual(2);
+
+    await supertest(app)
+      .delete(
+        `/entries/${
+          createdEvent._id
+        }?start=${updatedStartDate.toISOString()}&applyToSeries=false`,
+      )
+      .expect(200);
+    const updatedExceptionCount = await EntryException.countDocuments();
+    //even though we're checking there's only one exception now it would be good to check that the exception is specifically for deletion
+    expect(updatedExceptionCount).toEqual(1);
+  });
+
   it("cascades deletion to entry exceptions when recurring series is deleted", async () => {
     const date = new Date("04 January 2023 14:48 UTC");
     const oneYearLater = yearAfter(date);
