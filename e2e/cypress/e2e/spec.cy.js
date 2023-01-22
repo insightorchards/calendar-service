@@ -18,6 +18,7 @@ describe("journey test", () => {
     cy.request("DELETE", `http://localhost:4000/entries/${postFourId}`);
   });
 
+  // TODO: A note to fix this test that is currently breaking on main
   it.skip("can create and update an event", () => {
     cy.visit("http://localhost:3000");
 
@@ -232,9 +233,8 @@ describe("journey test", () => {
   });
 
   // Testing Recurring events
-
   describe("recurring events", () => {
-    it.only("displays monthly recurring events", () => {
+    it("displays monthly recurring events", () => {
       cy.visit("http://localhost:3000");
       cy.intercept({
         method: "POST",
@@ -250,7 +250,7 @@ describe("journey test", () => {
       cy.contains("label", "End Date").click().type("2022-12-22");
 
       cy.contains("label", "Recurring").click();
-      cy.contains("label", "Recurrence End").click().type("2023-01-22");
+      cy.contains("label", "Recurrence End").click().type("2023-01-25");
 
       cy.contains("label", "Monthly").within(() => {
         cy.get(":radio").should("be.checked");
@@ -319,10 +319,10 @@ describe("journey test", () => {
     }).as("createEntry");
 
     // Asserts daily recurring events are created
-    cy.contains("Morning meditation").should("not.exist");
+    cy.contains("Gardening").should("not.exist");
     cy.get(`[data-date="2022-12-01"]`).click();
-    cy.contains("label", "Title").click().type("Morning meditation");
-    cy.contains("label", "Description").click().type("Merge with light");
+    cy.contains("label", "Title").click().type("Gardening");
+    cy.contains("label", "Description").click().type("In the backyard");
     cy.contains("label", "Start Date").click().type("2022-12-01");
     cy.contains("label", "End Date").click().type("2022-12-01");
 
@@ -337,9 +337,9 @@ describe("journey test", () => {
       .should("have.length", 31);
 
     // Deletes recurrence series
-    cy.contains("Morning meditation").click();
+    cy.contains("Gardening").click();
     cy.contains("Delete").click();
     cy.contains("Delete series").click();
-    cy.findByText("Morning meditation").should("not.exist");
+    cy.findByText("Gardening").should("not.exist");
   });
 });

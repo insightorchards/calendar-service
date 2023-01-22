@@ -193,7 +193,7 @@ describe("EventForm", () => {
       );
     });
 
-    it("allows user to choose between monthly and weekly and daily recurrence", () => {
+    it("allows user to choose between monthly, weekly and daily recurrence", () => {
       render(
         <EventForm
           initialStart={new Date("2022-02-15T04:00").toISOString()}
