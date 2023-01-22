@@ -532,8 +532,10 @@ describe("DELETE / entry?start=<start-time>&applyToSeries=<boolean>", () => {
       })
       .expect(200);
 
-    const exceptionCount = await EntryException.countDocuments();
-    expect(exceptionCount).toEqual(2);
+    const exceptionCount = await EntryException.where("modified")
+      .equals(true)
+      .countDocuments();
+    expect(exceptionCount).toEqual(1);
 
     await supertest(app)
       .delete(
@@ -542,9 +544,10 @@ describe("DELETE / entry?start=<start-time>&applyToSeries=<boolean>", () => {
         }?start=${updatedStartDate.toISOString()}&applyToSeries=false`,
       )
       .expect(200);
-    const updatedExceptionCount = await EntryException.countDocuments();
-    //even though we're checking there's only one exception now it would be good to check that the exception is specifically for deletion
-    expect(updatedExceptionCount).toEqual(1);
+    const updatedExceptionCount = await EntryException.where("modified")
+      .equals(true)
+      .countDocuments();
+    expect(updatedExceptionCount).toEqual(0);
   });
 
   it("cascades deletion to entry exceptions when recurring series is deleted", async () => {
