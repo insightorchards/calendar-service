@@ -262,6 +262,13 @@ describe("journey test", () => {
       cy.contains("button", "Create Event").click();
 
       // Assert monthly recurring event is created
+      cy.findByText("December 2022").should("be.visible");
+      cy.contains("Morning run").should("be.visible");
+
+      // assert the an event was also created on 01/22/2023
+      cy.get(`[title="Next month"]`).click();
+      cy.findByText("January 2023").should("be.visible");
+      cy.findByText("December 2022").should("not.exist");
       cy.contains("Morning run").should("be.visible");
     });
   });
