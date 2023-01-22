@@ -820,6 +820,103 @@ describe("PATCH / entry?start=<start-time>&applyToSeries=<boolean>", () => {
     expect(modifiedEntryException.endTimeUtc).toEqual(updatedEndDate);
   });
 
+  it("can edit an entry exception of a recurring event", async () => {
+    const date = new Date("04 January 2023 14:48 UTC");
+    const oneYearLater = yearAfter(date);
+
+    const createdEventData = await supertest(app)
+      .post("/entries")
+      .send({
+        eventId: "123",
+        creatorId: "456",
+        title: "Happy day",
+        description: "and a happy night too",
+        startTimeUtc: date,
+        endTimeUtc: dayAfter(date),
+        allDay: false,
+        recurring: true,
+        frequency: "monthly",
+        recurrenceEndsUtc: oneYearLater,
+      })
+      .expect(201);
+    const createdEvent = JSON.parse(createdEventData.text);
+
+    const rule = new RRule({
+      freq: RRule.MONTHLY,
+      dtstart: date,
+      until: oneYearLater,
+    });
+
+    const recurrences = rule.all();
+
+    const februaryFourth = recurrences[1];
+
+    const updatedStartDate = new Date("05 February 2023 14:48 UTC");
+    const updatedEndDate = dayAfter(updatedStartDate);
+
+    await supertest(app)
+      .patch(
+        `/entries/${
+          createdEvent._id
+        }?start=${februaryFourth.toISOString()}&applyToSeries=false`,
+      )
+      .send({
+        title: "Listen to Sweet Surrender",
+        startTimeUtc: updatedStartDate,
+        endTimeUtc: updatedEndDate,
+        description: "by John Denver",
+        allDay: false,
+      })
+      .expect(200);
+
+    const newStartDate = new Date("06 February 2023 14:48 UTC");
+    const newEndDate = dayAfter(newStartDate);
+
+    const initialModifiedExceptions = await EntryException.where(
+      "modified",
+    ).equals(true);
+
+    expect(initialModifiedExceptions.length).toEqual(1);
+    expect(initialModifiedExceptions[0]).toEqual(
+      expect.objectContaining({
+        title: "Listen to Sweet Surrender",
+        startTimeUtc: updatedStartDate,
+        endTimeUtc: updatedEndDate,
+        description: "by John Denver",
+        allDay: false,
+      }),
+    );
+
+    await supertest(app)
+      .patch(
+        `/entries/${
+          createdEvent._id
+        }?start=${updatedStartDate.toISOString()}&applyToSeries=false`,
+      )
+      .send({
+        title: "Listen to Country Roads",
+        startTimeUtc: newStartDate,
+        endTimeUtc: newEndDate,
+        description: "by the man John Denver",
+        allDay: false,
+      })
+      .expect(200);
+
+    const modifiedExceptions = await EntryException.where("modified").equals(
+      true,
+    );
+    expect(modifiedExceptions.length).toEqual(1);
+    expect(modifiedExceptions[0]).toEqual(
+      expect.objectContaining({
+        title: "Listen to Country Roads",
+        startTimeUtc: newStartDate,
+        endTimeUtc: newEndDate,
+        description: "by the man John Denver",
+        allDay: false,
+      }),
+    );
+  });
+
   it("catches and returns an error from CalendarEntry.findByIdAndUpdate", async () => {
     data = await CalendarEntry.create({
       eventId: "123",

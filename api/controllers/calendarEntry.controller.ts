@@ -126,6 +126,20 @@ const expandRecurringEntry = async (calendarEntry, start, end) => {
   return expandedRecurringEntries.concat(expandedExceptionEntries);
 };
 
+const findMatchingModifiedExceptions = async (start, parentCalendarEntry) => {
+  const startDate = new Date(start as string);
+  const oneMinBefore = dateMinusMinutes(startDate, 1);
+  const oneMinAfter = datePlusMinutes(startDate, 1);
+  return await EntryException.find({
+    entryId: parentCalendarEntry._id,
+    modified: true,
+  })
+    .where("startTimeUtc")
+    .gte(oneMinBefore)
+    .where("startTimeUtc")
+    .lt(oneMinAfter);
+};
+
 export const seedDatabaseWithEntry = async (
   _req: Request,
   res: Response,
@@ -291,17 +305,10 @@ export const deleteCalendarEntry = async (
   try {
     const entryToDelete = await CalendarEntry.findById(id);
     if (isRecurringEntry(entryToDelete) && applyToSeries === "false") {
-      const startDate = new Date(start as string);
-      const oneMinBefore = dateMinusMinutes(startDate, 1);
-      const oneMinAfter = datePlusMinutes(startDate, 1);
-      const existingModifiedExceptions = await EntryException.find({
-        entryId: entryToDelete._id,
-        modified: true,
-      })
-        .where("startTimeUtc")
-        .gte(oneMinBefore)
-        .where("startTimeUtc")
-        .lt(oneMinAfter);
+      const existingModifiedExceptions = await findMatchingModifiedExceptions(
+        start,
+        entryToDelete,
+      );
       if (existingModifiedExceptions.length > 0) {
         existingModifiedExceptions[0].remove();
       } else {
@@ -346,29 +353,49 @@ export const updateCalendarEntry = async (
       updatedEntry.save();
       res.status(200).json(updatedEntry);
     } else if (isRecurringEntry(entryToUpdate) && applyToSeries === "false") {
-      await EntryException.create({
-        deleted: true,
-        modified: false,
-        entryId: entryToUpdate._id,
-        startTimeUtc: start,
-      });
-
-      const updatedEntryException = await EntryException.create({
-        deleted: false,
-        modified: true,
-        entryId: entryToUpdate._id,
-        startTimeUtc: req.body.startTimeUtc,
-        title: req.body.title,
-        description: req.body.description,
-        allDay: req.body.allDay,
-        endTimeUtc: req.body.endTimeUtc,
-      });
-
-      const updatedEntry = expandModifiedEntryException(
-        updatedEntryException,
+      const existingModifiedExceptions = await findMatchingModifiedExceptions(
+        start,
         entryToUpdate,
       );
-      res.status(200).json(updatedEntry);
+      if (existingModifiedExceptions.length > 0) {
+        const exceptionToUpdate = existingModifiedExceptions[0];
+        exceptionToUpdate.title = req.body.title;
+        exceptionToUpdate.description = req.body.description;
+        exceptionToUpdate.title = req.body.title;
+        exceptionToUpdate.allDay = req.body.allDay;
+        exceptionToUpdate.startTimeUtc = req.body.startTimeUtc;
+        exceptionToUpdate.endTimeUtc = req.body.endTimeUtc;
+        exceptionToUpdate.save();
+        const updatedEntry = expandModifiedEntryException(
+          exceptionToUpdate,
+          entryToUpdate,
+        );
+        res.status(200).json(updatedEntry);
+      } else {
+        await EntryException.create({
+          deleted: true,
+          modified: false,
+          entryId: entryToUpdate._id,
+          startTimeUtc: start,
+        });
+
+        const updatedEntryException = await EntryException.create({
+          deleted: false,
+          modified: true,
+          entryId: entryToUpdate._id,
+          startTimeUtc: req.body.startTimeUtc,
+          title: req.body.title,
+          description: req.body.description,
+          allDay: req.body.allDay,
+          endTimeUtc: req.body.endTimeUtc,
+        });
+
+        const updatedEntry = expandModifiedEntryException(
+          updatedEntryException,
+          entryToUpdate,
+        );
+        res.status(200).json(updatedEntry);
+      }
     } else {
       const updatedEntry = await CalendarEntry.findByIdAndUpdate(
         id,
