@@ -324,6 +324,73 @@ describe("GET /entry/:entryId?start=<start-time>", () => {
     );
   });
 
+  it("returns the transformed entry exception", async () => {
+    const date = new Date("04 January 2023 14:48 UTC");
+    const oneYearLater = yearAfter(date);
+
+    const createdEventData = await supertest(app)
+      .post("/entries")
+      .send({
+        eventId: "123",
+        creatorId: "456",
+        title: "Happy day",
+        description: "and a happy night too",
+        startTimeUtc: date,
+        endTimeUtc: dayAfter(date),
+        allDay: false,
+        recurring: true,
+        frequency: "monthly",
+        recurrenceEndsUtc: oneYearLater,
+      })
+      .expect(201);
+    const createdEvent = JSON.parse(createdEventData.text);
+
+    const rule = new RRule({
+      freq: RRule.MONTHLY,
+      dtstart: date,
+      until: oneYearLater,
+    });
+
+    const recurrences = rule.all();
+
+    const februaryFourth = recurrences[1];
+
+    const updatedStartDate = new Date("05 February 2023 14:48 UTC");
+    const updatedEndDate = dayAfter(updatedStartDate);
+
+    await supertest(app)
+      .patch(
+        `/entries/${
+          createdEvent._id
+        }?start=${februaryFourth.toISOString()}&applyToSeries=false`,
+      )
+      .send({
+        title: "Listen to Sweet Surrender",
+        startTimeUtc: updatedStartDate,
+        endTimeUtc: updatedEndDate,
+        description: "by John Denver",
+        allDay: false,
+      })
+      .expect(200);
+
+    const response = await supertest(app)
+      .get(`/entries/${createdEvent._id}?start=${updatedStartDate}`)
+      .expect(200);
+
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        eventId: "123",
+        creatorId: "456",
+        title: "Listen to Sweet Surrender",
+        description: "by John Denver",
+        allDay: false,
+        recurring: true,
+        startTimeUtc: updatedStartDate.toISOString(),
+        endTimeUtc: dayAfter(updatedStartDate).toISOString(),
+      }),
+    );
+  });
+
   it("catches and returns an error from CalendarEntry.findOne", async () => {
     const findOneMock = jest
       .spyOn(CalendarEntry, "findOne")
@@ -337,7 +404,7 @@ describe("GET /entry/:entryId?start=<start-time>", () => {
   });
 });
 
-describe("DELETE / entry", () => {
+describe("DELETE / entry?start=<start-time>&applyToSeries=<boolean>", () => {
   let data;
   const startTime = new Date("05 July 2011 14:48 UTC");
   const endTime = new Date("05 July 2011 14:48 UTC");
@@ -414,6 +481,73 @@ describe("DELETE / entry", () => {
       .get(`/entries?start=${date}&end=${oneYearLater}`)
       .expect(200);
     expect(updatedResponse.body.length).toEqual(10);
+  });
+
+  it("deletes an entry exception from a recurring series", async () => {
+    const date = new Date("04 January 2023 14:48 UTC");
+    const oneYearLater = yearAfter(date);
+
+    const createdEventData = await supertest(app)
+      .post("/entries")
+      .send({
+        eventId: "123",
+        creatorId: "456",
+        title: "Happy day",
+        description: "and a happy night too",
+        startTimeUtc: date,
+        endTimeUtc: dayAfter(date),
+        allDay: false,
+        recurring: true,
+        frequency: "monthly",
+        recurrenceEndsUtc: oneYearLater,
+      })
+      .expect(201);
+    const createdEvent = JSON.parse(createdEventData.text);
+
+    const rule = new RRule({
+      freq: RRule.MONTHLY,
+      dtstart: date,
+      until: oneYearLater,
+    });
+
+    const recurrences = rule.all();
+
+    const februaryFourth = recurrences[1];
+
+    const updatedStartDate = new Date("05 February 2023 14:48 UTC");
+    const updatedEndDate = dayAfter(updatedStartDate);
+
+    await supertest(app)
+      .patch(
+        `/entries/${
+          createdEvent._id
+        }?start=${februaryFourth.toISOString()}&applyToSeries=false`,
+      )
+      .send({
+        title: "Listen to Sweet Surrender",
+        startTimeUtc: updatedStartDate,
+        endTimeUtc: updatedEndDate,
+        description: "by John Denver",
+        allDay: false,
+      })
+      .expect(200);
+
+    const exceptionCount = await EntryException.where("modified")
+      .equals(true)
+      .countDocuments();
+    expect(exceptionCount).toEqual(1);
+
+    await supertest(app)
+      .delete(
+        `/entries/${
+          createdEvent._id
+        }?start=${updatedStartDate.toISOString()}&applyToSeries=false`,
+      )
+      .expect(200);
+    const updatedExceptionCount = await EntryException.where("modified")
+      .equals(true)
+      .countDocuments();
+    expect(updatedExceptionCount).toEqual(0);
   });
 
   it("cascades deletion to entry exceptions when recurring series is deleted", async () => {
@@ -493,12 +627,12 @@ describe("DELETE / entry", () => {
   });
 });
 
-describe("PATCH / entry", () => {
+describe("PATCH / entry?start=<start-time>&applyToSeries=<boolean>", () => {
   let data;
   const startTime = new Date();
   const endTime = new Date();
 
-  beforeEach(async () => {
+  it("edits the selected entry in the database", async () => {
     data = await CalendarEntry.create({
       eventId: "123",
       creatorId: "456",
@@ -509,9 +643,6 @@ describe("PATCH / entry", () => {
       startTimeUtc: startTime,
       endTimeUtc: endTime,
     });
-  });
-
-  it("edits the selected entry in the database", async () => {
     const newStart = new Date();
     const newEnd = dayAfter(newStart);
     await supertest(app)
@@ -541,7 +672,262 @@ describe("PATCH / entry", () => {
     );
   });
 
+  it("can edit a recurring event", async () => {
+    const date = new Date("04 January 2023 14:48 UTC");
+    const oneYearLater = yearAfter(date);
+
+    const createdEventData = await supertest(app)
+      .post("/entries")
+      .send({
+        eventId: "123",
+        creatorId: "456",
+        title: "Happy day",
+        description: "and a happy night too",
+        startTimeUtc: date,
+        endTimeUtc: dayAfter(date),
+        allDay: false,
+        recurring: true,
+        frequency: "monthly",
+        recurrenceEndsUtc: oneYearLater,
+      })
+      .expect(201);
+    const createdEvent = JSON.parse(createdEventData.text);
+
+    const rule = new RRule({
+      freq: RRule.MONTHLY,
+      dtstart: date,
+      until: oneYearLater,
+    });
+
+    const recurrences = rule.all();
+
+    const februaryFourth = recurrences[1];
+
+    const updatedStartDate = new Date("05 February 2023 14:48 UTC");
+    const updatedEndDate = dayAfter(updatedStartDate);
+    const updatedRecurrenceEnd = yearAfter(updatedStartDate);
+
+    await supertest(app)
+      .patch(
+        `/entries/${
+          createdEvent._id
+        }?start=${februaryFourth.toISOString()}&applyToSeries=true`,
+      )
+      .send({
+        eventId: "345",
+        creatorId: "678",
+        title: "Listen to Sweet Surrender",
+        startTimeUtc: updatedStartDate,
+        endTimeUtc: updatedEndDate,
+        description: "by John Denver",
+        frequency: "weekly",
+        recurrenceEndsUtc: updatedRecurrenceEnd,
+      })
+      .expect(200);
+
+    const editedEntry = await CalendarEntry.findById(createdEvent._id);
+
+    const updatedRule = new RRule({
+      freq: RRule.WEEKLY,
+      dtstart: updatedStartDate,
+      until: updatedRecurrenceEnd,
+    });
+
+    expect(editedEntry).toEqual(
+      expect.objectContaining({
+        _id: expect.anything(),
+        eventId: "345",
+        creatorId: "678",
+        title: "Listen to Sweet Surrender",
+        startTimeUtc: updatedStartDate,
+        endTimeUtc: updatedEndDate,
+        description: "by John Denver",
+        frequency: "weekly",
+        allDay: false,
+        recurrencePattern: updatedRule.toString(),
+        recurrenceEndsUtc: updatedRecurrenceEnd,
+      }),
+    );
+  });
+
+  it("can edit a single instance of a recurring event", async () => {
+    const date = new Date("04 January 2023 14:48 UTC");
+    const oneYearLater = yearAfter(date);
+
+    const createdEventData = await supertest(app)
+      .post("/entries")
+      .send({
+        eventId: "123",
+        creatorId: "456",
+        title: "Happy day",
+        description: "and a happy night too",
+        startTimeUtc: date,
+        endTimeUtc: dayAfter(date),
+        allDay: false,
+        recurring: true,
+        frequency: "monthly",
+        recurrenceEndsUtc: oneYearLater,
+      })
+      .expect(201);
+    const createdEvent = JSON.parse(createdEventData.text);
+
+    const rule = new RRule({
+      freq: RRule.MONTHLY,
+      dtstart: date,
+      until: oneYearLater,
+    });
+
+    const recurrences = rule.all();
+
+    const februaryFourth = recurrences[1];
+
+    const updatedStartDate = new Date("05 February 2023 14:48 UTC");
+    const updatedEndDate = dayAfter(updatedStartDate);
+
+    const exceptionCount = await EntryException.countDocuments();
+    expect(exceptionCount).toEqual(0);
+
+    await supertest(app)
+      .patch(
+        `/entries/${
+          createdEvent._id
+        }?start=${februaryFourth.toISOString()}&applyToSeries=false`,
+      )
+      .send({
+        eventId: "345",
+        creatorId: "678",
+        title: "Listen to Sweet Surrender",
+        startTimeUtc: updatedStartDate,
+        endTimeUtc: updatedEndDate,
+        description: "by John Denver",
+      })
+      .expect(200);
+
+    const updatedExceptionCount = await EntryException.countDocuments();
+    expect(updatedExceptionCount).toEqual(2);
+
+    const entryException = await EntryException.find()
+      .sort({ _id: -1 })
+      .limit(1);
+
+    const modifiedEntryException = entryException[0];
+    expect(modifiedEntryException.entryId.toString()).toEqual(
+      createdEvent._id.toString(),
+    );
+    expect(modifiedEntryException.title).toEqual("Listen to Sweet Surrender");
+    expect(modifiedEntryException.description).toEqual("by John Denver");
+    expect(modifiedEntryException.startTimeUtc).toEqual(updatedStartDate);
+    expect(modifiedEntryException.endTimeUtc).toEqual(updatedEndDate);
+  });
+
+  it("can edit an entry exception of a recurring event", async () => {
+    const date = new Date("04 January 2023 14:48 UTC");
+    const oneYearLater = yearAfter(date);
+
+    const createdEventData = await supertest(app)
+      .post("/entries")
+      .send({
+        eventId: "123",
+        creatorId: "456",
+        title: "Happy day",
+        description: "and a happy night too",
+        startTimeUtc: date,
+        endTimeUtc: dayAfter(date),
+        allDay: false,
+        recurring: true,
+        frequency: "monthly",
+        recurrenceEndsUtc: oneYearLater,
+      })
+      .expect(201);
+    const createdEvent = JSON.parse(createdEventData.text);
+
+    const rule = new RRule({
+      freq: RRule.MONTHLY,
+      dtstart: date,
+      until: oneYearLater,
+    });
+
+    const recurrences = rule.all();
+
+    const februaryFourth = recurrences[1];
+
+    const updatedStartDate = new Date("05 February 2023 14:48 UTC");
+    const updatedEndDate = dayAfter(updatedStartDate);
+
+    await supertest(app)
+      .patch(
+        `/entries/${
+          createdEvent._id
+        }?start=${februaryFourth.toISOString()}&applyToSeries=false`,
+      )
+      .send({
+        title: "Listen to Sweet Surrender",
+        startTimeUtc: updatedStartDate,
+        endTimeUtc: updatedEndDate,
+        description: "by John Denver",
+        allDay: false,
+      })
+      .expect(200);
+
+    const newStartDate = new Date("06 February 2023 14:48 UTC");
+    const newEndDate = dayAfter(newStartDate);
+
+    const initialModifiedExceptions = await EntryException.where(
+      "modified",
+    ).equals(true);
+
+    expect(initialModifiedExceptions.length).toEqual(1);
+    expect(initialModifiedExceptions[0]).toEqual(
+      expect.objectContaining({
+        title: "Listen to Sweet Surrender",
+        startTimeUtc: updatedStartDate,
+        endTimeUtc: updatedEndDate,
+        description: "by John Denver",
+        allDay: false,
+      }),
+    );
+
+    await supertest(app)
+      .patch(
+        `/entries/${
+          createdEvent._id
+        }?start=${updatedStartDate.toISOString()}&applyToSeries=false`,
+      )
+      .send({
+        title: "Listen to Country Roads",
+        startTimeUtc: newStartDate,
+        endTimeUtc: newEndDate,
+        description: "by the man John Denver",
+        allDay: false,
+      })
+      .expect(200);
+
+    const modifiedExceptions = await EntryException.where("modified").equals(
+      true,
+    );
+    expect(modifiedExceptions.length).toEqual(1);
+    expect(modifiedExceptions[0]).toEqual(
+      expect.objectContaining({
+        title: "Listen to Country Roads",
+        startTimeUtc: newStartDate,
+        endTimeUtc: newEndDate,
+        description: "by the man John Denver",
+        allDay: false,
+      }),
+    );
+  });
+
   it("catches and returns an error from CalendarEntry.findByIdAndUpdate", async () => {
+    data = await CalendarEntry.create({
+      eventId: "123",
+      creatorId: "456",
+      title: "Happy day",
+      description: "and a happy night too",
+      allDay: false,
+      recurring: false,
+      startTimeUtc: startTime,
+      endTimeUtc: endTime,
+    });
     const updateMock = jest
       .spyOn(CalendarEntry, "findByIdAndUpdate")
       .mockRejectedValue({ message: "error occurred" });

@@ -277,6 +277,82 @@ describe("App", () => {
       );
     });
 
+    it("allows for editing a single instance of recurring event", async () => {
+      mockGetEntries.mockResolvedValue([
+        {
+          _id: "123",
+          end: "2022-02-27T05:43:37.868Z",
+          start: "2022-02-27T05:43:37.868Z",
+          title: "Berta goes to the baseball game!",
+          recurring: true,
+        },
+        {
+          _id: "345",
+          end: "2022-02-24T05:43:37.868Z",
+          start: "2022-02-24T05:43:37.868Z",
+          title: "Dance",
+          recurring: true,
+        },
+      ]);
+
+      mockGetEntry.mockResolvedValue({
+        _id: "345",
+        end: "2022-02-24T05:43:37.868Z",
+        startTimeUtc: "2022-02-24T05:43:37.868Z",
+        endTimeUtc: "2022-02-25T05:43:37.868Z",
+        title: "Dance",
+        description: "fun times",
+        recurring: true,
+        recurrenceEndUtc: "2023-02-24T05:43:37.868Z",
+      });
+
+      mockUpdateEntry.mockResolvedValue(new Response());
+      await act(async () => {
+        await render(<App />);
+      });
+      const eventText = await screen.findByText("Dance");
+      expect(eventText).toBeInTheDocument();
+      await act(async () => {
+        await eventText.click();
+      });
+      expect(mockGetEntry).toHaveBeenCalledTimes(1);
+
+      const editButton = await screen.findByText("Edit");
+      expect(editButton).toBeInTheDocument();
+      await act(async () => {
+        await editButton.click();
+      });
+
+      userEvent.type(
+        screen.getByLabelText("Description"),
+        " at the grand royale",
+      );
+
+      const saveButton = await screen.findByText("Save");
+      expect(saveButton).toBeInTheDocument();
+      await act(async () => {
+        await saveButton.click();
+      });
+
+      expect(
+        await screen.findByText(
+          "Would you like to edit the entire recurring series or just this event?",
+        ),
+      ).toBeInTheDocument();
+      await act(async () => {
+        await userEvent.click(screen.getByText("Edit this one event"));
+      });
+      expect(mockUpdateEntry).toHaveBeenCalledWith(
+        "345",
+        expect.objectContaining({
+          title: "Dance",
+          description: "fun times at the grand royale",
+        }),
+        "2022-02-24T05:43:37.868Z",
+        false,
+      );
+    });
+
     it("automatically sets end date when start date is selected", async () => {
       mockCreateEntry.mockResolvedValue({});
       mockGetEntries.mockResolvedValue([]);

@@ -348,17 +348,22 @@ describe("client functions", () => {
         .spyOn(window, "fetch")
         .mockResolvedValue(mockResponse);
 
-      const result = await updateEntry("638d815856e5c70955565b7e", {
-        title: "Barbies's Bat Mitzvah",
-        description: "Barbie is turning 13!",
-        startTimeUtc: new Date("2024-06-06T01:07:00.000Z"),
-        endTimeUtc: new Date("2024-06-06T01:07:00.000Z"),
-        allDay: true,
-        recurring: true,
-        frequency: "monthly",
-        recurrenceBegins: new Date("2024-06-06T01:07:00.000Z"),
-        recurrenceEndUtc: new Date("2025-06-06T01:07:00.000Z"),
-      });
+      const result = await updateEntry(
+        "638d815856e5c70955565b7e",
+        {
+          title: "Barbies's Bat Mitzvah",
+          description: "Barbie is turning 13!",
+          startTimeUtc: new Date("2024-06-06T01:07:00.000Z"),
+          endTimeUtc: new Date("2024-06-06T01:07:00.000Z"),
+          allDay: true,
+          recurring: true,
+          frequency: "monthly",
+          recurrenceBegins: new Date("2024-06-06T01:07:00.000Z"),
+          recurrenceEndUtc: new Date("2025-06-06T01:07:00.000Z"),
+        },
+        "2024-06-06T01:07:00.000Z",
+        true,
+      );
       expect(fetchSpy).toHaveBeenCalled();
       expect(result).toEqual({
         _id: "638d815856e5c70955565b7e",

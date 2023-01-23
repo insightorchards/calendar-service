@@ -32,7 +32,7 @@ type NonRecurringEntry = {
 };
 
 type RecurringEntry = {
-  id: string;
+  _id: string;
   eventId: string;
   creatorId: string;
   title: string;
@@ -48,13 +48,27 @@ type RecurringEntry = {
   updatedAt: Date;
 };
 
-// not used right now but will be used in the future
-const isNonRecurringEntry = (entry) => {
-  return (entry as NonRecurringEntry).recurring === false;
-};
-
 const isRecurringEntry = (entry) => {
   return (entry as RecurringEntry).recurring === true;
+};
+
+const expandModifiedEntryException = async (
+  entryException: EntryException,
+  parentCalendarEntry: RecurringEntry,
+) => {
+  return {
+    _id: parentCalendarEntry._id,
+    title: entryException.title,
+    description: entryException.description,
+    allDay: entryException.allDay,
+    startTimeUtc: entryException.startTimeUtc,
+    endTimeUtc: entryException.endTimeUtc,
+    recurring: true,
+    eventId: parentCalendarEntry.eventId,
+    creatorId: parentCalendarEntry.creatorId,
+    frequency: parentCalendarEntry.frequency,
+    recurrenceEndsUtc: parentCalendarEntry.recurrenceEndsUtc,
+  };
 };
 
 const expandRecurringEntry = async (calendarEntry, start, end) => {
@@ -67,15 +81,18 @@ const expandRecurringEntry = async (calendarEntry, start, end) => {
 
   rruleSet.rrule(rule);
 
-  const exceptions = await EntryException.find({ entryId: calendarEntry._id });
+  const deletedExceptions = await EntryException.find({
+    entryId: calendarEntry._id,
+    deleted: true,
+  });
 
-  exceptions.forEach((exception) => {
+  deletedExceptions.forEach((exception) => {
     rruleSet.exdate(exception.startTimeUtc);
   });
 
   const recurrences = rruleSet.between(new Date(start), new Date(end));
 
-  return recurrences.map((date) => {
+  const expandedRecurringEntries = recurrences.map((date) => {
     return {
       _id: calendarEntry._id,
       eventId: calendarEntry.eventId,
@@ -90,6 +107,37 @@ const expandRecurringEntry = async (calendarEntry, start, end) => {
       recurrenceEndsUtc: calendarEntry.recurrenceEndsUtc,
     };
   });
+
+  const modifiedExceptions = await EntryException.find({
+    entryId: calendarEntry._id,
+    modified: true,
+  })
+    .where("startTimeUtc")
+    .gte(start)
+    .where("startTimeUtc")
+    .lt(end);
+
+  const promises = modifiedExceptions.map(async (exception) => {
+    return expandModifiedEntryException(exception, calendarEntry);
+  });
+
+  const expandedExceptionEntries = await Promise.all(promises);
+
+  return expandedRecurringEntries.concat(expandedExceptionEntries);
+};
+
+const findMatchingModifiedExceptions = async (start, parentCalendarEntry) => {
+  const startDate = new Date(start as string);
+  const oneMinBefore = dateMinusMinutes(startDate, 1);
+  const oneMinAfter = datePlusMinutes(startDate, 1);
+  return await EntryException.find({
+    entryId: parentCalendarEntry._id,
+    modified: true,
+  })
+    .where("startTimeUtc")
+    .gte(oneMinBefore)
+    .where("startTimeUtc")
+    .lt(oneMinAfter);
 };
 
 export const seedDatabaseWithEntry = async (
@@ -232,7 +280,11 @@ export const getCalendarEntry = async (
         oneMinBefore,
         oneMinAfter,
       );
-      res.status(200).json(expandedEntry[0]);
+      if (expandedEntry.length > 0) {
+        res.status(200).json(expandedEntry[0]);
+      } else {
+        res.status(200).json({});
+      }
     } else {
       res.status(200).json(entry);
     }
@@ -253,12 +305,20 @@ export const deleteCalendarEntry = async (
   try {
     const entryToDelete = await CalendarEntry.findById(id);
     if (isRecurringEntry(entryToDelete) && applyToSeries === "false") {
-      await EntryException.create({
-        deleted: true,
-        modified: false,
-        entryId: entryToDelete._id,
-        startTimeUtc: start,
-      });
+      const existingModifiedExceptions = await findMatchingModifiedExceptions(
+        start,
+        entryToDelete,
+      );
+      if (existingModifiedExceptions.length > 0) {
+        existingModifiedExceptions[0].remove();
+      } else {
+        await EntryException.create({
+          deleted: true,
+          modified: false,
+          entryId: entryToDelete._id,
+          startTimeUtc: start,
+        });
+      }
     } else {
       entryToDelete.remove();
     }
@@ -275,10 +335,75 @@ export const updateCalendarEntry = async (
   _next: NextFunction,
 ) => {
   const { id } = req.params;
+  const { start, applyToSeries } = req.query;
   try {
-    await CalendarEntry.findByIdAndUpdate(id, req.body as CalendarEntry);
-    const updatedEntry = await CalendarEntry.findById(id);
-    res.status(200).json(updatedEntry);
+    const entryToUpdate = await CalendarEntry.findById(id);
+    if (isRecurringEntry(entryToUpdate) && applyToSeries === "true") {
+      const updatedEntry = await CalendarEntry.findByIdAndUpdate(
+        id,
+        req.body as CalendarEntry,
+        { returnDocument: "after" },
+      );
+      const rule = new RRule({
+        freq: FREQUENCY_MAPPING[updatedEntry.frequency],
+        dtstart: updatedEntry.startTimeUtc,
+        until: updatedEntry.recurrenceEndsUtc,
+      });
+      updatedEntry.recurrencePattern = rule.toString();
+      updatedEntry.save();
+      res.status(200).json(updatedEntry);
+    } else if (isRecurringEntry(entryToUpdate) && applyToSeries === "false") {
+      const existingModifiedExceptions = await findMatchingModifiedExceptions(
+        start,
+        entryToUpdate,
+      );
+      if (existingModifiedExceptions.length > 0) {
+        const exceptionToUpdate = existingModifiedExceptions[0];
+        exceptionToUpdate.title = req.body.title;
+        exceptionToUpdate.description = req.body.description;
+        exceptionToUpdate.title = req.body.title;
+        exceptionToUpdate.allDay = req.body.allDay;
+        exceptionToUpdate.startTimeUtc = req.body.startTimeUtc;
+        exceptionToUpdate.endTimeUtc = req.body.endTimeUtc;
+        exceptionToUpdate.save();
+        const updatedEntry = expandModifiedEntryException(
+          exceptionToUpdate,
+          entryToUpdate,
+        );
+        res.status(200).json(updatedEntry);
+      } else {
+        await EntryException.create({
+          deleted: true,
+          modified: false,
+          entryId: entryToUpdate._id,
+          startTimeUtc: start,
+        });
+
+        const updatedEntryException = await EntryException.create({
+          deleted: false,
+          modified: true,
+          entryId: entryToUpdate._id,
+          startTimeUtc: req.body.startTimeUtc,
+          title: req.body.title,
+          description: req.body.description,
+          allDay: req.body.allDay,
+          endTimeUtc: req.body.endTimeUtc,
+        });
+
+        const updatedEntry = expandModifiedEntryException(
+          updatedEntryException,
+          entryToUpdate,
+        );
+        res.status(200).json(updatedEntry);
+      }
+    } else {
+      const updatedEntry = await CalendarEntry.findByIdAndUpdate(
+        id,
+        req.body as CalendarEntry,
+        { returnDocument: "after" },
+      );
+      res.status(200).json(updatedEntry);
+    }
   } catch (err) {
     res.status(400);
     res.send({ message: err.message });
