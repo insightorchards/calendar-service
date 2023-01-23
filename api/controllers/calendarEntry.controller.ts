@@ -13,6 +13,7 @@ import { RRule, RRuleSet, rrulestr } from "rrule";
 const FREQUENCY_MAPPING = {
   monthly: RRule.MONTHLY,
   weekly: RRule.WEEKLY,
+  daily: RRule.DAILY,
 };
 
 type CalendarEntry = NonRecurringEntry | RecurringEntry;
@@ -304,6 +305,10 @@ export const deleteCalendarEntry = async (
 
   try {
     const entryToDelete = await CalendarEntry.findById(id);
+    if (!entryToDelete) {
+      throw new Error("Entry to delete is not found");
+    }
+    console.log({ entryToDelete });
     if (isRecurringEntry(entryToDelete) && applyToSeries === "false") {
       const existingModifiedExceptions = await findMatchingModifiedExceptions(
         start,

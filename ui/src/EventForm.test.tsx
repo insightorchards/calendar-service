@@ -193,7 +193,7 @@ describe("EventForm", () => {
       );
     });
 
-    it("allows user to choose between monthly and weekly recurrence", () => {
+    it("allows user to choose between monthly, weekly and daily recurrence", () => {
       render(
         <EventForm
           initialStart={new Date("2022-02-15T04:00").toISOString()}
@@ -207,7 +207,7 @@ describe("EventForm", () => {
           isCreate={true}
         />,
       );
-
+      expect(screen.getByText("Daily")).toBeVisible();
       expect(screen.getByText("Monthly")).toBeVisible();
       expect(screen.getByText("Weekly")).toBeVisible();
     });
