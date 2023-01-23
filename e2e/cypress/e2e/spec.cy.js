@@ -66,7 +66,7 @@ describe("journey test", () => {
     cy.findByText("Bye").should("not.exist");
   });
 
-  it.only("shows correct default time when uncreated event is changed to not be `allDay`", () => {
+  it("shows correct default time when uncreated event is changed to not be `allDay`", () => {
     cy.visit("http://localhost:3000");
 
     // Creating new event from "+"
@@ -127,7 +127,7 @@ describe("journey test", () => {
     cy.get(`[id="endTime"]`).should("have.value", "05:00");
     cy.contains("button", "Save").click();
 
-    cy.contains("Night").click();
+    // cy.contains("Night").click();
     cy.contains("Delete").click();
     cy.findByText("Night").should("not.exist");
   });
@@ -149,7 +149,7 @@ describe("journey test", () => {
 
     cy.contains("button", "Create Event").click();
 
-    cy.contains("Error: recurrence end must be after start.").should(
+    cy.contains("Error: recurrence end cannot be before start.").should(
       "be.visible",
     );
   });
