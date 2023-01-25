@@ -917,6 +917,80 @@ describe("PATCH / entry?start=<start-time>&applyToSeries=<boolean>", () => {
     );
   });
 
+  it.only("can edit a recurring series from an entry exception", async () => {
+    const date = new Date("04 January 2023 14:48 UTC");
+    const oneYearLater = yearAfter(date);
+
+    const createdEventData = await supertest(app)
+      .post("/entries")
+      .send({
+        eventId: "123",
+        creatorId: "456",
+        title: "Happy day",
+        description: "and a happy night too",
+        startTimeUtc: date,
+        endTimeUtc: dayAfter(date),
+        allDay: false,
+        recurring: true,
+        frequency: "monthly",
+        recurrenceEndsUtc: oneYearLater,
+      })
+      .expect(201);
+    const createdEvent = JSON.parse(createdEventData.text);
+
+    const rule = new RRule({
+      freq: RRule.MONTHLY,
+      dtstart: date,
+      until: oneYearLater,
+    });
+
+    const recurrences = rule.all();
+
+    const februaryFourth = recurrences[1];
+
+    const updatedStartDate = new Date("05 February 2023 14:48 UTC");
+    const updatedEndDate = dayAfter(updatedStartDate);
+
+    await supertest(app)
+      .patch(
+        `/entries/${
+          createdEvent._id
+        }?start=${februaryFourth.toISOString()}&applyToSeries=false`,
+      )
+      .send({
+        title: "Listen to Sweet Surrender",
+        startTimeUtc: updatedStartDate,
+        endTimeUtc: updatedEndDate,
+        description: "by John Denver",
+        allDay: false,
+      })
+      .expect(200);
+
+    await supertest(app)
+      .patch(
+        `/entries/${
+          createdEvent._id
+        }?start=${februaryFourth.toISOString()}&applyToSeries=true`,
+      )
+      .send({
+        title: "Listen to Country Roads",
+        description: "by the man John Denver",
+      })
+      .expect(200);
+
+    const parentRecurringEntry = await CalendarEntry.findById(createdEvent._id);
+    const calEntry = await CalendarEntry.findOne({}).sort({
+      $natural: -1,
+    });
+
+    expect(parentRecurringEntry).toEqual(
+      expect.objectContaining({
+        title: "Listen to Country Roads",
+        description: "by the man John Denver",
+      }),
+    );
+  });
+
   it("catches and returns an error from CalendarEntry.findByIdAndUpdate", async () => {
     data = await CalendarEntry.create({
       eventId: "123",

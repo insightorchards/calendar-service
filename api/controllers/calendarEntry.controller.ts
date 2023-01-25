@@ -308,7 +308,7 @@ export const deleteCalendarEntry = async (
     if (!entryToDelete) {
       throw new Error("Entry to delete is not found");
     }
-    console.log({ entryToDelete });
+
     if (isRecurringEntry(entryToDelete) && applyToSeries === "false") {
       const existingModifiedExceptions = await findMatchingModifiedExceptions(
         start,
@@ -334,6 +334,20 @@ export const deleteCalendarEntry = async (
   }
 };
 
+const updateEntryExceptions = (entryExceptions, updates) => {
+  entryExceptions.forEach((exception) => {
+    // title and description are the only fields that
+    // make sense to include in this update
+    if (updates.title) {
+      exception.title = updates.title;
+    }
+    if (updates.description) {
+      exception.description = updates.description;
+    }
+    exception.save();
+  });
+};
+
 export const updateCalendarEntry = async (
   req: Request,
   res: Response,
@@ -344,11 +358,35 @@ export const updateCalendarEntry = async (
   try {
     const entryToUpdate = await CalendarEntry.findById(id);
     if (isRecurringEntry(entryToUpdate) && applyToSeries === "true") {
-      const updatedEntry = await CalendarEntry.findByIdAndUpdate(
-        id,
-        req.body as CalendarEntry,
-        { returnDocument: "after" },
+      // If editing from a modified exception, don't apply
+      // time changes since that will overwrite the entire series
+      // This is a temporary fix, we may need to look into storing
+      // date and time separately to be able to change the times
+      // on a recurring event without changing the recurrence start
+      // date
+      const existingModifiedExceptions = await findMatchingModifiedExceptions(
+        start,
+        entryToUpdate,
       );
+
+      if (existingModifiedExceptions) {
+        entryToUpdate.title = req.body.title;
+        entryToUpdate.description = req.body.description;
+        entryToUpdate.allDay = req.body.allDay;
+        entryToUpdate.save();
+      } else {
+        await CalendarEntry.findByIdAndUpdate(id, req.body as CalendarEntry, {
+          returnDocument: "after",
+        });
+      }
+
+      const updatedEntry = await CalendarEntry.findById(id);
+      const relatedEntryExceptions = await EntryException.find({
+        entryId: entryToUpdate.id,
+        modified: true,
+      });
+
+      updateEntryExceptions(relatedEntryExceptions, req.body);
       const rule = new RRule({
         freq: FREQUENCY_MAPPING[updatedEntry.frequency],
         dtstart: updatedEntry.startTimeUtc,
@@ -366,7 +404,6 @@ export const updateCalendarEntry = async (
         const exceptionToUpdate = existingModifiedExceptions[0];
         exceptionToUpdate.title = req.body.title;
         exceptionToUpdate.description = req.body.description;
-        exceptionToUpdate.title = req.body.title;
         exceptionToUpdate.allDay = req.body.allDay;
         exceptionToUpdate.startTimeUtc = req.body.startTimeUtc;
         exceptionToUpdate.endTimeUtc = req.body.endTimeUtc;
