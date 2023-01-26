@@ -1,0 +1,12 @@
+{
+  "name": "@insightorchards/calendar-ui",
+  "version": "1.0.0",
+  "description": "A calendar UI package",
+  "main": "index.js",
+  "repository": "https://github.com/insightorchards/calendar-service.git",
+  "scripts": {
+    "test": "exit 0"
+  },
+  "author": "Insight Orchards",
+  "license": "ISC"
+}
