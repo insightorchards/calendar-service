@@ -1,1 +1,3 @@
-console.log("Inside the calendar ui package");
+export const heartbeat = () => {
+  console.log("Inside the local calendar ui package");
+};
