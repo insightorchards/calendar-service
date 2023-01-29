@@ -19,7 +19,7 @@ import interactionPlugin from "@fullcalendar/interaction";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import listPlugin from "@fullcalendar/list";
 // @ts-ignore
-import { heartbeat } from "@insightorchards/calendar-ui";
+import { Paragraph } from "@insightorchards/calendar-ui";
 import { AddIcon } from "@chakra-ui/icons";
 import {
   Alert,
@@ -78,8 +78,6 @@ interface FormEntryProps {
 }
 
 const App = () => {
-  heartbeat();
-
   const DEFAULT_START = datePlusHours(new Date(), 1).toISOString();
   const DEFAULT_END = datePlusHours(new Date(), 2).toISOString();
 
@@ -374,7 +372,7 @@ const App = () => {
               <AlertDescription>Oops! Something went wrong.</AlertDescription>
             </Alert>
           )}
-
+          <Paragraph></Paragraph>
           <div className={s.mainContainer}>
             <div className={s.fullCalendarUI}>
               <div className={s.addEventButton}>
