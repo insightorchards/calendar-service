@@ -19,7 +19,7 @@ import interactionPlugin from "@fullcalendar/interaction";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import listPlugin from "@fullcalendar/list";
 // @ts-ignore
-import { Paragraph } from "@insightorchards/calendar-ui";
+import { Counter } from "@insightorchards/calendar-ui";
 import { AddIcon } from "@chakra-ui/icons";
 import {
   Alert,
@@ -372,7 +372,7 @@ const App = () => {
               <AlertDescription>Oops! Something went wrong.</AlertDescription>
             </Alert>
           )}
-          <Paragraph></Paragraph>
+          <Counter></Counter>
           <div className={s.mainContainer}>
             <div className={s.fullCalendarUI}>
               <div className={s.addEventButton}>
