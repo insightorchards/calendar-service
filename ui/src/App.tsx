@@ -20,6 +20,7 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import listPlugin from "@fullcalendar/list";
 // @ts-ignore
 import { Counter } from "@insightorchards/calendar-ui";
+// import Dummy from "dummy-counter";
 import { AddIcon } from "@chakra-ui/icons";
 import {
   Alert,
