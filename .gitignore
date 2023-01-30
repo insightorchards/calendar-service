@@ -1,3 +1,4 @@
 packages/calendar-ui/.npmrc
+packages/calendar-ui-old/.npmrc
 packages/calendar-ui/node_modules
 packages/calendar-api/.npmrc
