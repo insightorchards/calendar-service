@@ -8,6 +8,7 @@ const Counter: React.FC<{
   className: string
 }> = ({ count, className }) => (
   <div className={`counter ${className}`}>
+    <p className={`red`}>This is some sample text</p>
     <p
       key={count}
       className={`counter__count ${className ? className + '__count' : ''}`}
