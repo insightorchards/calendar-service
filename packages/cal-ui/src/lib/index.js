@@ -1,4 +1,4 @@
-import Badge from "./components/Badge";
+import Calendar from "./components/Calendar";
 import Button from "./components/Button";
 
-export { Badge, Button };
+export { Calendar, Button };

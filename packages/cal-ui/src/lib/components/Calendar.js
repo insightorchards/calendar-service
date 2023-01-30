@@ -7,9 +7,9 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import listPlugin from "@fullcalendar/list";
-import s from "./Badge.module.css";
+import s from "./Calendar.module.css";
 
-const Badge = (props) => {
+const Calendar = (props) => {
   return (
     <div>
       <h4 className={s.red}>Here is some text</h4>
@@ -30,4 +30,4 @@ const Badge = (props) => {
   );
 };
 
-export default Badge;
+export default Calendar;
