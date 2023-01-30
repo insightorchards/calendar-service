@@ -1,6 +1,6 @@
 {
   "name": "@insightorchards/calendar-ui",
-  "version": "0.0.19",
+  "version": "0.0.23",
   "description": "A calendar UI package",
   "license": "Apache-2.0",
   "author": "Insight Orchards",
@@ -36,5 +36,6 @@
     "react",
     "typescript",
     "npm"
-  ]
+  ],
+  "dependencies": {}
 }

@@ -1,4 +1,5 @@
 import * as React from 'react'
+// import FullCalendar from '@fullcalendar/react'
 import './styles.scss'
 
 const { useState, useEffect } = React
@@ -7,15 +8,18 @@ const Counter: React.FC<{
   count: number
   className: string
 }> = ({ count, className }) => (
-  <div className={`counter ${className}`}>
-    <p className={`red`}>This is some sample text</p>
-    <p
-      key={count}
-      className={`counter__count ${className ? className + '__count' : ''}`}
-    >
-      {count}
-    </p>
-  </div>
+  <>
+    {/* <FullCalendar /> */}
+    <div className={`counter ${className}`}>
+      <p className={`red`}>This is some sample text</p>
+      <p
+        key={count}
+        className={`counter__count ${className ? className + '__count' : ''}`}
+      >
+        {count}
+      </p>
+    </div>
+  </>
 )
 
 export type ICounterProps = {
