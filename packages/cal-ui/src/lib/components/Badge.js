@@ -7,11 +7,12 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import listPlugin from "@fullcalendar/list";
+import s from "./Badge.module.css";
 
 const Badge = (props) => {
   return (
-    <div className={`red ${!props.value ? "badge--none" : ""} `}>
-      <h4>{props.value || 0}</h4>
+    <div>
+      <h4 className={s.red}>Here is some text</h4>
       <FullCalendar
         plugins={[dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin]}
         headerToolbar={{
