@@ -373,7 +373,11 @@ const App = () => {
               <AlertDescription>Oops! Something went wrong.</AlertDescription>
             </Alert>
           )}
-          <Calendar></Calendar>
+          <Calendar
+            events={events}
+            createEntry={createEntry}
+            getEntries={getEntries}
+          ></Calendar>
           <div className={s.mainContainer}>
             <div className={s.fullCalendarUI}>
               <div className={s.addEventButton}>

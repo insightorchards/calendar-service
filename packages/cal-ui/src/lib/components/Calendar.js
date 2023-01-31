@@ -33,10 +33,12 @@ import listPlugin from "@fullcalendar/list";
 import EventForm from "./EventForm";
 import s from "./Calendar.module.css";
 
-const Calendar = ({ events }) => {
+const Calendar = ({ events, createEntry, getEntries }) => {
   const DEFAULT_START = datePlusHours(new Date(), 1).toISOString();
   const DEFAULT_END = datePlusHours(new Date(), 2).toISOString();
 
+  // TODO: Update events to getEntries result
+  const [innerEvents, setEvents] = useState(events);
   const [modalStart, setModalStart] = useState(DEFAULT_START);
   const [modalEnd, setModalEnd] = useState(DEFAULT_END);
 
@@ -46,8 +48,14 @@ const Calendar = ({ events }) => {
   const [modalAllDay, setModalAllDay] = useState(false);
   const [rangeStart, setRangeStart] = useState("");
   const [rangeEnd, setRangeEnd] = useState("");
+  const [apiError, setApiError] = useState(false);
 
   const [displayedEventData, setDisplayedEventData] = useState({});
+
+  const flashApiErrorMessage = () => {
+    setApiError(true);
+    setTimeout(() => setApiError(false), 4000);
+  };
 
   const closeOverlay = () => {
     setShowOverlay(false);
@@ -55,6 +63,22 @@ const Calendar = ({ events }) => {
     setInCreateMode(false);
     // setShowDeletionSelectionScreen(false);
     // setShowEditSelectionScreen(false);
+  };
+
+  const setEventsWithStart = (events) => {
+    // We need to manually set the entryStart field
+    // so we can read it off the object later
+    // See https://fullcalendar.io/docs/event-parsing
+    // Can't use the 'start' field because it gets truncated
+    // for all day events when coming back from FullCalendar
+    const expandedEvents = events.map((event) => {
+      return {
+        ...event,
+        entryStart: event.start,
+      };
+    });
+
+    setEvents(expandedEvents);
   };
 
   const handleCreateEntry = async ({
@@ -77,28 +101,28 @@ const Calendar = ({ events }) => {
       recurrenceEndUtc = new Date(getDateTimeString(recurrenceEnds, startTime));
     }
 
-    // await createEntry({
-    //   title,
-    //   description,
-    //   startTimeUtc,
-    //   endTimeUtc,
-    //   allDay,
-    //   recurring,
-    //   frequency,
-    //   recurrenceBegins,
-    //   recurrenceEndUtc,
-    // }).catch(() => {
-    //   flashApiErrorMessage();
-    // });
-    // getEntries(rangeStart, rangeEnd)
-    //   .then((entries) => {
-    //     setEventsWithStart(entries);
-    //     setShowOverlay(false);
-    //     setInCreateMode(false);
-    //   })
-    //   .catch(() => {
-    //     flashApiErrorMessage();
-    //   });
+    await createEntry({
+      title,
+      description,
+      startTimeUtc,
+      endTimeUtc,
+      allDay,
+      recurring,
+      frequency,
+      recurrenceBegins,
+      recurrenceEndUtc,
+    }).catch(() => {
+      flashApiErrorMessage();
+    });
+    getEntries(rangeStart, rangeEnd)
+      .then((entries) => {
+        setEventsWithStart(entries);
+        setShowOverlay(false);
+        setInCreateMode(false);
+      })
+      .catch(() => {
+        flashApiErrorMessage();
+      });
   };
 
   const handleSaveChanges = async ({
@@ -165,6 +189,12 @@ const Calendar = ({ events }) => {
     <div className="App">
       <ChakraProvider>
         <Box>
+          {apiError && (
+            <Alert status="error" justifyContent="center">
+              <AlertIcon />
+              <AlertDescription>Oops! Something went wrong.</AlertDescription>
+            </Alert>
+          )}
           <div className={s.mainContainer}>
             <div className={s.fullCalendarUI}>
               <div className={s.addEventButton}>
