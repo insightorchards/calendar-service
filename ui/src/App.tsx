@@ -378,6 +378,7 @@ const App = () => {
             getEntries={getEntries}
             getEntry={getEntry}
             updateEntry={updateEntry}
+            deleteEntry={deleteEntry}
           ></Calendar>
           <div className={s.mainContainer}>
             <div className={s.fullCalendarUI}>

@@ -38,6 +38,7 @@ const Calendar = ({
   getEntries = async () => {},
   getEntry = async () => {},
   updateEntry = async () => {},
+  deleteEntry = async () => {},
 }) => {
   const DEFAULT_START = datePlusHours(new Date(), 1).toISOString();
   const DEFAULT_END = datePlusHours(new Date(), 2).toISOString();
@@ -102,21 +103,21 @@ const Calendar = ({
 
   const handleDeleteEntry = async (e) => {
     e.preventDefault();
-    // if (displayedEventData.recurring) {
-    //   setShowDeletionSelectionScreen(true);
-    // } else {
-    //   deleteEntry(displayedEventData._id)
-    //     .then(() => {
-    //       getEntries(rangeStart, rangeEnd).then((entries) => {
-    //         setEventsWithStart(entries);
-    //         setShowOverlay(false);
-    //       });
-    //     })
-    //     .catch(() => {
-    //       setShowOverlay(false);
-    //       flashApiErrorMessage();
-    //     });
-    // }
+    if (displayedEventData.recurring) {
+      setShowDeletionSelectionScreen(true);
+    } else {
+      deleteEntry(displayedEventData._id)
+        .then(() => {
+          getEntries(rangeStart, rangeEnd).then((entries) => {
+            setEventsWithStart(entries);
+            setShowOverlay(false);
+          });
+        })
+        .catch(() => {
+          setShowOverlay(false);
+          flashApiErrorMessage();
+        });
+    }
   };
 
   const handleEditEntry = () => setInEditMode(true);
