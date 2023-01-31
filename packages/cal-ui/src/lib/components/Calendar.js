@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import FullCalendar from "@fullcalendar/react";
 import {
   addDayToAllDayEvent,
@@ -33,12 +33,14 @@ import listPlugin from "@fullcalendar/list";
 import EventForm from "./EventForm";
 import s from "./Calendar.module.css";
 
-const Calendar = ({ events, createEntry, getEntries }) => {
+const Calendar = ({
+  createEntry = async () => {},
+  getEntries = async () => {},
+}) => {
   const DEFAULT_START = datePlusHours(new Date(), 1).toISOString();
   const DEFAULT_END = datePlusHours(new Date(), 2).toISOString();
 
-  // TODO: Update events to getEntries result
-  const [innerEvents, setEvents] = useState(events);
+  const [events, setEvents] = useState();
   const [modalStart, setModalStart] = useState(DEFAULT_START);
   const [modalEnd, setModalEnd] = useState(DEFAULT_END);
 
@@ -51,6 +53,16 @@ const Calendar = ({ events, createEntry, getEntries }) => {
   const [apiError, setApiError] = useState(false);
 
   const [displayedEventData, setDisplayedEventData] = useState({});
+
+  useEffect(() => {
+    getEntries(rangeStart, rangeEnd)
+      .then((entries) => {
+        setEventsWithStart(entries);
+      })
+      .catch(() => {
+        flashApiErrorMessage();
+      });
+  }, [rangeStart, rangeEnd]);
 
   const flashApiErrorMessage = () => {
     setApiError(true);
