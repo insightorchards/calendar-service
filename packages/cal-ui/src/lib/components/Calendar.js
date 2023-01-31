@@ -37,6 +37,7 @@ const Calendar = ({
   createEntry = async () => {},
   getEntries = async () => {},
   getEntry = async () => {},
+  updateEntry = async () => {},
 }) => {
   const DEFAULT_START = datePlusHours(new Date(), 1).toISOString();
   const DEFAULT_END = datePlusHours(new Date(), 2).toISOString();
@@ -52,14 +53,13 @@ const Calendar = ({
   const [rangeStart, setRangeStart] = useState("");
   const [rangeEnd, setRangeEnd] = useState("");
   const [apiError, setApiError] = useState(false);
+  const [pendingEdits, setPendingEdits] = useState({});
 
   const [showDeletionSelectionScreen, setShowDeletionSelectionScreen] =
     useState(false);
   const [showEditSelectionScreen, setShowEditSelectionScreen] = useState(false);
 
   const [displayedEventData, setDisplayedEventData] = useState({});
-
-  console.log({ displayedEventData });
 
   useEffect(() => {
     getEntries(rangeStart, rangeEnd)
@@ -80,8 +80,8 @@ const Calendar = ({
     setShowOverlay(false);
     setInEditMode(false);
     setInCreateMode(false);
-    // setShowDeletionSelectionScreen(false);
-    // setShowEditSelectionScreen(false);
+    setShowDeletionSelectionScreen(false);
+    setShowEditSelectionScreen(false);
   };
 
   const setEventsWithStart = (events) => {
@@ -168,7 +168,6 @@ const Calendar = ({
   const getEntryDetails = (entryId, start) => {
     getEntry(entryId, start)
       .then((data) => {
-        console.log("data in callback", data);
         setDisplayedEventData(data);
         setShowOverlay(true);
         setInEditMode(false);
@@ -205,44 +204,44 @@ const Calendar = ({
       recurrenceEndUtc = new Date(getDateTimeString(recurrenceEnds, startTime));
     }
 
-    // if (displayedEventData.recurring) {
-    //   setPendingEdits({
-    //     title,
-    //     description,
-    //     startTimeUtc,
-    //     endTimeUtc,
-    //     allDay,
-    //     recurring,
-    //     frequency,
-    //     recurrenceBegins,
-    //     recurrenceEndUtc,
-    //   });
-    //   setShowEditSelectionScreen(true);
-    //   setInEditMode(false);
-    // } else {
-    //   updateEntry(displayedEventData._id, {
-    //     title,
-    //     description,
-    //     startTimeUtc,
-    //     endTimeUtc,
-    //     allDay,
-    //     recurring,
-    //     frequency,
-    //     recurrenceBegins,
-    //     recurrenceEndUtc,
-    //   })
-    //     .then(() => {
-    //       getEntries(rangeStart, rangeEnd).then((entries) => {
-    //         setEventsWithStart(entries);
-    //       });
-    //       setShowOverlay(false);
-    //       setInEditMode(false);
-    //     })
-    //     .catch(() => {
-    //       setShowOverlay(false);
-    //       flashApiErrorMessage();
-    //     });
-    // }
+    if (displayedEventData.recurring) {
+      setPendingEdits({
+        title,
+        description,
+        startTimeUtc,
+        endTimeUtc,
+        allDay,
+        recurring,
+        frequency,
+        recurrenceBegins,
+        recurrenceEndUtc,
+      });
+      setShowEditSelectionScreen(true);
+      setInEditMode(false);
+    } else {
+      updateEntry(displayedEventData._id, {
+        title,
+        description,
+        startTimeUtc,
+        endTimeUtc,
+        allDay,
+        recurring,
+        frequency,
+        recurrenceBegins,
+        recurrenceEndUtc,
+      })
+        .then(() => {
+          getEntries(rangeStart, rangeEnd).then((entries) => {
+            setEventsWithStart(entries);
+          });
+          setShowOverlay(false);
+          setInEditMode(false);
+        })
+        .catch(() => {
+          setShowOverlay(false);
+          flashApiErrorMessage();
+        });
+    }
   };
 
   return (
