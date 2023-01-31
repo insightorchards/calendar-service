@@ -36,6 +36,7 @@ import s from "./Calendar.module.css";
 const Calendar = ({
   createEntry = async () => {},
   getEntries = async () => {},
+  getEntry = async () => {},
 }) => {
   const DEFAULT_START = datePlusHours(new Date(), 1).toISOString();
   const DEFAULT_END = datePlusHours(new Date(), 2).toISOString();
@@ -52,7 +53,13 @@ const Calendar = ({
   const [rangeEnd, setRangeEnd] = useState("");
   const [apiError, setApiError] = useState(false);
 
+  const [showDeletionSelectionScreen, setShowDeletionSelectionScreen] =
+    useState(false);
+  const [showEditSelectionScreen, setShowEditSelectionScreen] = useState(false);
+
   const [displayedEventData, setDisplayedEventData] = useState({});
+
+  console.log({ displayedEventData });
 
   useEffect(() => {
     getEntries(rangeStart, rangeEnd)
@@ -92,6 +99,27 @@ const Calendar = ({
 
     setEvents(expandedEvents);
   };
+
+  const handleDeleteEntry = async (e) => {
+    e.preventDefault();
+    // if (displayedEventData.recurring) {
+    //   setShowDeletionSelectionScreen(true);
+    // } else {
+    //   deleteEntry(displayedEventData._id)
+    //     .then(() => {
+    //       getEntries(rangeStart, rangeEnd).then((entries) => {
+    //         setEventsWithStart(entries);
+    //         setShowOverlay(false);
+    //       });
+    //     })
+    //     .catch(() => {
+    //       setShowOverlay(false);
+    //       flashApiErrorMessage();
+    //     });
+    // }
+  };
+
+  const handleEditEntry = () => setInEditMode(true);
 
   const handleCreateEntry = async ({
     title,
@@ -135,6 +163,26 @@ const Calendar = ({
       .catch(() => {
         flashApiErrorMessage();
       });
+  };
+
+  const getEntryDetails = (entryId, start) => {
+    getEntry(entryId, start)
+      .then((data) => {
+        console.log("data in callback", data);
+        setDisplayedEventData(data);
+        setShowOverlay(true);
+        setInEditMode(false);
+      })
+      .catch(() => {
+        setShowOverlay(false);
+        flashApiErrorMessage();
+      });
+  };
+
+  const openModal = (arg) => {
+    const entryId = arg.event._def.extendedProps._id;
+    const start = arg.event._def.extendedProps.entryStart;
+    getEntryDetails(entryId, start);
   };
 
   const handleSaveChanges = async ({
@@ -238,8 +286,7 @@ const Calendar = ({
                 events={events}
                 initialView="dayGridMonth"
                 selectable={true}
-                eventClick={() => {}}
-                // eventClick={openModal}
+                eventClick={openModal}
                 select={({ start, end, allDay }) => {
                   setModalAllDay(allDay);
                   setModalStart(start.toISOString());
@@ -267,6 +314,81 @@ const Calendar = ({
         <Modal isOpen={showOverlay} onClose={closeOverlay}>
           <ModalOverlay />
           <ModalContent>
+            {!inEditMode &&
+              !inCreateMode &&
+              !showDeletionSelectionScreen &&
+              !showEditSelectionScreen && (
+                <>
+                  <ModalHeader>{displayedEventData.title}</ModalHeader>
+                  <ModalCloseButton />
+                  <ModalBody>
+                    <div className={s.eventDetails}>
+                      <p>{displayedEventData.description}</p>
+                      <p className={s.eventDetailsTime}>
+                        {modalDateFormat({
+                          startTimeUtc: displayedEventData.startTimeUtc,
+                          endTimeUtc: displayedEventData.endTimeUtc,
+                          allDay: displayedEventData.allDay,
+                        })}
+                      </p>
+                      <div className={s.allDay}>
+                        {displayedEventData.allDay ? "All Day" : ""}
+                      </div>
+                    </div>
+                  </ModalBody>
+                  <ModalFooter>
+                    <Button onClick={handleEditEntry} variant="ghost">
+                      Edit
+                    </Button>
+                    <Button onClick={handleDeleteEntry} variant="ghost">
+                      Delete
+                    </Button>
+                  </ModalFooter>
+                </>
+              )}
+            {/* {showDeletionSelectionScreen && (
+              <>
+                <ModalHeader>{displayedEventData.title}</ModalHeader>
+                <ModalCloseButton />
+                <ModalBody>
+                  <p>
+                    Would you like to delete the entire recurring series or just
+                    this event?
+                  </p>
+                </ModalBody>
+                <ModalFooter>
+                  <Button onClick={handleDeleteSeries} variant="ghost">
+                    Delete series
+                  </Button>
+                  <Button
+                    onClick={handleDeleteRecurringInstance}
+                    variant="ghost"
+                  >
+                    Delete this one event
+                  </Button>
+                </ModalFooter>
+              </>
+            )}
+            {showEditSelectionScreen && (
+              <>
+                <ModalHeader>{displayedEventData.title}</ModalHeader>
+                <ModalCloseButton />
+                <ModalBody>
+                  <p>
+                    Would you like to edit the entire recurring series or just
+                    this event?
+                  </p>
+                </ModalBody>
+                <ModalFooter>
+                  <Button onClick={handleEditSeries} variant="ghost">
+                    Edit series
+                  </Button>
+                  <Button onClick={handleEditRecurringInstance} variant="ghost">
+                    Edit this one event
+                  </Button>
+                </ModalFooter>
+              </>
+            )} */}
             {inEditMode && (
               <>
                 <ModalHeader>Edit event</ModalHeader>

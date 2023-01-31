@@ -374,9 +374,9 @@ const App = () => {
             </Alert>
           )}
           <Calendar
-            events={events}
             createEntry={createEntry}
             getEntries={getEntries}
+            getEntry={getEntry}
           ></Calendar>
           <div className={s.mainContainer}>
             <div className={s.fullCalendarUI}>
