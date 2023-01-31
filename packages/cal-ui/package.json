@@ -12,6 +12,8 @@
   "repository": "https://github.com/insightorchards/calendar-service.git",
   "dependencies": {
     "@babel/polyfill": "^7.12.1",
+    "@chakra-ui/icons": "^2.0.13",
+    "@chakra-ui/react": "^2.3.7",
     "@fullcalendar/daygrid": "^5.11.3",
     "@fullcalendar/interaction": "^5.11.3",
     "@fullcalendar/list": "^5.11.3",
@@ -20,6 +22,7 @@
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "moment": "^2.29.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-scripts": "5.0.1",

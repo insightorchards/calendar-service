@@ -1,3 +1,189 @@
-.red {
-  color: red;
+.mainContainer {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.allDay {
+  font-style: italic;
+  font-weight: 600;
+  padding-left: 20px;
+  padding-top: 2px;
+}
+
+.title {
+  font-size: 22px;
+  font-weight: 600;
+  padding-left: 18px;
+  padding-top: 22px;
+}
+
+.eventDetails {
+  padding-left: 20px;
+}
+
+.eventDetailsTime {
+  display: block;
+}
+
+.addEventButton {
+  margin-bottom: 15px;
+}
+
+.closeButton {
+  display: none;
+}
+
+.formHeader {
+  font-size: 20px;
+  margin: 85px 0 20px 0;
+}
+
+.form {
+  align-items: center;
+  display: none;
+  flex-direction: column;
+}
+
+.fullCalendarUI {
+  align-self: center;
+  max-width: 1100px;
+  padding: 20px;
+  width: 100%;
+}
+
+.saveButton {
+  margin: 10px;
+}
+
+.active {
+  background-color: white;
+  bottom: 0;
+  display: block;
+  left: 0;
+  padding-top: 20px;
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 100%;
+  z-index: 2;
+}
+
+.closeButton {
+  display: block;
+  position: absolute;
+  right: 20px;
+  top: 20px;
+}
+
+@media (max-width: 600px) {
+  .addEventButton {
+    bottom: 0;
+    position: fixed;
+    right: 20px;
+    z-index: 2;
+  }
+
+  .createEventButton {
+    background: rgb(157, 156, 156);
+    display: flex;
+    height: 50px;
+    justify-content: center;
+    width: 100px;
+  }
+
+  .fullCalendarUI {
+    padding: 10px;
+    width: 100%;
+  }
+
+  /* WRAPPER FOR ALL TOOLBAR BUTTONS AND TITLE */
+  :global(.fc-header-toolbar) {
+    display: flex;
+    flex-direction: column;
+    margin-top: 25px;
+    position: relative;
+  }
+
+  /* TOOLBAR TITLE */
+  :global(.fc-toolbar-title) {
+    padding-bottom: 50px;
+  }
+
+  /* DIV FC TOOLBAR CHUNK */
+  :global(div.fc-header-toolbar.fc-toolbar.fc-toolbar-ltr > div:nth-child(1)) {
+    height: 0px;
+  }
+
+  /* WRAPPER FOR ARROWS AND TODAY BUTTON UNSET BECAUSE IT IS POSITION RELATIVE*/
+  :global(
+      div.fc-header-toolbar.fc-toolbar.fc-toolbar-ltr > div:nth-child(1) > div
+    ) {
+    position: unset;
+  }
+
+  /* PARENT DIV WRAPPER FOR MONTH DAY AND WEEK WITH DEFAULT RELATIVE POSITIONING */
+  :global(
+      div.fc-header-toolbar.fc-toolbar.fc-toolbar-ltr > div:nth-child(3) > div
+    ) {
+    position: unset;
+  }
+
+  /* LEFT ARROW */
+  :global(button.fc-prev-button.fc-button.fc-button-primary) {
+    border-radius: 5px;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 50px;
+  }
+
+  /* RIGHT ARROW */
+  :global(button.fc-next-button.fc-button.fc-button-primary) {
+    border-radius: 5px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 50px;
+  }
+
+  /* TODAY BUTTON */
+  :global(
+      div.fc-header-toolbar.fc-toolbar.fc-toolbar-ltr
+        > div:nth-child(1)
+        > button
+    ) {
+    border-radius: 5px;
+    bottom: 0;
+    left: 0;
+    margin: 0;
+    position: absolute;
+    width: 23%;
+  }
+
+  /* MONTH BUTTON */
+  :global(button.fc-dayGridMonth-button.fc-button.fc-button-primary) {
+    border-radius: 5px 0 0 5px;
+    bottom: 0;
+    left: 25%;
+    position: absolute;
+    width: 25%;
+  }
+
+  /* WEEK BUTTON */
+  :global(button.fc-timeGridWeek-button.fc-button.fc-button-primary) {
+    bottom: 0;
+    left: 50%;
+    position: absolute;
+    width: 25%;
+  }
+
+  /* DAY BUTTON */
+  :global(button.fc-timeGridDay-button.fc-button.fc-button-primary) {
+    border-radius: 0 5px 5px 0;
+    bottom: 0;
+    left: 75%;
+    position: absolute;
+    width: 25%;
+  }
 }

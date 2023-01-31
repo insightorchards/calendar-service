@@ -1,3 +1,4 @@
+import Button from "./lib/components/Button";
 import Calendar from "./lib/components/Calendar";
 import "./App.css";
 
@@ -14,8 +15,11 @@ function App() {
       }}
     >
       <p>Wow, look at this component library.</p>
-      <h5>Here's a calendar:</h5>
+      <h5>A notification badge:</h5>
       <Calendar />
+      <br />
+      <h5>A button:</h5>
+      <Button label="Enter" kind="primary" />
     </div>
   );
 }
