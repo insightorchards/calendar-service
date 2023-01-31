@@ -1,0 +1,51 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+  padding: 0 20px 0 20px;
+  width: 100%;
+}
+
+.formTitleInput {
+  border-radius: 7px;
+  border: 1px solid gray;
+  display: flex;
+}
+
+.formInput {
+  border-radius: 7px;
+  border: 1px solid gray;
+  display: flex;
+  flex-grow: 1;
+  padding: 6px 10px;
+  width: 100%;
+}
+
+.formSubmit {
+  align-self: center;
+  background-color: rgb(213, 211, 211);
+  border-radius: 7px;
+  border: 1px solid gray;
+  margin: 20px;
+  padding: 6px 10px;
+  width: 120px;
+}
+
+.formItem {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.checkbox {
+  margin: 10px 0px;
+}
+
+.error {
+  background-color: rgba(255, 0, 0, 0.31);
+  border-radius: 7px;
+  border: 2px rgb(184, 48, 27) solid;
+  padding: 6px 10px;
+  text-align: center;
+}
