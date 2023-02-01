@@ -1,3 +1,10 @@
+# NPM module publishing basics
+
+1. Run `npm run build` to build the project and generate the files in the /dist folder
+2. Update the version number in the package.json file. We use [semantic versioning](https://semver.org/)
+3. Run `npm publish` to publish a new version of the package
+4. Import the package into project by running `npm install @insightorchards/calendar-ui@<version-number>`
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
