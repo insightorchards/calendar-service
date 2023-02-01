@@ -133,6 +133,47 @@ const Calendar = ({
       });
   };
 
+  const handleEditRecurring = ({ applyToSeries }) => {
+    const entryId = displayedEventData._id;
+
+    updateEntry(
+      entryId,
+      {
+        title: pendingEdits.title,
+        description: pendingEdits.description,
+        startTimeUtc: pendingEdits.startTimeUtc,
+        endTimeUtc: pendingEdits.endTimeUtc,
+        allDay: pendingEdits.allDay,
+        recurring: pendingEdits.recurring,
+        frequency: pendingEdits.frequency,
+        recurrenceBegins: pendingEdits.recurrenceBegins,
+        recurrenceEndUtc: pendingEdits.recurrenceEndUtc,
+      },
+      displayedEventData.startTimeUtc,
+      applyToSeries,
+    )
+      .then(() => {
+        getEntries(rangeStart, rangeEnd).then((entries) => {
+          setEventsWithStart(entries);
+        });
+        setShowOverlay(false);
+        setShowEditSelectionScreen(false);
+      })
+      .catch(() => {
+        setShowOverlay(false);
+        setShowEditSelectionScreen(false);
+        flashApiErrorMessage();
+      });
+  };
+
+  const handleEditSeries = () => {
+    handleEditRecurring({ applyToSeries: true });
+  };
+
+  const handleEditRecurringInstance = () => {
+    handleEditRecurring({ applyToSeries: false });
+  };
+
   const handleDeleteEntry = async (e) => {
     e.preventDefault();
     if (displayedEventData.recurring) {
@@ -378,7 +419,7 @@ const Calendar = ({
                   </ModalFooter>
                 </>
               )}
-            {/* {showDeletionSelectionScreen && (
+            {showDeletionSelectionScreen && (
               <>
                 <ModalHeader>{displayedEventData.title}</ModalHeader>
                 <ModalCloseButton />
@@ -420,7 +461,7 @@ const Calendar = ({
                   </Button>
                 </ModalFooter>
               </>
-            )} */}
+            )}
             {inEditMode && (
               <>
                 <ModalHeader>Edit event</ModalHeader>
