@@ -101,6 +101,38 @@ const Calendar = ({
     setEvents(expandedEvents);
   };
 
+  const handleDeleteSeries = () => {
+    deleteEntry(displayedEventData._id, displayedEventData.startTimeUtc, true)
+      .then(() => {
+        getEntries(rangeStart, rangeEnd).then((entries) => {
+          setEventsWithStart(entries);
+          setShowDeletionSelectionScreen(false);
+          setShowOverlay(false);
+        });
+      })
+      .catch(() => {
+        setShowOverlay(false);
+        setShowDeletionSelectionScreen(false);
+        flashApiErrorMessage();
+      });
+  };
+
+  const handleDeleteRecurringInstance = () => {
+    deleteEntry(displayedEventData._id, displayedEventData.startTimeUtc, false)
+      .then(() => {
+        getEntries(rangeStart, rangeEnd).then((entries) => {
+          setEventsWithStart(entries);
+          setShowDeletionSelectionScreen(false);
+          setShowOverlay(false);
+        });
+      })
+      .catch(() => {
+        setShowOverlay(false);
+        setShowDeletionSelectionScreen(false);
+        flashApiErrorMessage();
+      });
+  };
+
   const handleDeleteEntry = async (e) => {
     e.preventDefault();
     if (displayedEventData.recurring) {
