@@ -2,14 +2,14 @@ import { render, screen } from "@testing-library/react";
 import React from "react";
 
 import userEvent from "@testing-library/user-event";
-import { getDateTimeString } from "./lib";
+import { getDateTimeString } from "../helpers/lib";
 import EventForm from "./EventForm";
 
 describe("EventForm", () => {
-  let currentHour: number;
-  let currentMinute: number;
+  let currentHour;
+  let currentMinute;
   beforeAll(() => {
-    jest.useFakeTimers("modern" as FakeTimersConfig);
+    jest.useFakeTimers("modern");
     const date = new Date("2022-02-15T04:00");
     jest.setSystemTime(date);
     currentHour = new Date().getHours();

@@ -4,21 +4,9 @@ import {
   getDateTimeString,
   padNumberWith0Zero,
   timeFormat,
-} from "./lib";
+} from "../helpers/lib";
 import { Checkbox, RadioGroup, Radio, Stack } from "@chakra-ui/react";
 import s from "./EventForm.module.css";
-
-interface FormProps {
-  initialStart: string; // ex. "2023-01-25T08:00:00.000Z"
-  initialEnd: string; // ex. "2023-01-25T09:00:00.000Z"
-  initialTitle: string;
-  initialDescription: string;
-  initialAllDay: boolean;
-  initialRecurring: boolean;
-  initialRecurrenceEnd: string; // ex. "2023-01-25T08:00:00.000Z"
-  onFormSubmit: Function;
-  isCreate: boolean;
-}
 
 const EventForm = ({
   initialStart,
@@ -30,50 +18,36 @@ const EventForm = ({
   initialRecurrenceEnd,
   onFormSubmit,
   isCreate,
-}: FormProps) => {
-  const [startDate, setStartDate] = useState<string>(
+}) => {
+  const [startDate, setStartDate] = useState(
     formatDate(new Date(initialStart)),
   );
-  const [endDate, setEndDate] = useState<string>(
-    formatDate(new Date(initialEnd)),
-  );
-  const [startTime, setStartTime] = useState<string>(
+  const [endDate, setEndDate] = useState(formatDate(new Date(initialEnd)));
+  const [startTime, setStartTime] = useState(
     timeFormat(new Date(initialStart)),
   );
-
-  const [endTime, setEndTime] = useState<string>(
-    timeFormat(new Date(initialEnd)),
-  );
-
-  const [error, setError] = useState<string | null>(null);
-  const [title, setTitle] = useState<string>(initialTitle);
-  const [description, setDescription] = useState<string>(initialDescription);
-  const [allDay, setAllDay] = useState<boolean>(initialAllDay);
-  const [recurring, setRecurring] = useState<boolean>(initialRecurring);
-  const [recurrenceFrequency, setRecurrenceFrequency] =
-    useState<string>("monthly");
-
-  const currentHour: number = new Date().getHours();
-
-  const DEFAULT_START_TIME: string = `${padNumberWith0Zero(
-    currentHour + 1,
-  )}:00`;
-  const DEFAULT_END_TIME: string = `${padNumberWith0Zero(currentHour + 2)}:00`;
-
+  const [endTime, setEndTime] = useState(timeFormat(new Date(initialEnd)));
+  const [error, setError] = useState(null);
+  const [title, setTitle] = useState(initialTitle);
+  const [description, setDescription] = useState(initialDescription);
+  const [allDay, setAllDay] = useState(initialAllDay);
+  const [recurring, setRecurring] = useState(initialRecurring);
+  const [recurrenceFrequency, setRecurrenceFrequency] = useState("monthly");
+  const currentHour = new Date().getHours();
+  const DEFAULT_START_TIME = `${padNumberWith0Zero(currentHour + 1)}:00`;
+  const DEFAULT_END_TIME = `${padNumberWith0Zero(currentHour + 2)}:00`;
   const recurrenceBeginDate = new Date(getDateTimeString(startDate, startTime));
-
-  const [recurrenceEndDate, setRecurrenceEndDate] = useState<string>(
+  const [recurrenceEndDate, setRecurrenceEndDate] = useState(
     formatDate(new Date(initialRecurrenceEnd)),
   );
 
-  const handleFormSubmit = async (_: React.MouseEvent<HTMLButtonElement>) => {
-    const startDateAndTime: string = getDateTimeString(startDate, startTime);
-    const endDateAndTime: string = getDateTimeString(endDate, endTime);
-    const recurrenceEndDateAndTime: string = getDateTimeString(
+  const handleFormSubmit = async (_) => {
+    const startDateAndTime = getDateTimeString(startDate, startTime);
+    const endDateAndTime = getDateTimeString(endDate, endTime);
+    const recurrenceEndDateAndTime = getDateTimeString(
       recurrenceEndDate,
       startTime,
     );
-
     if (title === "") {
       setError("Error: Add Title");
       return;
