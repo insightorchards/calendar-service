@@ -1,10 +1,10 @@
-const {
+import {
   addMillisecondsToDate,
   getMillisecondsBetween,
   yearAfter,
   dateMinusMinutes,
   datePlusMinutes,
-} = require("./dateHelpers");
+} from "./dateHelpers";
 
 describe("yearAfter", () => {
   it("returns a date one year in the future", () => {

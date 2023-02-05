@@ -1,13 +1,14 @@
 import { Request, Response, NextFunction } from "express";
 import { CalendarEntry } from "../models/calendarEntry";
 import { EntryException } from "../models/entryException";
+import mongoose from "mongoose";
 import {
   dayAfter,
   getMillisecondsBetween,
   addMillisecondsToDate,
   dateMinusMinutes,
   datePlusMinutes,
-} from "../lib/dateHelpers";
+} from "../helpers/dateHelpers";
 import { RRule, RRuleSet, rrulestr } from "rrule";
 
 const FREQUENCY_MAPPING = {
@@ -17,6 +18,19 @@ const FREQUENCY_MAPPING = {
 };
 
 type CalendarEntry = NonRecurringEntry | RecurringEntry;
+
+type EntryException = {
+  deleted: boolean;
+  modified: boolean;
+  entryId: mongoose.Schema.Types.ObjectId;
+  title: string;
+  description?: string;
+  allDay: boolean;
+  startTimeUtc: Date;
+  endTimeUtc: Date;
+  createdAt: Date;
+  updatedAt: Date;
+};
 
 type NonRecurringEntry = {
   id: string;
@@ -308,7 +322,7 @@ export const deleteCalendarEntry = async (
     if (!entryToDelete) {
       throw new Error("Entry to delete is not found");
     }
-    console.log({ entryToDelete });
+
     if (isRecurringEntry(entryToDelete) && applyToSeries === "false") {
       const existingModifiedExceptions = await findMatchingModifiedExceptions(
         start,

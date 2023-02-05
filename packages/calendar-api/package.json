@@ -1,12 +1,38 @@
 {
   "name": "@insightorchards/calendar-api",
-  "version": "1.0.0",
+  "version": "0.0.29",
   "description": "A calendar API package",
-  "main": "index.js",
+  "main": "lib/index.js",
   "repository": "https://github.com/insightorchards/calendar-service.git",
   "scripts": {
-    "test": "exit 0"
+    "test": "jest --runInBand --detectOpenHandles --forceExit",
+    "build": "tsc"
+  },
+  "files": [
+    "lib/**/*"
+  ],
+  "jest": {
+    "transform": {
+      "^.+\\.(ts|tsx)$": "ts-jest"
+    }
   },
   "author": "Insight Orchards",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "@types/express": "^4.17.17",
+    "@types/jest": "^29.4.0",
+    "@types/mongodb": "^4.0.7",
+    "@types/mongoose": "^5.11.97",
+    "mongodb-memory-server": "^8.9.3",
+    "ts-jest": "^29.0.5",
+    "typescript": "^4.9.5",
+    "supertest": "^6.3.0"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "mongodb": "^4.10.0",
+    "mongoose": "^6.6.7",
+    "rrule": "^2.7.1"
+  }
 }

@@ -47,4 +47,4 @@ const EntryException = mongoose.model(
   "entryExceptions",
 );
 
-module.exports = { EntryException };
+export { EntryException };

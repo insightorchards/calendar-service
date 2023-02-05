@@ -1,13 +1,16 @@
 const { connectDB, dropDB, dropCollections } = require("./setupTestDb");
 const { CalendarEntry } = require("./models/calendarEntry");
 const supertest = require("supertest");
-const { app } = require("./app");
-const { dayAfter, yearAfter } = require("./lib/dateHelpers");
+import { app } from "./setupTestApp";
+const { dayAfter, yearAfter } = require("./helpers/dateHelpers");
 const { RRule, RRuleSet, rrulestr } = require("rrule");
 const { EntryException } = require("./models/entryException");
 
+let server: any;
+
 beforeAll(async () => {
   await connectDB();
+  server = app.listen(4001);
 });
 
 afterEach(async () => {
@@ -16,6 +19,7 @@ afterEach(async () => {
 
 afterAll(async () => {
   await dropDB();
+  await server.close();
 });
 
 describe("POST /seedDatabase", () => {
