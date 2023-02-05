@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-import { addCalendarRoutes } from "./app";
+const { addCalendarRoutes } = require("./app");
 
 const app = express();
 
@@ -11,4 +11,4 @@ const connectionString = "mongodb://127.0.0.1:27017/calendar-app";
 
 addCalendarRoutes(app, connectionString);
 
-export { app };
+module.exports = { app };

@@ -1,7 +1,7 @@
 const { connectDB, dropDB, dropCollections } = require("./setupTestDb");
 const { CalendarEntry } = require("./models/calendarEntry");
 const supertest = require("supertest");
-import { app } from "./setupTestApp";
+const { app } = require("./setupTestApp");
 const { dayAfter, yearAfter } = require("./helpers/dateHelpers");
 const { RRule, RRuleSet, rrulestr } = require("rrule");
 const { EntryException } = require("./models/entryException");
