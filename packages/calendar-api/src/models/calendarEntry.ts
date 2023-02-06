@@ -53,7 +53,8 @@ const calendarEntrySchema = new mongoose.Schema(
   },
 );
 
-calendarEntrySchema.pre("remove", { document: true }, function (next) {
+calendarEntrySchema.pre("remove", { document: true }, function (next: any) {
+  // @ts-ignore
   EntryException.remove({ entryId: this._id }).exec();
   next();
 });
@@ -64,4 +65,4 @@ const CalendarEntry = mongoose.model(
   "calendarEntries",
 );
 
-module.exports = { CalendarEntry };
+export { CalendarEntry };
