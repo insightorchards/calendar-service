@@ -15,7 +15,7 @@ const PORT = process.env.NODE_ENV === "test" ? 4001 : 4000;
 
 const start = async () => {
   try {
-    addCalendarRoutes(app, connectionString);
+    await addCalendarRoutes(app, connectionString);
     app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
   } catch (error) {
     console.error(error);
