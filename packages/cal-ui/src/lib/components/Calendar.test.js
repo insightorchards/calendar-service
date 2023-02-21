@@ -721,7 +721,7 @@ describe("Calendar", () => {
 describe("App - edge cases for late night times", () => {
   describe("10:40PM", () => {
     beforeAll(() => {
-      jest.useFakeTimers("modern" as FakeTimersConfig);
+      jest.useFakeTimers("modern");
       const date = new Date("2022-02-15T10:40");
       jest.setSystemTime(date);
     });
@@ -745,7 +745,7 @@ describe("App - edge cases for late night times", () => {
   });
   describe("11:40PM", () => {
     beforeAll(() => {
-      jest.useFakeTimers("modern" as FakeTimersConfig);
+      jest.useFakeTimers("modern");
       const date = new Date("2022-02-15T11:40");
       jest.setSystemTime(date);
     });
