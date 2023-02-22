@@ -733,9 +733,15 @@ describe("App - edge cases for late night times", () => {
     it("defaults to today's date and a one hour time window starting at the next hour", () => {
       mockCreateEntry.mockResolvedValue({});
       mockGetEntries.mockResolvedValue([]);
-      waitFor(() => {
-        render(<App />);
-      });
+      render(
+        <Calendar
+          createEntry={mockCreateEntry}
+          getEntries={mockGetEntries}
+          getEntry={mockGetEntry}
+          updateEntry={mockUpdateEntry}
+          deleteEntry={mockDeleteEntry}
+        />,
+      );
       userEvent.click(screen.getByLabelText("add event"));
       expect(screen.getByLabelText("Start Date")).toHaveValue("2022-02-15");
       expect(screen.getByLabelText("End Date")).toHaveValue("2022-02-16");
@@ -758,7 +764,15 @@ describe("App - edge cases for late night times", () => {
       mockCreateEntry.mockResolvedValue({});
       mockGetEntries.mockResolvedValue([]);
       waitFor(() => {
-        render(<App />);
+        render(
+          <Calendar
+            createEntry={mockCreateEntry}
+            getEntries={mockGetEntries}
+            getEntry={mockGetEntry}
+            updateEntry={mockUpdateEntry}
+            deleteEntry={mockDeleteEntry}
+          />,
+        );
       });
       userEvent.click(screen.getByLabelText("add event"));
       expect(screen.getByLabelText("Start Date")).toHaveValue("2022-02-16");
