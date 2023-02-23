@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import FullCalendar from "@fullcalendar/react";
 import {
   addDayToAllDayEvent,
+  combineDateAndHours,
   dateMinusOneDay,
   datePlusHours,
   formatDate,
@@ -40,8 +41,19 @@ const Calendar = ({
   updateEntry = async () => {},
   deleteEntry = async () => {},
 }) => {
-  const DEFAULT_START = datePlusHours(new Date(), 1).toISOString();
-  const DEFAULT_END = datePlusHours(new Date(), 2).toISOString();
+  const currentHour = new Date().getHours();
+
+  const resetMinutes = (date) => {
+    if (!date instanceof Date) return;
+    date.setMinutes(0);
+    return date;
+  };
+  const DEFAULT_START = resetMinutes(
+    datePlusHours(combineDateAndHours(new Date(), currentHour), 1),
+  ).toISOString();
+  const DEFAULT_END = resetMinutes(
+    datePlusHours(combineDateAndHours(new Date(), currentHour), 2),
+  ).toISOString();
 
   const [events, setEvents] = useState();
   const [modalStart, setModalStart] = useState(DEFAULT_START);

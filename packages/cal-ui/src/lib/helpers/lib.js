@@ -32,8 +32,17 @@ const dateFormatWithYear = (date) => {
   })} ${date.getDate()} ${date.getFullYear()}`;
 };
 
-const datePlusHours = (date, hours) => {
-  date.setHours(date.getHours() + hours);
+const datePlusHours = (date, h) => {
+  if (!date instanceof Date) return;
+  const resultDate = new Date();
+  const tempDate = new Date(date);
+  resultDate.setTime(tempDate.getTime() + h * 60 * 60 * 1000);
+  return resultDate;
+};
+
+const combineDateAndHours = (dateString, hours) => {
+  const date = new Date(dateString);
+  date.setHours(hours);
   return date;
 };
 
@@ -94,6 +103,7 @@ const addDayToAllDayEvent = (event) => {
 
 export {
   addDayToAllDayEvent,
+  combineDateAndHours,
   dateFormat,
   dateFormatWithYear,
   dateMinusOneDay,
