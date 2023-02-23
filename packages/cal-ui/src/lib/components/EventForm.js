@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import {
+  combineDateAndHours,
+  datePlusHours,
   formatDate,
   getDateTimeString,
   padNumberWith0Zero,
@@ -33,9 +35,30 @@ const EventForm = ({
   const [allDay, setAllDay] = useState(initialAllDay);
   const [recurring, setRecurring] = useState(initialRecurring);
   const [recurrenceFrequency, setRecurrenceFrequency] = useState("monthly");
+
   const currentHour = new Date().getHours();
-  const DEFAULT_START_TIME = `${padNumberWith0Zero(currentHour + 1)}:00`;
-  const DEFAULT_END_TIME = `${padNumberWith0Zero(currentHour + 2)}:00`;
+
+  const DEFAULT_START_DATE_OBJECT = datePlusHours(
+    combineDateAndHours(startDate, currentHour),
+    1,
+  );
+  const DEFAULT_END_DATE_OBJECT = datePlusHours(
+    combineDateAndHours(endDate, currentHour),
+    2,
+  );
+
+  const DEFAULT_START_DATE =
+    DEFAULT_START_DATE_OBJECT.toISOString().split("T")[0];
+
+  const DEFAULT_END_DATE = DEFAULT_END_DATE_OBJECT.toISOString().split("T")[0];
+
+  const DEFAULT_START_TIME = `${padNumberWith0Zero(
+    DEFAULT_START_DATE_OBJECT.getHours(),
+  )}:00`;
+  const DEFAULT_END_TIME = `${padNumberWith0Zero(
+    DEFAULT_END_DATE_OBJECT.getHours(),
+  )}:00`;
+
   const recurrenceBeginDate = new Date(getDateTimeString(startDate, startTime));
   const [recurrenceEndDate, setRecurrenceEndDate] = useState(
     formatDate(new Date(initialRecurrenceEnd)),
@@ -149,6 +172,8 @@ const EventForm = ({
             if (e.target.checked === false) {
               setStartTime(DEFAULT_START_TIME);
               setEndTime(DEFAULT_END_TIME);
+              setStartDate(DEFAULT_START_DATE);
+              setEndDate(DEFAULT_END_DATE);
             }
           }}
         >

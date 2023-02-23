@@ -66,13 +66,7 @@ describe("Calendar", () => {
   describe("events", () => {
     it("defaults to today's date and a one hour time window", () => {
       mockCreateEntry.mockResolvedValue({});
-      mockGetEntries.mockResolvedValue([
-        {
-          end: "2022-02-27T05:43:37.868Z",
-          start: "2022-02-27T05:43:37.868Z",
-          title: "Berta goes to the baseball game!",
-        },
-      ]);
+      mockGetEntries.mockResolvedValue([]);
       waitFor(() => {
         render(
           <Calendar
@@ -621,17 +615,29 @@ describe("Calendar", () => {
       mockGetEntries.mockResolvedValue([
         {
           _id: "123",
-          end: "2022-02-27T05:43:37.868Z",
-          start: "2022-02-27T05:43:37.868Z",
+          end: "2022-02-27T05:43:37.868Z", // data doesn't come through without this
+          start: "2022-02-27T05:43:37.868Z", // data doesn't come through without this
+          endTimeUtc: "2022-02-27T05:43:37.868Z",
+          startTimeUtc: "2022-02-27T05:43:37.868Z",
           title: "Dance",
+          allDay: false,
+          recurring: false,
+          creatorId: "bobby123",
+          eventId: "bobbybday",
         },
       ]);
 
       mockGetEntry.mockResolvedValue({
         _id: "123",
-        end: "2022-02-27T05:43:37.868Z",
-        start: "2022-02-27T05:43:37.868Z",
+        end: "2022-02-27T05:43:37.868Z", // data doesn't come through without this
+        start: "2022-02-27T05:43:37.868Z", // data doesn't come through without this
+        endTimeUtc: "2022-02-27T05:43:37.868Z",
+        startTimeUtc: "2022-02-27T05:43:37.868Z",
         title: "Dance",
+        allDay: false,
+        recurring: false,
+        creatorId: "bobby123",
+        eventId: "bobbybday",
       });
 
       mockUpdateEntry.mockRejectedValue("Error in updateEntry");
@@ -720,6 +726,71 @@ describe("Calendar", () => {
         await deleteButton.click();
       });
       expect(await screen.findByRole("alert")).toBeVisible();
+    });
+  });
+});
+
+describe("App - edge cases for late night times", () => {
+  describe("10:40PM", () => {
+    beforeAll(() => {
+      jest.useFakeTimers("modern");
+      const date = new Date("2022-02-15T22:40");
+      jest.setSystemTime(date);
+    });
+
+    afterAll(() => {
+      jest.useRealTimers();
+    });
+
+    it("defaults to today's date and a one hour time window starting at the next hour", () => {
+      mockCreateEntry.mockResolvedValue({});
+      mockGetEntries.mockResolvedValue([]);
+      render(
+        <Calendar
+          createEntry={mockCreateEntry}
+          getEntries={mockGetEntries}
+          getEntry={mockGetEntry}
+          updateEntry={mockUpdateEntry}
+          deleteEntry={mockDeleteEntry}
+        />,
+      );
+      userEvent.click(screen.getByLabelText("add event"));
+      expect(screen.getByLabelText("Start Date")).toHaveValue("2022-02-15");
+      expect(screen.getByLabelText("End Date")).toHaveValue("2022-02-16");
+      expect(screen.getByLabelText("Start Time")).toHaveValue("23:00"); // in real app this will be 11:00PM
+      expect(screen.getByLabelText("End Time")).toHaveValue("00:00"); // in real app this will be 12:00PM
+    });
+  });
+  describe("11:40PM", () => {
+    beforeAll(() => {
+      jest.useFakeTimers("modern");
+      const date = new Date("2022-02-15T23:40");
+      jest.setSystemTime(date);
+    });
+
+    afterAll(() => {
+      jest.useRealTimers();
+    });
+
+    it("defaults to today's date and a one hour time window starting at the next hour", () => {
+      mockCreateEntry.mockResolvedValue({});
+      mockGetEntries.mockResolvedValue([]);
+      waitFor(() => {
+        render(
+          <Calendar
+            createEntry={mockCreateEntry}
+            getEntries={mockGetEntries}
+            getEntry={mockGetEntry}
+            updateEntry={mockUpdateEntry}
+            deleteEntry={mockDeleteEntry}
+          />,
+        );
+      });
+      userEvent.click(screen.getByLabelText("add event"));
+      expect(screen.getByLabelText("Start Date")).toHaveValue("2022-02-16");
+      expect(screen.getByLabelText("End Date")).toHaveValue("2022-02-16");
+      expect(screen.getByLabelText("Start Time")).toHaveValue("00:00"); // in real app this will be 12:00PM
+      expect(screen.getByLabelText("End Time")).toHaveValue("01:00");
     });
   });
 });

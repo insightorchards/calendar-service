@@ -32,8 +32,8 @@ const getEntries = async (start: string, end: string) => {
         return {
           _id: event._id,
           title: event.title,
-          start: event.startTimeUtc,
-          end: event.endTimeUtc,
+          startTimeUtc: event.startTimeUtc,
+          endTimeUtc: event.endTimeUtc,
           allDay: event.allDay,
           recurring: event.recurring,
           recurrenceEnd: event.recurrenceEndsUtc,
