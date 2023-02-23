@@ -615,17 +615,29 @@ describe("Calendar", () => {
       mockGetEntries.mockResolvedValue([
         {
           _id: "123",
-          end: "2022-02-27T05:43:37.868Z",
-          start: "2022-02-27T05:43:37.868Z",
+          end: "2022-02-27T05:43:37.868Z", // data doesn't come through without this
+          start: "2022-02-27T05:43:37.868Z", // data doesn't come through without this
+          endTimeUtc: "2022-02-27T05:43:37.868Z",
+          startTimeUtc: "2022-02-27T05:43:37.868Z",
           title: "Dance",
+          allDay: false,
+          recurring: false,
+          creatorId: "bobby123",
+          eventId: "bobbybday",
         },
       ]);
 
       mockGetEntry.mockResolvedValue({
         _id: "123",
-        end: "2022-02-27T05:43:37.868Z",
-        start: "2022-02-27T05:43:37.868Z",
+        end: "2022-02-27T05:43:37.868Z", // data doesn't come through without this
+        start: "2022-02-27T05:43:37.868Z", // data doesn't come through without this
+        endTimeUtc: "2022-02-27T05:43:37.868Z",
+        startTimeUtc: "2022-02-27T05:43:37.868Z",
         title: "Dance",
+        allDay: false,
+        recurring: false,
+        creatorId: "bobby123",
+        eventId: "bobbybday",
       });
 
       mockUpdateEntry.mockRejectedValue("Error in updateEntry");

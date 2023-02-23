@@ -47,9 +47,6 @@ const EventForm = ({
     2,
   );
 
-  // console.log("initialStart", initialStart);
-  // console.log("startDate", startDate);
-  // console.log("DEFAULT_START_DATE_OBJECT", DEFAULT_START_DATE_OBJECT);
   const DEFAULT_START_DATE =
     DEFAULT_START_DATE_OBJECT.toISOString().split("T")[0];
 
