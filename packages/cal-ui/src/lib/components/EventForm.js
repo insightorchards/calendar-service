@@ -21,7 +21,6 @@ const EventForm = ({
   onFormSubmit,
   isCreate,
 }) => {
-  console.log("initialStart", initialStart);
   const [startDate, setStartDate] = useState(
     formatDate(new Date(initialStart)),
   );
@@ -47,16 +46,13 @@ const EventForm = ({
     combineDateAndHours(endDate, currentHour),
     2,
   );
-  console.log("startDate", startDate);
 
-  console.log("DEFAULT_start_DATE_OBJECT", DEFAULT_START_DATE_OBJECT);
-
-  console.log("endDate", endDate);
-
-  console.log("DEFAULT_End_DATE_OBJECT", DEFAULT_END_DATE_OBJECT);
-
+  // console.log("initialStart", initialStart);
+  // console.log("startDate", startDate);
+  // console.log("DEFAULT_START_DATE_OBJECT", DEFAULT_START_DATE_OBJECT);
   const DEFAULT_START_DATE =
     DEFAULT_START_DATE_OBJECT.toISOString().split("T")[0];
+
   const DEFAULT_END_DATE = DEFAULT_END_DATE_OBJECT.toISOString().split("T")[0];
 
   const DEFAULT_START_TIME = `${padNumberWith0Zero(

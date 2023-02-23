@@ -718,7 +718,7 @@ describe("Calendar", () => {
   });
 });
 
-describe.only("App - edge cases for late night times", () => {
+describe("App - edge cases for late night times", () => {
   describe("10:40PM", () => {
     beforeAll(() => {
       jest.useFakeTimers("modern");
@@ -745,11 +745,11 @@ describe.only("App - edge cases for late night times", () => {
       userEvent.click(screen.getByLabelText("add event"));
       expect(screen.getByLabelText("Start Date")).toHaveValue("2022-02-15");
       expect(screen.getByLabelText("End Date")).toHaveValue("2022-02-16");
-      expect(screen.getByLabelText("Start Time")).toHaveValue("11:00");
-      expect(screen.getByLabelText("End Time")).toHaveValue("12:00");
+      expect(screen.getByLabelText("Start Time")).toHaveValue("23:00"); // in real app this will be 11:00PM
+      expect(screen.getByLabelText("End Time")).toHaveValue("00:00"); // in real app this will be 12:00PM
     });
   });
-  describe.skip("11:40PM", () => {
+  describe("11:40PM", () => {
     beforeAll(() => {
       jest.useFakeTimers("modern");
       const date = new Date("2022-02-15T23:40");
@@ -777,7 +777,7 @@ describe.only("App - edge cases for late night times", () => {
       userEvent.click(screen.getByLabelText("add event"));
       expect(screen.getByLabelText("Start Date")).toHaveValue("2022-02-16");
       expect(screen.getByLabelText("End Date")).toHaveValue("2022-02-16");
-      expect(screen.getByLabelText("Start Time")).toHaveValue("12:00");
+      expect(screen.getByLabelText("Start Time")).toHaveValue("00:00"); // in real app this will be 12:00PM
       expect(screen.getByLabelText("End Time")).toHaveValue("01:00");
     });
   });
