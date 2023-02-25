@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { CalendarEntry } from "../models/calendarEntry";
 import { EntryException } from "../models/entryException";
-import mongoose from "mongoose";
+import { type CalendarEntryType, type NonRecurringEntry, type RecurringEntry, } from "../types"
 import {
   dayAfter,
   getMillisecondsBetween,
@@ -10,6 +10,7 @@ import {
   datePlusMinutes,
 } from "../helpers/dateHelpers";
 import { RRule, RRuleSet, rrulestr } from "rrule";
+import { addDeletedDatesToRuleSet, expandModifiedEntryException, findMatchingModifiedExceptions, getExpandedEntryExceptions, getExpandedRecurringEntries } from "../helpers/entriesHelpers";
 
 const FREQUENCY_MAPPING = {
   monthly: RRule.MONTHLY,
@@ -17,73 +18,8 @@ const FREQUENCY_MAPPING = {
   daily: RRule.DAILY,
 };
 
-type CalendarEntry = NonRecurringEntry | RecurringEntry;
-
-type EntryException = {
-  deleted: boolean;
-  modified: boolean;
-  entryId: mongoose.Schema.Types.ObjectId;
-  title: string;
-  description?: string;
-  allDay: boolean;
-  startTimeUtc: Date;
-  endTimeUtc: Date;
-  createdAt: Date;
-  updatedAt: Date;
-};
-
-type NonRecurringEntry = {
-  id: string;
-  eventId: string;
-  creatorId: string;
-  title: string;
-  description?: string;
-  allDay: boolean;
-  recurring: false;
-  startTimeUtc: Date;
-  endTimeUtc: Date;
-  createdAt: Date;
-  updatedAt: Date;
-};
-
-type RecurringEntry = {
-  _id: string;
-  eventId: string;
-  creatorId: string;
-  title: string;
-  description?: string;
-  allDay: boolean;
-  recurring: true;
-  startTimeUtc: Date;
-  endTimeUtc: Date;
-  frequency: string;
-  recurrenceEndsUtc: Date;
-  recurrencePattern: string;
-  createdAt: Date;
-  updatedAt: Date;
-};
-
 const isRecurringEntry = (entry) => {
   return (entry as RecurringEntry).recurring === true;
-};
-
-const expandModifiedEntryException = async (
-  entryException: EntryException,
-  parentCalendarEntry: RecurringEntry,
-) => {
-  return {
-    _id: parentCalendarEntry._id,
-    title: entryException.title,
-    description: entryException.description,
-    allDay: entryException.allDay,
-    startTimeUtc: entryException.startTimeUtc,
-    endTimeUtc: entryException.endTimeUtc,
-    recurring: true,
-    eventId: parentCalendarEntry.eventId,
-    creatorId: parentCalendarEntry.creatorId,
-    frequency: parentCalendarEntry.frequency,
-    recurrenceEndsUtc: parentCalendarEntry.recurrenceEndsUtc,
-  };
 };
 
 const expandRecurringEntry = async (calendarEntry, start, end) => {
@@ -93,66 +29,14 @@ const expandRecurringEntry = async (calendarEntry, start, end) => {
   );
   const rule = rrulestr(calendarEntry.recurrencePattern);
   const rruleSet = new RRuleSet();
-
   rruleSet.rrule(rule);
 
-  const deletedExceptions = await EntryException.find({
-    entryId: calendarEntry._id,
-    deleted: true,
-  });
+  await addDeletedDatesToRuleSet(rruleSet, calendarEntry._id)
 
-  deletedExceptions.forEach((exception) => {
-    rruleSet.exdate(exception.startTimeUtc);
-  });
-
-  const recurrences = rruleSet.between(new Date(start), new Date(end));
-
-  const expandedRecurringEntries = recurrences.map((date) => {
-    return {
-      _id: calendarEntry._id,
-      eventId: calendarEntry.eventId,
-      creatorId: calendarEntry.creatorId,
-      title: calendarEntry.title,
-      description: calendarEntry.description,
-      allDay: calendarEntry.allDay,
-      startTimeUtc: date,
-      endTimeUtc: addMillisecondsToDate(date, duration),
-      recurring: true,
-      frequency: calendarEntry.frequency,
-      recurrenceEndsUtc: calendarEntry.recurrenceEndsUtc,
-    };
-  });
-
-  const modifiedExceptions = await EntryException.find({
-    entryId: calendarEntry._id,
-    modified: true,
-  })
-    .where("startTimeUtc")
-    .gte(start)
-    .where("startTimeUtc")
-    .lt(end);
-
-  const promises = modifiedExceptions.map(async (exception) => {
-    return expandModifiedEntryException(exception, calendarEntry);
-  });
-
-  const expandedExceptionEntries = await Promise.all(promises);
+  const expandedRecurringEntries = getExpandedRecurringEntries(rruleSet, calendarEntry, start, end, duration)
+  const expandedExceptionEntries = await getExpandedEntryExceptions(calendarEntry, start, end)
 
   return expandedRecurringEntries.concat(expandedExceptionEntries);
-};
-
-const findMatchingModifiedExceptions = async (start, parentCalendarEntry) => {
-  const startDate = new Date(start as string);
-  const oneMinBefore = dateMinusMinutes(startDate, 1);
-  const oneMinAfter = datePlusMinutes(startDate, 1);
-  return await EntryException.find({
-    entryId: parentCalendarEntry._id,
-    modified: true,
-  })
-    .where("startTimeUtc")
-    .gte(oneMinBefore)
-    .where("startTimeUtc")
-    .lt(oneMinAfter);
 };
 
 export const seedDatabaseWithEntry = async (
@@ -203,7 +87,7 @@ export const createCalendarEntry = async (
   _next: NextFunction,
 ) => {
   try {
-    const entry = await CalendarEntry.create(req.body as CalendarEntry);
+    const entry = await CalendarEntry.create(req.body as CalendarEntryType);
     if (isRecurringEntry(entry)) {
       const rule = new RRule({
         freq: FREQUENCY_MAPPING[entry.frequency],
@@ -360,7 +244,7 @@ export const updateCalendarEntry = async (
     if (isRecurringEntry(entryToUpdate) && applyToSeries === "true") {
       const updatedEntry = await CalendarEntry.findByIdAndUpdate(
         id,
-        req.body as CalendarEntry,
+        req.body as CalendarEntryType,
         { returnDocument: "after" },
       );
       const rule = new RRule({
@@ -418,7 +302,7 @@ export const updateCalendarEntry = async (
     } else {
       const updatedEntry = await CalendarEntry.findByIdAndUpdate(
         id,
-        req.body as CalendarEntry,
+        req.body as CalendarEntryType,
         { returnDocument: "after" },
       );
       res.status(200).json(updatedEntry);
