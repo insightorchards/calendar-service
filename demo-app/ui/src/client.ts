@@ -1,8 +1,5 @@
 const CALENDAR_BACKEND_URL = (process.env.NODE_ENV === 'production') ? process.env.REACT_APP_CALENDAR_BACKEND_URL
 : "http://localhost:4000"
-console.log("Backend URL:", CALENDAR_BACKEND_URL)
-console.log("react app Backend URL:", process.env.REACT_APP_CALENDAR_BACKEND_URL)
-console.log("all process env", process.env)
 
 export interface CalendarEntryInput {
   title: string;
