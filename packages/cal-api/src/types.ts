@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-export type CalendarEntryType = NonRecurringEntry | RecurringEntry;
+export type CalendarEntryType = NonRecurringEntryType | RecurringEntryType;
 
 export type EntryExceptionType = {
   deleted: boolean;
@@ -15,7 +15,7 @@ export type EntryExceptionType = {
   updatedAt: Date;
 };
 
-export type NonRecurringEntry = {
+export type NonRecurringEntryType = {
   id: string;
   eventId: string;
   creatorId: string;
@@ -29,7 +29,7 @@ export type NonRecurringEntry = {
   updatedAt: Date;
 };
 
-export type RecurringEntry = {
+export type RecurringEntryType = {
   _id: string;
   eventId: string;
   creatorId: string;

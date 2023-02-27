@@ -1,16 +1,19 @@
 import { Request, Response, NextFunction } from "express";
 import { CalendarEntry } from "../models/calendarEntry";
 import { EntryException } from "../models/entryException";
-import { type CalendarEntryType, type NonRecurringEntry, type RecurringEntry, } from "../types"
+import { type CalendarEntryType, type NonRecurringEntryType, type RecurringEntryType, } from "../types"
 import {
   dayAfter,
-  getMillisecondsBetween,
-  addMillisecondsToDate,
   dateMinusMinutes,
   datePlusMinutes,
 } from "../helpers/dateHelpers";
-import { RRule, RRuleSet, rrulestr } from "rrule";
-import { addDeletedDatesToRuleSet, expandModifiedEntryException, findMatchingModifiedExceptions, getExpandedEntryExceptions, getExpandedRecurringEntries } from "../helpers/entriesHelpers";
+import { RRule } from "rrule";
+import {
+  expandModifiedEntryException,
+  findMatchingModifiedExceptions,
+  getRecurringEntriesWithinRange,
+  expandRecurringEntry
+} from "../helpers/entriesHelpers";
 
 const FREQUENCY_MAPPING = {
   monthly: RRule.MONTHLY,
@@ -19,24 +22,7 @@ const FREQUENCY_MAPPING = {
 };
 
 const isRecurringEntry = (entry) => {
-  return (entry as RecurringEntry).recurring === true;
-};
-
-const expandRecurringEntry = async (calendarEntry, start, end) => {
-  const duration = getMillisecondsBetween(
-    calendarEntry.startTimeUtc,
-    calendarEntry.endTimeUtc,
-  );
-  const rule = rrulestr(calendarEntry.recurrencePattern);
-  const rruleSet = new RRuleSet();
-  rruleSet.rrule(rule);
-
-  await addDeletedDatesToRuleSet(rruleSet, calendarEntry._id)
-
-  const expandedRecurringEntries = getExpandedRecurringEntries(rruleSet, calendarEntry, start, end, duration)
-  const expandedExceptionEntries = await getExpandedEntryExceptions(calendarEntry, start, end)
-
-  return expandedRecurringEntries.concat(expandedExceptionEntries);
+  return (entry as RecurringEntryType).recurring === true;
 };
 
 export const seedDatabaseWithEntry = async (
@@ -111,7 +97,7 @@ export const getCalendarEntries = async (
 ) => {
   try {
     const { start, end } = req.query;
-    const nonRecurringEntries: NonRecurringEntry[] = await CalendarEntry.find()
+    const nonRecurringEntries: NonRecurringEntryType[] = await CalendarEntry.find()
       .where("recurring")
       .equals(false)
       .where("startTimeUtc")
@@ -119,38 +105,7 @@ export const getCalendarEntries = async (
       .where("endTimeUtc")
       .lte(end);
 
-    const recurringEntriesBeginsWithin: RecurringEntry[] =
-      await CalendarEntry.find()
-        .where("recurring")
-        .equals(true)
-        .where("startTimeUtc")
-        .gte(start)
-        .where("startTimeUtc")
-        .lt(end);
-    const recurringEntriesBeginsBefore: RecurringEntry[] =
-      await CalendarEntry.find()
-        .where("recurring")
-        .equals(true)
-        .where("startTimeUtc")
-        .lt(start)
-        .where("recurrenceEndsUtc")
-        .gt(start);
-
-    const allRecurringEntries = [
-      ...recurringEntriesBeginsWithin,
-      ...recurringEntriesBeginsBefore,
-    ];
-    let allRecurrences = [];
-
-    for (const recurringEntry of allRecurringEntries) {
-      const expandedEntries = await expandRecurringEntry(
-        recurringEntry,
-        start,
-        end,
-      );
-
-      allRecurrences.push(...expandedEntries);
-    }
+    const allRecurrences = await getRecurringEntriesWithinRange(start, end)
 
     const allEntries = [...nonRecurringEntries, ...allRecurrences];
 

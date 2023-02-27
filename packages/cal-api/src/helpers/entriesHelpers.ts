@@ -1,10 +1,12 @@
-import {type EntryExceptionType, RecurringEntry} from "../types"
+import { CalendarEntry } from "../models/calendarEntry";
+import {type EntryExceptionType, RecurringEntryType} from "../types"
 import { EntryException } from "../models/entryException";
-import { addMillisecondsToDate, dateMinusMinutes, datePlusMinutes } from "./dateHelpers";
+import { addMillisecondsToDate, dateMinusMinutes, datePlusMinutes, getMillisecondsBetween } from "./dateHelpers";
+import { RRuleSet, rrulestr } from "rrule";
 
 export const expandModifiedEntryException = async (
   entryException: EntryExceptionType,
-  parentCalendarEntry: RecurringEntry,
+  parentCalendarEntry: RecurringEntryType,
 ) => {
   return {
     _id: parentCalendarEntry._id,
@@ -82,3 +84,56 @@ export const getExpandedRecurringEntries = (ruleSet, calendarEntry, start, end, 
     };
   });
 }
+
+export const getRecurringEntriesWithinRange = async (start, end) => {
+  const recurringEntriesBeginsWithin: RecurringEntryType[] =
+  await CalendarEntry.find()
+    .where("recurring")
+    .equals(true)
+    .where("startTimeUtc")
+    .gte(start)
+    .where("startTimeUtc")
+    .lt(end);
+  const recurringEntriesBeginsBefore: RecurringEntryType[] =
+    await CalendarEntry.find()
+      .where("recurring")
+      .equals(true)
+      .where("startTimeUtc")
+      .lt(start)
+      .where("recurrenceEndsUtc")
+      .gt(start);
+
+  const allRecurringEntries = [
+    ...recurringEntriesBeginsWithin,
+    ...recurringEntriesBeginsBefore,
+  ];
+  let allRecurrences = [];
+
+  for (const recurringEntry of allRecurringEntries) {
+    const expandedEntries = await expandRecurringEntry(
+      recurringEntry,
+      start,
+      end,
+    );
+
+    allRecurrences.push(...expandedEntries);
+  }
+  return allRecurrences
+}
+
+export const expandRecurringEntry = async (calendarEntry, start, end) => {
+  const duration = getMillisecondsBetween(
+    calendarEntry.startTimeUtc,
+    calendarEntry.endTimeUtc,
+  );
+  const rule = rrulestr(calendarEntry.recurrencePattern);
+  const rruleSet = new RRuleSet();
+  rruleSet.rrule(rule);
+
+  await addDeletedDatesToRuleSet(rruleSet, calendarEntry._id)
+
+  const expandedRecurringEntries = getExpandedRecurringEntries(rruleSet, calendarEntry, start, end, duration)
+  const expandedExceptionEntries = await getExpandedEntryExceptions(calendarEntry, start, end)
+
+  return expandedRecurringEntries.concat(expandedExceptionEntries);
+};
