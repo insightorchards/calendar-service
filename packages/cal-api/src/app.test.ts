@@ -280,8 +280,11 @@ describe("GET /entry/:entryId?start=<start-time>", () => {
   });
 
   it("returns the requested recurring entry", async () => {
-    const date = new Date("04 January 2023 14:48 UTC");
-    const oneYearLater = yearAfter(date);
+    const {
+      date,
+      oneYearLater,
+      februaryFourth,
+    } = generateRecurrenceData()
 
     const createdEventData = await supertest(app)
       .post("/entries")
@@ -299,16 +302,6 @@ describe("GET /entry/:entryId?start=<start-time>", () => {
       })
       .expect(201);
     const createdEvent = JSON.parse(createdEventData.text);
-
-    const rule = new RRule({
-      freq: RRule.MONTHLY,
-      dtstart: date,
-      until: oneYearLater,
-    });
-
-    const recurrences = rule.all();
-
-    const februaryFourth = recurrences[1];
 
     const response = await supertest(app)
       .get(`/entries/${createdEvent._id}?start=${februaryFourth}`)
@@ -329,8 +322,13 @@ describe("GET /entry/:entryId?start=<start-time>", () => {
   });
 
   it("returns the transformed entry exception", async () => {
-    const date = new Date("04 January 2023 14:48 UTC");
-    const oneYearLater = yearAfter(date);
+    const {
+      date,
+      oneYearLater,
+      februaryFourth,
+      updatedStartDate,
+      updatedEndDate
+    } = generateRecurrenceData()
 
     const createdEventData = await supertest(app)
       .post("/entries")
@@ -348,19 +346,6 @@ describe("GET /entry/:entryId?start=<start-time>", () => {
       })
       .expect(201);
     const createdEvent = JSON.parse(createdEventData.text);
-
-    const rule = new RRule({
-      freq: RRule.MONTHLY,
-      dtstart: date,
-      until: oneYearLater,
-    });
-
-    const recurrences = rule.all();
-
-    const februaryFourth = recurrences[1];
-
-    const updatedStartDate = new Date("05 February 2023 14:48 UTC");
-    const updatedEndDate = dayAfter(updatedStartDate);
 
     await supertest(app)
       .patch(
@@ -432,8 +417,11 @@ describe("DELETE / entry?start=<start-time>&applyToSeries=<boolean>", () => {
   });
 
   it("deletes a single instance of a recurring event", async () => {
-    const date = new Date("04 January 2023 14:48 UTC");
-    const oneYearLater = yearAfter(date);
+    const {
+      date,
+      oneYearLater,
+      februaryFourth,
+    } = generateRecurrenceData()
 
     const createdEventData = await supertest(app)
       .post("/entries")
@@ -451,16 +439,6 @@ describe("DELETE / entry?start=<start-time>&applyToSeries=<boolean>", () => {
       })
       .expect(201);
     const createdEvent = JSON.parse(createdEventData.text);
-
-    const rule = new RRule({
-      freq: RRule.MONTHLY,
-      dtstart: date,
-      until: oneYearLater,
-    });
-
-    const recurrences = rule.all();
-
-    const februaryFourth = recurrences[1];
 
     const exceptionCount = await EntryException.countDocuments();
     expect(exceptionCount).toEqual(0);
@@ -488,8 +466,13 @@ describe("DELETE / entry?start=<start-time>&applyToSeries=<boolean>", () => {
   });
 
   it("deletes an entry exception from a recurring series", async () => {
-    const date = new Date("04 January 2023 14:48 UTC");
-    const oneYearLater = yearAfter(date);
+    const {
+      date,
+      oneYearLater,
+      februaryFourth,
+      updatedStartDate,
+      updatedEndDate
+    } = generateRecurrenceData()
 
     const createdEventData = await supertest(app)
       .post("/entries")
@@ -507,19 +490,6 @@ describe("DELETE / entry?start=<start-time>&applyToSeries=<boolean>", () => {
       })
       .expect(201);
     const createdEvent = JSON.parse(createdEventData.text);
-
-    const rule = new RRule({
-      freq: RRule.MONTHLY,
-      dtstart: date,
-      until: oneYearLater,
-    });
-
-    const recurrences = rule.all();
-
-    const februaryFourth = recurrences[1];
-
-    const updatedStartDate = new Date("05 February 2023 14:48 UTC");
-    const updatedEndDate = dayAfter(updatedStartDate);
 
     await supertest(app)
       .patch(
@@ -555,8 +525,11 @@ describe("DELETE / entry?start=<start-time>&applyToSeries=<boolean>", () => {
   });
 
   it("cascades deletion to entry exceptions when recurring series is deleted", async () => {
-    const date = new Date("04 January 2023 14:48 UTC");
-    const oneYearLater = yearAfter(date);
+    const {
+      date,
+      oneYearLater,
+      februaryFourth,
+    } = generateRecurrenceData()
 
     const createdEventData = await supertest(app)
       .post("/entries")
@@ -574,16 +547,6 @@ describe("DELETE / entry?start=<start-time>&applyToSeries=<boolean>", () => {
       })
       .expect(201);
     const createdEvent = JSON.parse(createdEventData.text);
-
-    const rule = new RRule({
-      freq: RRule.MONTHLY,
-      dtstart: date,
-      until: oneYearLater,
-    });
-
-    const recurrences = rule.all();
-
-    const februaryFourth = recurrences[1];
 
     await supertest(app)
       .delete(
@@ -677,8 +640,13 @@ describe("PATCH / entry?start=<start-time>&applyToSeries=<boolean>", () => {
   });
 
   it("can edit a recurring event", async () => {
-    const date = new Date("04 January 2023 14:48 UTC");
-    const oneYearLater = yearAfter(date);
+    const {
+      date,
+      oneYearLater,
+      februaryFourth,
+      updatedStartDate,
+      updatedEndDate
+    } = generateRecurrenceData()
 
     const createdEventData = await supertest(app)
       .post("/entries")
@@ -697,18 +665,6 @@ describe("PATCH / entry?start=<start-time>&applyToSeries=<boolean>", () => {
       .expect(201);
     const createdEvent = JSON.parse(createdEventData.text);
 
-    const rule = new RRule({
-      freq: RRule.MONTHLY,
-      dtstart: date,
-      until: oneYearLater,
-    });
-
-    const recurrences = rule.all();
-
-    const februaryFourth = recurrences[1];
-
-    const updatedStartDate = new Date("05 February 2023 14:48 UTC");
-    const updatedEndDate = dayAfter(updatedStartDate);
     const updatedRecurrenceEnd = yearAfter(updatedStartDate);
 
     await supertest(app)
@@ -755,8 +711,13 @@ describe("PATCH / entry?start=<start-time>&applyToSeries=<boolean>", () => {
   });
 
   it("can edit a single instance of a recurring event", async () => {
-    const date = new Date("04 January 2023 14:48 UTC");
-    const oneYearLater = yearAfter(date);
+    const {
+      date,
+      oneYearLater,
+      februaryFourth,
+      updatedStartDate,
+      updatedEndDate
+    } = generateRecurrenceData()
 
     const createdEventData = await supertest(app)
       .post("/entries")
@@ -774,19 +735,6 @@ describe("PATCH / entry?start=<start-time>&applyToSeries=<boolean>", () => {
       })
       .expect(201);
     const createdEvent = JSON.parse(createdEventData.text);
-
-    const rule = new RRule({
-      freq: RRule.MONTHLY,
-      dtstart: date,
-      until: oneYearLater,
-    });
-
-    const recurrences = rule.all();
-
-    const februaryFourth = recurrences[1];
-
-    const updatedStartDate = new Date("05 February 2023 14:48 UTC");
-    const updatedEndDate = dayAfter(updatedStartDate);
 
     const exceptionCount = await EntryException.countDocuments();
     expect(exceptionCount).toEqual(0);
@@ -825,8 +773,13 @@ describe("PATCH / entry?start=<start-time>&applyToSeries=<boolean>", () => {
   });
 
   it("can edit an entry exception of a recurring event", async () => {
-    const date = new Date("04 January 2023 14:48 UTC");
-    const oneYearLater = yearAfter(date);
+    const {
+      date,
+      oneYearLater,
+      februaryFourth,
+      updatedStartDate,
+      updatedEndDate
+    } = generateRecurrenceData()
 
     const createdEventData = await supertest(app)
       .post("/entries")
@@ -844,19 +797,6 @@ describe("PATCH / entry?start=<start-time>&applyToSeries=<boolean>", () => {
       })
       .expect(201);
     const createdEvent = JSON.parse(createdEventData.text);
-
-    const rule = new RRule({
-      freq: RRule.MONTHLY,
-      dtstart: date,
-      until: oneYearLater,
-    });
-
-    const recurrences = rule.all();
-
-    const februaryFourth = recurrences[1];
-
-    const updatedStartDate = new Date("05 February 2023 14:48 UTC");
-    const updatedEndDate = dayAfter(updatedStartDate);
 
     await supertest(app)
       .patch(
@@ -953,3 +893,32 @@ describe("PATCH / entry?start=<start-time>&applyToSeries=<boolean>", () => {
     updateMock.mockRestore();
   });
 });
+
+
+const generateRecurrenceData = () => {
+  const date = new Date("04 January 2023 14:48 UTC");
+  const oneYearLater = yearAfter(date);
+
+  const rule = new RRule({
+    freq: RRule.MONTHLY,
+    dtstart: date,
+    until: oneYearLater,
+  });
+
+  const recurrences = rule.all();
+
+  const februaryFourth = recurrences[1];
+
+  const updatedStartDate = new Date("05 February 2023 14:48 UTC");
+  const updatedEndDate = dayAfter(updatedStartDate);
+
+  return {
+    date,
+    oneYearLater,
+    rule,
+    recurrences,
+    februaryFourth,
+    updatedStartDate,
+    updatedEndDate
+  }
+}
