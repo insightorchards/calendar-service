@@ -12,8 +12,9 @@ import {
   expandModifiedEntryException,
   findMatchingModifiedExceptions,
   getRecurringEntriesWithinRange,
-  expandRecurringEntry
-} from "../helpers/entriesHelpers";
+  expandRecurringEntry,
+  handleRecurringEntryDeletion
+} from "../helpers/recurringEntriesHelpers";
 
 const FREQUENCY_MAPPING = {
   monthly: RRule.MONTHLY,
@@ -163,20 +164,7 @@ export const deleteCalendarEntry = async (
     }
 
     if (isRecurringEntry(entryToDelete) && applyToSeries === "false") {
-      const existingModifiedExceptions = await findMatchingModifiedExceptions(
-        start,
-        entryToDelete,
-      );
-      if (existingModifiedExceptions.length > 0) {
-        existingModifiedExceptions[0].remove();
-      } else {
-        await EntryException.create({
-          deleted: true,
-          modified: false,
-          entryId: entryToDelete._id,
-          startTimeUtc: start,
-        });
-      }
+      handleRecurringEntryDeletion(entryToDelete, start)
     } else {
       entryToDelete.remove();
     }
