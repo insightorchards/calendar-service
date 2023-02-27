@@ -13,10 +13,13 @@ import {
   findMatchingModifiedExceptions,
   getRecurringEntriesWithinRange,
   expandRecurringEntry,
-  handleRecurringEntryDeletion
+  handleRecurringEntryDeletion,
+  updateExceptionDetails,
+  updateRecurrenceRule,
+  createEntryException
 } from "../helpers/recurringEntriesHelpers";
 
-const FREQUENCY_MAPPING = {
+export const FREQUENCY_MAPPING = {
   monthly: RRule.MONTHLY,
   weekly: RRule.WEEKLY,
   daily: RRule.DAILY,
@@ -190,13 +193,7 @@ export const updateCalendarEntry = async (
         req.body as CalendarEntryType,
         { returnDocument: "after" },
       );
-      const rule = new RRule({
-        freq: FREQUENCY_MAPPING[updatedEntry.frequency],
-        dtstart: updatedEntry.startTimeUtc,
-        until: updatedEntry.recurrenceEndsUtc,
-      });
-      updatedEntry.recurrencePattern = rule.toString();
-      updatedEntry.save();
+      updateRecurrenceRule(updatedEntry)
       res.status(200).json(updatedEntry);
     } else if (isRecurringEntry(entryToUpdate) && applyToSeries === "false") {
       const existingModifiedExceptions = await findMatchingModifiedExceptions(
@@ -205,36 +202,14 @@ export const updateCalendarEntry = async (
       );
       if (existingModifiedExceptions.length > 0) {
         const exceptionToUpdate = existingModifiedExceptions[0];
-        exceptionToUpdate.title = req.body.title;
-        exceptionToUpdate.description = req.body.description;
-        exceptionToUpdate.title = req.body.title;
-        exceptionToUpdate.allDay = req.body.allDay;
-        exceptionToUpdate.startTimeUtc = req.body.startTimeUtc;
-        exceptionToUpdate.endTimeUtc = req.body.endTimeUtc;
-        exceptionToUpdate.save();
+        const updatedException = updateExceptionDetails(exceptionToUpdate, req.body)
         const updatedEntry = expandModifiedEntryException(
-          exceptionToUpdate,
+          updatedException,
           entryToUpdate,
         );
         res.status(200).json(updatedEntry);
       } else {
-        await EntryException.create({
-          deleted: true,
-          modified: false,
-          entryId: entryToUpdate._id,
-          startTimeUtc: start,
-        });
-
-        const updatedEntryException = await EntryException.create({
-          deleted: false,
-          modified: true,
-          entryId: entryToUpdate._id,
-          startTimeUtc: req.body.startTimeUtc,
-          title: req.body.title,
-          description: req.body.description,
-          allDay: req.body.allDay,
-          endTimeUtc: req.body.endTimeUtc,
-        });
+        const updatedEntryException = await createEntryException(entryToUpdate, { ...req.body, start })
 
         const updatedEntry = expandModifiedEntryException(
           updatedEntryException,
