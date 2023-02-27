@@ -1,3 +1,6 @@
+const CALENDAR_BACKEND_URL = (process.env.NODE_ENV === 'production') ? process.env.REACT_APP_CALENDAR_BACKEND_URL
+: "http://localhost:4000"
+
 export interface CalendarEntryInput {
   title: string;
   description: string;
@@ -15,7 +18,7 @@ const notOk = (status: number) => {
 };
 
 const getEntries = async (start: string, end: string) => {
-  return fetch(`http://localhost:4000/entries?start=${start}&end=${end}`, {
+  return fetch(`${CALENDAR_BACKEND_URL}/entries?start=${start}&end=${end}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -44,7 +47,7 @@ const getEntries = async (start: string, end: string) => {
 };
 
 const getEntry = async (entryId: string, start?: string) => {
-  return fetch(`http://localhost:4000/entries/${entryId}?start=${start}`, {
+  return fetch(`${CALENDAR_BACKEND_URL}/entries/${entryId}?start=${start}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -70,7 +73,7 @@ const createEntry = async ({
 }: CalendarEntryInput) => {
   let response;
   if (recurring) {
-    response = await fetch("http://localhost:4000/entries", {
+    response = await fetch(`${CALENDAR_BACKEND_URL}/entries`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -90,7 +93,7 @@ const createEntry = async ({
       }),
     });
   } else {
-    response = await fetch("http://localhost:4000/entries", {
+    response = await fetch(`${CALENDAR_BACKEND_URL}/entries`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -133,7 +136,7 @@ const updateEntry = async (
   let response;
   if (recurring) {
     response = await fetch(
-      `http://localhost:4000/entries/${entryId}?start=${start}&applyToSeries=${applyToSeries}`,
+      `${CALENDAR_BACKEND_URL}/entries/${entryId}?start=${start}&applyToSeries=${applyToSeries}`,
       {
         method: "PATCH",
         headers: {
@@ -155,7 +158,7 @@ const updateEntry = async (
       },
     );
   } else {
-    response = await fetch(`http://localhost:4000/entries/${entryId}`, {
+    response = await fetch(`${CALENDAR_BACKEND_URL}/entries/${entryId}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -185,7 +188,7 @@ const deleteEntry = async (
   applyToSeries?: boolean,
 ) => {
   const response = await fetch(
-    `http://localhost:4000/entries/${entryId}?start=${start}&applyToSeries=${applyToSeries}`,
+    `${CALENDAR_BACKEND_URL}/entries/${entryId}?start=${start}&applyToSeries=${applyToSeries}`,
     {
       method: "DELETE",
       headers: {

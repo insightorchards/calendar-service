@@ -1,0 +1,16 @@
+version: "2"
+services:
+  api:
+    build:
+      context: .
+      args:
+        - GITHUB_TOKEN=${GITHUB_TOKEN}
+        - MONGO_CONNECTION_STRING=mongodb://mongo:27017/calendar-app
+    ports:
+      - 4000:4000
+    depends_on:
+      - mongo
+  mongo:
+    image: mongo
+    ports:
+      - 27017:27017
