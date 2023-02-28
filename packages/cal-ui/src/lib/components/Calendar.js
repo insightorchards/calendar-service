@@ -70,7 +70,7 @@ const Calendar = ({
       .catch(() => {
         flashApiErrorMessage();
       });
-  }, [rangeStart, rangeEnd]);
+  }, [getEntries, rangeStart, rangeEnd]);
 
   const flashApiErrorMessage = () => {
     setApiError(true);
