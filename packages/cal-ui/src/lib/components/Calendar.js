@@ -55,6 +55,7 @@ const Calendar = ({
   const [rangeEnd, setRangeEnd] = useState("");
   const [apiError, setApiError] = useState(false);
   const [pendingEdits, setPendingEdits] = useState({});
+  const [editingSeries, setEditingSeries] = useState(false)
 
   const [showDeletionSelectionScreen, setShowDeletionSelectionScreen] =
     useState(false);
@@ -133,24 +134,23 @@ const Calendar = ({
       });
   };
 
-  const handleEditRecurring = ({ applyToSeries }) => {
+  const saveRecurringSeriesChanges = (data) => {
     const entryId = displayedEventData._id;
-
     updateEntry(
       entryId,
       {
-        title: pendingEdits.title,
-        description: pendingEdits.description,
-        startTimeUtc: pendingEdits.startTimeUtc,
-        endTimeUtc: pendingEdits.endTimeUtc,
-        allDay: pendingEdits.allDay,
-        recurring: pendingEdits.recurring,
-        frequency: pendingEdits.frequency,
-        recurrenceBegins: pendingEdits.recurrenceBegins,
-        recurrenceEndUtc: pendingEdits.recurrenceEndUtc,
+        title: data.title,
+        description: data.description,
+        startTimeUtc: data.startTimeUtc,
+        endTimeUtc: data.endTimeUtc,
+        allDay: data.allDay,
+        recurring: data.recurring,
+        frequency: data.frequency,
+        recurrenceBegins: data.recurrenceBegins,
+        recurrenceEndUtc: data.recurrenceEndUtc,
       },
       displayedEventData.startTimeUtc,
-      applyToSeries,
+      true,
     )
       .then(() => {
         getEntries(rangeStart, rangeEnd).then((entries) => {
@@ -164,15 +164,47 @@ const Calendar = ({
         setShowEditSelectionScreen(false);
         flashApiErrorMessage();
       });
-  };
+  }
 
-  const handleEditSeries = () => {
-    handleEditRecurring({ applyToSeries: true });
-  };
+  const saveRecurringInstanceChanges = (data) => {
+    const entryId = displayedEventData._id;
+    updateEntry(
+      entryId,
+      {
+        title: data.title,
+        description: data.description,
+        startTimeUtc: data.startTimeUtc,
+        endTimeUtc: data.endTimeUtc,
+        allDay: data.allDay,
+        recurring: data.recurring,
+        frequency: data.frequency,
+        recurrenceBegins: data.recurrenceBegins,
+        recurrenceEndUtc: data.recurrenceEndUtc,
+      },
+      displayedEventData.startTimeUtc,
+      false,
+    )
+      .then(() => {
+        getEntries(rangeStart, rangeEnd).then((entries) => {
+          setEventsWithStart(entries);
+        });
+        setShowOverlay(false);
+        setShowEditSelectionScreen(false);
+      })
+      .catch(() => {
+        setShowOverlay(false);
+        setShowEditSelectionScreen(false);
+        flashApiErrorMessage();
+      });
+  }
 
-  const handleEditRecurringInstance = () => {
-    handleEditRecurring({ applyToSeries: false });
-  };
+  const handleEditEntry = () => {
+    if (displayedEventData.recurring) {
+      setShowEditSelectionScreen(true)
+    } else {
+      setInEditMode(true)
+    }
+  }
 
   const handleDeleteEntry = async (e) => {
     e.preventDefault();
@@ -192,8 +224,6 @@ const Calendar = ({
         });
     }
   };
-
-  const handleEditEntry = () => setInEditMode(true);
 
   const handleCreateEntry = async ({
     title,
@@ -258,6 +288,18 @@ const Calendar = ({
     getEntryDetails(entryId, start);
   };
 
+  const setEditingSeriesAndOpenModal = () => {
+    setShowEditSelectionScreen(false)
+    setEditingSeries(true)
+    setInEditMode(true)
+  }
+
+  const setEditingSingleAndOpenModal = () => {
+    setShowEditSelectionScreen(false)
+    setEditingSeries(false)
+    setInEditMode(true)
+  }
+
   const handleSaveChanges = async ({
     title,
     description,
@@ -279,7 +321,7 @@ const Calendar = ({
     }
 
     if (displayedEventData.recurring) {
-      setPendingEdits({
+      const data = {
         title,
         description,
         startTimeUtc,
@@ -289,8 +331,14 @@ const Calendar = ({
         frequency,
         recurrenceBegins,
         recurrenceEndUtc,
-      });
-      setShowEditSelectionScreen(true);
+      }
+
+      if (editingSeries) {
+        saveRecurringSeriesChanges(data)
+      } else {
+        saveRecurringInstanceChanges(data)
+      }
+
       setInEditMode(false);
     } else {
       updateEntry(displayedEventData._id, {
@@ -453,10 +501,10 @@ const Calendar = ({
                   </p>
                 </ModalBody>
                 <ModalFooter>
-                  <Button onClick={handleEditSeries} variant="ghost">
+                  <Button onClick={setEditingSeriesAndOpenModal} variant="ghost">
                     Edit series
                   </Button>
-                  <Button onClick={handleEditRecurringInstance} variant="ghost">
+                  <Button onClick={setEditingSingleAndOpenModal} variant="ghost">
                     Edit this one event
                   </Button>
                 </ModalFooter>
