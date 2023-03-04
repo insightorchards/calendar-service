@@ -281,9 +281,9 @@ describe("GET /entry/:entryId?start=<start-time>", () => {
 
   it("returns the requested recurring entry", async () => {
     const {
-      date,
+      janFourth,
       oneYearLater,
-      februaryFourth,
+      febFourth,
     } = generateRecurrenceData()
 
     const createdEventData = await supertest(app)
@@ -293,8 +293,8 @@ describe("GET /entry/:entryId?start=<start-time>", () => {
         creatorId: "456",
         title: "Happy day",
         description: "and a happy night too",
-        startTimeUtc: date,
-        endTimeUtc: dayAfter(date),
+        startTimeUtc: janFourth,
+        endTimeUtc: dayAfter(janFourth),
         allDay: false,
         recurring: true,
         frequency: "monthly",
@@ -304,7 +304,7 @@ describe("GET /entry/:entryId?start=<start-time>", () => {
     const createdEvent = JSON.parse(createdEventData.text);
 
     const response = await supertest(app)
-      .get(`/entries/${createdEvent._id}?start=${februaryFourth}`)
+      .get(`/entries/${createdEvent._id}?start=${febFourth}`)
       .expect(200);
 
     expect(response.body).toEqual(
@@ -315,17 +315,17 @@ describe("GET /entry/:entryId?start=<start-time>", () => {
         description: "and a happy night too",
         allDay: false,
         recurring: true,
-        startTimeUtc: februaryFourth.toISOString(),
-        endTimeUtc: dayAfter(februaryFourth).toISOString(),
+        startTimeUtc: febFourth.toISOString(),
+        endTimeUtc: dayAfter(febFourth).toISOString(),
       }),
     );
   });
 
   it("returns the transformed entry exception", async () => {
     const {
-      date,
+      janFourth,
       oneYearLater,
-      februaryFourth,
+      febFourth,
       updatedStartDate,
       updatedEndDate
     } = generateRecurrenceData()
@@ -337,8 +337,8 @@ describe("GET /entry/:entryId?start=<start-time>", () => {
         creatorId: "456",
         title: "Happy day",
         description: "and a happy night too",
-        startTimeUtc: date,
-        endTimeUtc: dayAfter(date),
+        startTimeUtc: janFourth,
+        endTimeUtc: dayAfter(janFourth),
         allDay: false,
         recurring: true,
         frequency: "monthly",
@@ -351,7 +351,7 @@ describe("GET /entry/:entryId?start=<start-time>", () => {
       .patch(
         `/entries/${
           createdEvent._id
-        }?start=${februaryFourth.toISOString()}&applyToSeries=false`,
+        }?start=${febFourth.toISOString()}&applyToSeries=false`,
       )
       .send({
         title: "Listen to Sweet Surrender",
@@ -418,9 +418,9 @@ describe("DELETE / entry?start=<start-time>&applyToSeries=<boolean>", () => {
 
   it("deletes a single instance of a recurring event", async () => {
     const {
-      date,
+      janFourth,
       oneYearLater,
-      februaryFourth,
+      febFourth,
     } = generateRecurrenceData()
 
     const createdEventData = await supertest(app)
@@ -430,8 +430,8 @@ describe("DELETE / entry?start=<start-time>&applyToSeries=<boolean>", () => {
         creatorId: "456",
         title: "Happy day",
         description: "and a happy night too",
-        startTimeUtc: date,
-        endTimeUtc: dayAfter(date),
+        startTimeUtc: janFourth,
+        endTimeUtc: dayAfter(janFourth),
         allDay: false,
         recurring: true,
         frequency: "monthly",
@@ -444,7 +444,7 @@ describe("DELETE / entry?start=<start-time>&applyToSeries=<boolean>", () => {
     expect(exceptionCount).toEqual(0);
 
     const response = await supertest(app)
-      .get(`/entries?start=${date}&end=${oneYearLater}`)
+      .get(`/entries?start=${janFourth}&end=${oneYearLater}`)
       .expect(200);
     expect(response.body.length).toEqual(11);
 
@@ -452,7 +452,7 @@ describe("DELETE / entry?start=<start-time>&applyToSeries=<boolean>", () => {
       .delete(
         `/entries/${
           createdEvent._id
-        }?start=${februaryFourth.toISOString()}&applyToSeries=false`,
+        }?start=${febFourth.toISOString()}&applyToSeries=false`,
       )
       .expect(200);
 
@@ -460,16 +460,16 @@ describe("DELETE / entry?start=<start-time>&applyToSeries=<boolean>", () => {
     expect(updatedExceptionCount).toEqual(1);
 
     const updatedResponse = await supertest(app)
-      .get(`/entries?start=${date}&end=${oneYearLater}`)
+      .get(`/entries?start=${janFourth}&end=${oneYearLater}`)
       .expect(200);
     expect(updatedResponse.body.length).toEqual(10);
   });
 
   it("deletes an entry exception from a recurring series", async () => {
     const {
-      date,
+      janFourth,
       oneYearLater,
-      februaryFourth,
+      febFourth,
       updatedStartDate,
       updatedEndDate
     } = generateRecurrenceData()
@@ -481,8 +481,8 @@ describe("DELETE / entry?start=<start-time>&applyToSeries=<boolean>", () => {
         creatorId: "456",
         title: "Happy day",
         description: "and a happy night too",
-        startTimeUtc: date,
-        endTimeUtc: dayAfter(date),
+        startTimeUtc: janFourth,
+        endTimeUtc: dayAfter(janFourth),
         allDay: false,
         recurring: true,
         frequency: "monthly",
@@ -495,7 +495,7 @@ describe("DELETE / entry?start=<start-time>&applyToSeries=<boolean>", () => {
       .patch(
         `/entries/${
           createdEvent._id
-        }?start=${februaryFourth.toISOString()}&applyToSeries=false`,
+        }?start=${febFourth.toISOString()}&applyToSeries=false`,
       )
       .send({
         title: "Listen to Sweet Surrender",
@@ -526,9 +526,9 @@ describe("DELETE / entry?start=<start-time>&applyToSeries=<boolean>", () => {
 
   it("cascades deletion to entry exceptions when recurring series is deleted", async () => {
     const {
-      date,
+      janFourth,
       oneYearLater,
-      februaryFourth,
+      febFourth,
     } = generateRecurrenceData()
 
     const createdEventData = await supertest(app)
@@ -538,8 +538,8 @@ describe("DELETE / entry?start=<start-time>&applyToSeries=<boolean>", () => {
         creatorId: "456",
         title: "Happy day",
         description: "and a happy night too",
-        startTimeUtc: date,
-        endTimeUtc: dayAfter(date),
+        startTimeUtc: janFourth,
+        endTimeUtc: dayAfter(janFourth),
         allDay: false,
         recurring: true,
         frequency: "monthly",
@@ -552,7 +552,7 @@ describe("DELETE / entry?start=<start-time>&applyToSeries=<boolean>", () => {
       .delete(
         `/entries/${
           createdEvent._id
-        }?start=${februaryFourth.toISOString()}&applyToSeries=false`,
+        }?start=${febFourth.toISOString()}&applyToSeries=false`,
       )
       .expect(200);
 
@@ -563,7 +563,7 @@ describe("DELETE / entry?start=<start-time>&applyToSeries=<boolean>", () => {
       .delete(
         `/entries/${
           createdEvent._id
-        }?start=${februaryFourth.toISOString()}&applyToSeries=true`,
+        }?start=${febFourth.toISOString()}&applyToSeries=true`,
       )
       .expect(200);
 
@@ -641,9 +641,9 @@ describe("PATCH / entry?start=<start-time>&applyToSeries=<boolean>", () => {
 
   it("can edit a recurring event", async () => {
     const {
-      date,
+      janFourth,
       oneYearLater,
-      februaryFourth,
+      febFourth,
       updatedStartDate,
       updatedEndDate
     } = generateRecurrenceData()
@@ -655,8 +655,8 @@ describe("PATCH / entry?start=<start-time>&applyToSeries=<boolean>", () => {
         creatorId: "456",
         title: "Happy day",
         description: "and a happy night too",
-        startTimeUtc: date,
-        endTimeUtc: dayAfter(date),
+        startTimeUtc: janFourth,
+        endTimeUtc: dayAfter(janFourth),
         allDay: false,
         recurring: true,
         frequency: "monthly",
@@ -671,7 +671,7 @@ describe("PATCH / entry?start=<start-time>&applyToSeries=<boolean>", () => {
       .patch(
         `/entries/${
           createdEvent._id
-        }?start=${februaryFourth.toISOString()}&applyToSeries=true`,
+        }?start=${febFourth.toISOString()}&applyToSeries=true`,
       )
       .send({
         eventId: "345",
@@ -712,9 +712,9 @@ describe("PATCH / entry?start=<start-time>&applyToSeries=<boolean>", () => {
 
   it("can edit a single instance of a recurring event", async () => {
     const {
-      date,
+      janFourth,
       oneYearLater,
-      februaryFourth,
+      febFourth,
       updatedStartDate,
       updatedEndDate
     } = generateRecurrenceData()
@@ -726,8 +726,8 @@ describe("PATCH / entry?start=<start-time>&applyToSeries=<boolean>", () => {
         creatorId: "456",
         title: "Happy day",
         description: "and a happy night too",
-        startTimeUtc: date,
-        endTimeUtc: dayAfter(date),
+        startTimeUtc: janFourth,
+        endTimeUtc: dayAfter(janFourth),
         allDay: false,
         recurring: true,
         frequency: "monthly",
@@ -743,7 +743,7 @@ describe("PATCH / entry?start=<start-time>&applyToSeries=<boolean>", () => {
       .patch(
         `/entries/${
           createdEvent._id
-        }?start=${februaryFourth.toISOString()}&applyToSeries=false`,
+        }?start=${febFourth.toISOString()}&applyToSeries=false`,
       )
       .send({
         eventId: "345",
@@ -774,9 +774,9 @@ describe("PATCH / entry?start=<start-time>&applyToSeries=<boolean>", () => {
 
   it("can edit an entry exception of a recurring event", async () => {
     const {
-      date,
+      janFourth,
       oneYearLater,
-      februaryFourth,
+      febFourth,
       updatedStartDate,
       updatedEndDate
     } = generateRecurrenceData()
@@ -788,8 +788,8 @@ describe("PATCH / entry?start=<start-time>&applyToSeries=<boolean>", () => {
         creatorId: "456",
         title: "Happy day",
         description: "and a happy night too",
-        startTimeUtc: date,
-        endTimeUtc: dayAfter(date),
+        startTimeUtc: janFourth,
+        endTimeUtc: dayAfter(janFourth),
         allDay: false,
         recurring: true,
         frequency: "monthly",
@@ -802,7 +802,7 @@ describe("PATCH / entry?start=<start-time>&applyToSeries=<boolean>", () => {
       .patch(
         `/entries/${
           createdEvent._id
-        }?start=${februaryFourth.toISOString()}&applyToSeries=false`,
+        }?start=${febFourth.toISOString()}&applyToSeries=false`,
       )
       .send({
         title: "Listen to Sweet Surrender",
@@ -861,6 +861,76 @@ describe("PATCH / entry?start=<start-time>&applyToSeries=<boolean>", () => {
     );
   });
 
+  // Come back to this test after completing https://github.com/insightorchards/calendar-service/issues/144
+  it.skip("can edit a recurring series from an entry exception", async () => {
+    const {
+      janFourth,
+      oneYearLater,
+      febFourth,
+    } = generateRecurrenceData()
+
+    const createdEventData = await supertest(app)
+      .post("/entries")
+      .send({
+        eventId: "123",
+        creatorId: "456",
+        title: "Happy day",
+        description: "and a happy night too",
+        startTimeUtc: janFourth,
+        endTimeUtc: dayAfter(janFourth),
+        allDay: false,
+        recurring: true,
+        frequency: "monthly",
+        recurrenceEndsUtc: oneYearLater,
+      })
+      .expect(201);
+    const createdEvent = JSON.parse(createdEventData.text);
+
+    await supertest(app)
+      .patch(
+        `/entries/${
+          createdEvent._id
+        }?start=${febFourth.toISOString()}&applyToSeries=true`,
+      )
+      .send({
+        title: "Listen to Country Roads",
+        description: "by John Denver",
+        startTimeUtc: febFourth,
+        endTimeUtc: dayAfter(febFourth),
+      })
+      .expect(200);
+
+    const parentRecurringEntry = await CalendarEntry.findById(createdEvent._id);
+
+    expect(parentRecurringEntry).toEqual(
+      expect.objectContaining({
+        title: "Listen to Country Roads",
+        description: "by John Denver",
+        startTimeUtc: janFourth,
+        endTimeUtc: dayAfter(janFourth)
+      }),
+    );
+
+    // const firstEventInSeries = await supertest(app)
+    // .get(`/entries/${createdEvent._id}?start=${janFourth}`)
+    // .expect(200);
+
+    // expect(firstEventInSeries).toBeDefined()
+
+    // expect(firstEventInSeries.body).toEqual(
+    //   expect.objectContaining({
+    //     eventId: "123",
+    //     creatorId: "456",
+    //     title: "Listen to Country Roads",
+    //     description: "by John Denver",
+    //     allDay: false,
+    //     recurring: true,
+    //     startTimeUtc: janFourth,
+    //     endTimeUtc: dayAfter(janFourth),
+    //   }),
+    // );
+  });
+
   it("catches and returns an error from CalendarEntry.findByIdAndUpdate", async () => {
     data = await CalendarEntry.create({
       eventId: "123",
@@ -896,28 +966,27 @@ describe("PATCH / entry?start=<start-time>&applyToSeries=<boolean>", () => {
 
 
 const generateRecurrenceData = () => {
-  const date = new Date("04 January 2023 14:48 UTC");
-  const oneYearLater = yearAfter(date);
+  const janFourth = new Date("04 January 2023 14:48 UTC");
+  const oneYearLater = yearAfter(janFourth);
 
   const rule = new RRule({
     freq: RRule.MONTHLY,
-    dtstart: date,
+    dtstart: janFourth,
     until: oneYearLater,
   });
 
   const recurrences = rule.all();
 
-  const februaryFourth = recurrences[1];
-
+  const febFourth = recurrences[1];
   const updatedStartDate = new Date("05 February 2023 14:48 UTC");
   const updatedEndDate = dayAfter(updatedStartDate);
 
   return {
-    date,
+    janFourth,
     oneYearLater,
     rule,
     recurrences,
-    februaryFourth,
+    febFourth,
     updatedStartDate,
     updatedEndDate
   }
