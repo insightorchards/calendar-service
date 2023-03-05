@@ -8,6 +8,12 @@ import {
 import { Checkbox, RadioGroup, Radio, Stack } from "@chakra-ui/react";
 import s from "./EventForm.module.css";
 
+export const FORM_MODE = {
+  full: "full",
+  editRecurringInstance: "editRecurringInstance",
+  editRecurringSeries: "editRecurringSeries"
+}
+
 const EventForm = ({
   initialStart,
   initialEnd,
@@ -16,8 +22,10 @@ const EventForm = ({
   initialAllDay,
   initialRecurring,
   initialRecurrenceEnd,
+  initialRecurrenceFrequency,
   onFormSubmit,
   isCreate,
+  formMode = "full"
 }) => {
   const [startDate, setStartDate] = useState(
     formatDate(new Date(initialStart)),
@@ -32,7 +40,7 @@ const EventForm = ({
   const [description, setDescription] = useState(initialDescription);
   const [allDay, setAllDay] = useState(initialAllDay);
   const [recurring, setRecurring] = useState(initialRecurring);
-  const [recurrenceFrequency, setRecurrenceFrequency] = useState("monthly");
+  const [recurrenceFrequency, setRecurrenceFrequency] = useState(initialRecurrenceFrequency);
   const currentHour = new Date().getHours();
   const DEFAULT_START_TIME = `${padNumberWith0Zero(currentHour + 1)}:00`;
   const DEFAULT_END_TIME = `${padNumberWith0Zero(currentHour + 2)}:00`;
@@ -114,7 +122,8 @@ const EventForm = ({
           value={description}
         />
       </label>
-      <label htmlFor="startDate" className={s.formItem}>
+      { !(formMode === FORM_MODE.editRecurringSeries) && <>
+        <label htmlFor="startDate" className={s.formItem}>
         Start Date
         <input
           className={s.formInput}
@@ -141,6 +150,7 @@ const EventForm = ({
           value={endDate}
         />
       </label>
+      </>}
       <div className={s.checkbox}>
         <Checkbox
           isChecked={allDay}
@@ -185,7 +195,7 @@ const EventForm = ({
           </label>
         </>
       )}
-      <div className={s.checkbox}>
+      { (formMode === FORM_MODE.full) && <div className={s.checkbox}>
         <Checkbox
           isChecked={recurring}
           onChange={(e) => {
@@ -194,8 +204,8 @@ const EventForm = ({
         >
           Recurring
         </Checkbox>
-      </div>
-      {recurring && (
+      </div>}
+      {recurring && !(formMode === FORM_MODE.editRecurringInstance) && (
         <>
           <label htmlFor="recurrenceType" className={s.formItem}>
             Recurrence Frequency

@@ -1,9 +1,8 @@
 import { render, screen } from "@testing-library/react";
 import React from "react";
-
 import userEvent from "@testing-library/user-event";
 import { getDateTimeString } from "../helpers/lib";
-import EventForm from "./EventForm";
+import EventForm, {FORM_MODE} from "./EventForm";
 
 describe("EventForm", () => {
   let currentHour;
@@ -150,6 +149,7 @@ describe("EventForm", () => {
           initialDescription="A time to remember and appreciate classic art and more"
           initialAllDay={false}
           initialRecurring={true}
+          initialRecurrenceFrequency="monthly"
           initialRecurrenceEnd={new Date("2023-02-15T04:00").toISOString()}
           onFormSubmit={onFormSubmitMock}
           isCreate={false}
@@ -211,5 +211,61 @@ describe("EventForm", () => {
       expect(screen.getByText("Monthly")).toBeVisible();
       expect(screen.getByText("Weekly")).toBeVisible();
     });
+
+    it("shows relevant fields when editing a recurring series", () => {
+      render(
+        <EventForm
+          initialStart={new Date("2022-02-15T04:00").toISOString()}
+          initialEnd={new Date("2022-02-15T05:00").toISOString()}
+          initialTitle="Mary's Chicken Feast"
+          initialDescription="A time to remember and appreciate chicken nuggets and more"
+          initialAllDay={false}
+          initialRecurring={true}
+          initialRecurrenceEnd={new Date("2023-02-15T04:00").toISOString()}
+          onFormSubmit={() => {}}
+          isCreate={true}
+          formMode={FORM_MODE.editRecurringSeries}
+        />,
+      );
+
+      expect(screen.getByLabelText("Title")).toBeVisible()
+      expect(screen.getByLabelText("Description")).toBeVisible()
+      expect(screen.queryByLabelText("Start Date")).toBeNull()
+      expect(screen.queryByLabelText("End Date")).toBeNull()
+      expect(screen.getByLabelText("Start Time")).toBeVisible()
+      expect(screen.getByLabelText("End Time")).toBeVisible()
+      expect(screen.getByLabelText("All Day")).toBeVisible()
+      expect(screen.queryByLabelText("Recurring")).toBeNull()
+      expect(screen.getByText("Recurrence Frequency")).toBeVisible()
+      expect(screen.getByLabelText("Recurrence Ends")).toBeVisible()
+    })
+
+    it("shows relevant fields when editing a recurring instance", () => {
+      render(
+        <EventForm
+          initialStart={new Date("2022-02-15T04:00").toISOString()}
+          initialEnd={new Date("2022-02-15T05:00").toISOString()}
+          initialTitle="Mary's Chicken Feast"
+          initialDescription="A time to remember and appreciate chicken nuggets and more"
+          initialAllDay={false}
+          initialRecurring={true}
+          initialRecurrenceEnd={new Date("2023-02-15T04:00").toISOString()}
+          onFormSubmit={() => {}}
+          isCreate={true}
+          formMode={FORM_MODE.editRecurringInstance}
+        />,
+      );
+
+      expect(screen.getByLabelText("Title")).toBeVisible()
+      expect(screen.getByLabelText("Description")).toBeVisible()
+      expect(screen.getByLabelText("Start Date")).toBeVisible()
+      expect(screen.getByLabelText("End Date")).toBeVisible()
+      expect(screen.getByLabelText("Start Time")).toBeVisible()
+      expect(screen.getByLabelText("End Time")).toBeVisible()
+      expect(screen.getByLabelText("All Day")).toBeVisible()
+      expect(screen.queryByLabelText("Recurring")).toBeNull()
+      expect(screen.queryByText("Recurrence Frequency")).toBeNull()
+      expect(screen.queryByLabelText("Recurrence Ends")).toBeNull()
+    })
   });
 });

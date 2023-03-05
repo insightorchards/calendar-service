@@ -30,7 +30,7 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import listPlugin from "@fullcalendar/list";
-import EventForm from "./EventForm";
+import EventForm, { FORM_MODE } from "./EventForm";
 import s from "./Calendar.module.css";
 
 const Calendar = ({
@@ -366,6 +366,14 @@ const Calendar = ({
     }
   };
 
+  const determineFormMode = () => {
+    if (displayedEventData.recurring) {
+      return editingSeries ? FORM_MODE.editRecurringSeries : FORM_MODE.editRecurringInstance
+    } else {
+      return FORM_MODE.full
+    }
+  }
+
   return (
     <div className="App">
       <ChakraProvider>
@@ -522,11 +530,13 @@ const Calendar = ({
                     initialEnd={displayedEventData.endTimeUtc}
                     initialAllDay={displayedEventData.allDay}
                     initialRecurring={displayedEventData.recurring}
+                    initialRecurrenceFrequency={displayedEventData.frequency}
                     initialRecurrenceEnd={formatDate(
                       new Date(displayedEventData.recurrenceEndsUtc),
                     )}
                     onFormSubmit={handleSaveChanges}
                     isCreate={false}
+                    formMode={determineFormMode()}
                   />
                 </ModalBody>
               </>
