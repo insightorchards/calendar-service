@@ -379,6 +379,15 @@ describe("Calendar", () => {
         await editButton.click();
       });
 
+      expect(
+        await screen.findByText(
+          "Would you like to edit the entire recurring series or just this event?",
+        ),
+      ).toBeInTheDocument();
+      await act(async () => {
+        await userEvent.click(screen.getByText("Edit this one event"));
+      });
+
       userEvent.type(
         screen.getByLabelText("Description"),
         " at the grand royale",
@@ -390,14 +399,6 @@ describe("Calendar", () => {
         await saveButton.click();
       });
 
-      expect(
-        await screen.findByText(
-          "Would you like to edit the entire recurring series or just this event?",
-        ),
-      ).toBeInTheDocument();
-      await act(async () => {
-        await userEvent.click(screen.getByText("Edit this one event"));
-      });
       expect(mockUpdateEntry).toHaveBeenCalledWith(
         "345",
         expect.objectContaining({
