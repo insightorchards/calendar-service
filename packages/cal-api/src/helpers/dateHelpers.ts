@@ -30,3 +30,20 @@ export const addMillisecondsToDate = (
   const timeAsMilliseconds = date + numMilliseconds;
   return new Date(timeAsMilliseconds).toISOString();
 };
+
+export const getTimeFromDate = (dateUtc) => {
+  const date = new Date(dateUtc)
+  const hours = date.getUTCHours()
+  const minutes = date.getUTCMinutes()
+  return {
+    hours,
+    minutes
+  }
+}
+
+export const setTimeForDate = (dateUtc, hours, minutes) => {
+  const date = new Date(dateUtc)
+  date.setUTCHours(hours)
+  date.setUTCMinutes(minutes)
+  return date
+}

@@ -1,7 +1,7 @@
 import { CalendarEntry } from "../models/calendarEntry";
 import {type EntryExceptionType, RecurringEntryType} from "../types"
 import { EntryException } from "../models/entryException";
-import { addMillisecondsToDate, dateMinusMinutes, datePlusMinutes, getMillisecondsBetween } from "./dateHelpers";
+import { addMillisecondsToDate, dateMinusMinutes, datePlusMinutes, getMillisecondsBetween, getTimeFromDate, setTimeForDate } from "./dateHelpers";
 import { RRule, RRuleSet, rrulestr } from "rrule";
 import { FREQUENCY_MAPPING } from "../controllers/calendar";
 
@@ -167,14 +167,14 @@ export const updateExceptionDetails = (exception, data) => {
   return exception  
 }
 
-export const updateRecurrenceRule = (entry) => {
+export const updateRecurrenceRule = async (entry) => {
   const rule = new RRule({
     freq: FREQUENCY_MAPPING[entry.frequency],
     dtstart: entry.startTimeUtc,
     until: entry.recurrenceEndsUtc,
   });
   entry.recurrencePattern = rule.toString();
-  entry.save();
+  await entry.save();
 }
 
 export const createEntryException = async (entry, data) => {
@@ -195,4 +195,55 @@ export const createEntryException = async (entry, data) => {
     allDay: data.allDay,
     endTimeUtc: data.endTimeUtc,
   });
+}
+
+export const updateRelevantFieldsOnSeries = async (entry, data) => {
+  const {
+    updatedStartUtc,
+    updatedEndUtc
+  } = calculateNewStartAndEnd(entry, data.startTimeUtc, data.endTimeUtc)
+
+  // The following are the only fields that are allowed to be edited on a recurring series
+  entry.startTimeUtc = updatedStartUtc
+  entry.endTimeUtc = updatedEndUtc
+  entry.title = data.title
+  entry.description = data.description
+  entry.recurrenceEndsUtc = data.recurrenceEndsUtc
+  entry.frequency = data.frequency
+  entry.allDay = data.allDay
+  await entry.save()
+  await updateRecurrenceRule(entry)
+  return entry
+}
+
+const calculateNewStartAndEnd = (originalEntry, newStart, newEnd) => {
+  const {hours: newStartHours, minutes: newStartMinutes} = getTimeFromDate(newStart)
+  const {hours: newEndHours, minutes: newEndMinutes} = getTimeFromDate(newEnd)
+
+  const updatedStartUtc = setTimeForDate(originalEntry.startTimeUtc, newStartHours, newStartMinutes)
+  const updatedEndUtc = setTimeForDate(originalEntry.endTimeUtc, newEndHours, newEndMinutes)
+
+  return {
+    updatedStartUtc,
+    updatedEndUtc
+  }
+}
+
+export const updateEntryExceptionsForEntry = async (entry) => {
+  const entryExceptions = await EntryException.find({
+    entryId: entry._id,
+    modified: true,
+  })
+
+  const {hours: newStartHours, minutes: newStartMinutes} = getTimeFromDate(entry.startTimeUtc)
+  const {hours: newEndHours, minutes: newEndMinutes} = getTimeFromDate(entry.endTimeUtc)
+
+  for (const exception of entryExceptions) {
+    exception.title = entry.title
+    exception.description = entry.description
+    exception.allDay = entry.allDay
+    exception.startTimeUtc = setTimeForDate(exception.startTimeUtc, newStartHours, newStartMinutes)
+    exception.endTimeUtc = setTimeForDate(exception.endTimeUtc, newEndHours, newEndMinutes)
+    await exception.save()
+  }
 }

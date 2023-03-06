@@ -4,6 +4,8 @@ import {
   yearAfter,
   dateMinusMinutes,
   datePlusMinutes,
+  getTimeFromDate,
+  setTimeForDate
 } from "./dateHelpers";
 
 describe("yearAfter", () => {
@@ -47,4 +49,19 @@ describe("addMillisecondsToDate", () => {
       new Date("05 October 2011 15:48 UTC").toISOString(),
     );
   });
+
+  describe("getTimeFromDate", () => {
+    it("returns hours and minutes of date", () => {
+      const date = new Date("05 October 2011 14:48 UTC").toISOString()
+      expect(getTimeFromDate(date)).toEqual({hours: 14, minutes: 48})
+    })
+  })
+
+  describe("setTimeForDate", () => {
+    it("sets hours and minutes of date", () => {
+      const date = new Date("05 October 2011 14:48 UTC").toISOString();
+      const expectedDate = new Date("05 October 2011 16:00 UTC")
+      expect(setTimeForDate(date, 16, 0)).toEqual(expectedDate)
+    })
+  })
 });

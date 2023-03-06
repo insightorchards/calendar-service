@@ -1,6 +1,6 @@
 {
   "name": "@insightorchards/calendar-api",
-  "version": "0.0.30",
+  "version": "0.0.31",
   "description": "A calendar API package",
   "main": "lib/index.js",
   "repository": "https://github.com/insightorchards/calendar-service.git",
