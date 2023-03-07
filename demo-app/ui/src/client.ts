@@ -129,11 +129,8 @@ const updateEntry = async (
   start?: string,
   applyToSeries?: boolean,
 ) => {
-  console.log("inside the function")
   let response;
   if (recurring) {
-    console.log("about to make the request")
-    console.log({startTimeUtc, endTimeUtc, recurrenceEndUtc})
     response = await fetch(
       `${CALENDAR_BACKEND_URL}/entries/${entryId}?start=${start}&applyToSeries=${applyToSeries}`,
       {
@@ -155,7 +152,6 @@ const updateEntry = async (
         }),
       },
     );
-    console.log({response})
   } else {
     response = await fetch(`${CALENDAR_BACKEND_URL}/entries/${entryId}`, {
       method: "PATCH",
@@ -175,7 +171,6 @@ const updateEntry = async (
     });
   }
   if (notOk(response.status)) {
-    console.log("hitting not ok block")
     throw new Error("Update entry request failed");
   }
   const result = await response.json();
