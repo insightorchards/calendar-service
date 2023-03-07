@@ -15,8 +15,9 @@ import {
   expandRecurringEntry,
   handleRecurringEntryDeletion,
   updateExceptionDetails,
-  updateRecurrenceRule,
-  createEntryException
+  createEntryException,
+  updateRelevantFieldsOnSeries,
+  updateEntryExceptionsForEntry
 } from "../helpers/recurringEntriesHelpers";
 
 export const FREQUENCY_MAPPING = {
@@ -188,12 +189,8 @@ export const updateCalendarEntry = async (
   try {
     const entryToUpdate = await CalendarEntry.findById(id);
     if (isRecurringEntry(entryToUpdate) && applyToSeries === "true") {
-      const updatedEntry = await CalendarEntry.findByIdAndUpdate(
-        id,
-        req.body as CalendarEntryType,
-        { returnDocument: "after" },
-      );
-      updateRecurrenceRule(updatedEntry)
+      const updatedEntry = await updateRelevantFieldsOnSeries(entryToUpdate, req.body as CalendarEntryType)
+      await updateEntryExceptionsForEntry(updatedEntry)
       res.status(200).json(updatedEntry);
     } else if (isRecurringEntry(entryToUpdate) && applyToSeries === "false") {
       const existingModifiedExceptions = await findMatchingModifiedExceptions(

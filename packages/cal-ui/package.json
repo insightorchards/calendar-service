@@ -1,6 +1,6 @@
 {
   "name": "@insightorchards/calendar-ui",
-  "version": "0.0.47",
+  "version": "0.0.49",
   "description": "A calendar UI package",
   "author": "Insight Orchards",
   "main": "dist/index.js",

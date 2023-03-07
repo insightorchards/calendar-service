@@ -9,7 +9,6 @@ export interface CalendarEntryInput {
   allDay: boolean;
   recurring: boolean;
   frequency?: string;
-  recurrenceBegins?: Date;
   recurrenceEndUtc?: Date;
 }
 
@@ -68,7 +67,6 @@ const createEntry = async ({
   allDay,
   recurring,
   frequency,
-  recurrenceBegins,
   recurrenceEndUtc,
 }: CalendarEntryInput) => {
   let response;
@@ -88,7 +86,6 @@ const createEntry = async ({
         allDay,
         recurring,
         frequency,
-        recurrenceBegins: recurrenceBegins?.toISOString(),
         recurrenceEndsUtc: recurrenceEndUtc?.toISOString(),
       }),
     });
@@ -127,7 +124,6 @@ const updateEntry = async (
     allDay,
     recurring,
     frequency,
-    recurrenceBegins,
     recurrenceEndUtc,
   }: CalendarEntryInput,
   start?: string,
@@ -152,8 +148,7 @@ const updateEntry = async (
           allDay,
           recurring,
           frequency,
-          recurrenceBegins: recurrenceBegins?.toISOString(),
-          recurrenceEnds: recurrenceEndUtc?.toISOString(),
+          recurrenceEndsUtc: recurrenceEndUtc?.toISOString(),
         }),
       },
     );
