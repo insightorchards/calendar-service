@@ -90,7 +90,6 @@ export const createCalendarEntry = async (
     }
     res.status(201).json(entry);
   } catch (err) {
-    console.log("Error:", err.message)
     res.status(400);
     res.send({ message: err.message });
   }
@@ -117,7 +116,6 @@ export const getCalendarEntries = async (
 
     res.status(200).json(allEntries);
   } catch (err) {
-    console.log("Error:", err.message)
     res.status(400);
     res.send({ message: err.message });
   }
@@ -150,7 +148,6 @@ export const getCalendarEntry = async (
       res.status(200).json(entry);
     }
   } catch (err) {
-    console.log("Error:", err.message)
     res.status(400);
     res.send({ message: err.message });
   }
@@ -177,7 +174,6 @@ export const deleteCalendarEntry = async (
     }
     res.sendStatus(200);
   } catch (err) {
-    console.log("Error:", err.message)
     res.status(400);
     res.send({ message: err.message });
   }
@@ -227,7 +223,6 @@ export const updateCalendarEntry = async (
       res.status(200).json(updatedEntry);
     }
   } catch (err) {
-    console.log("Error:", err.message)
     res.status(400);
     res.send({ message: err.message });
   }
