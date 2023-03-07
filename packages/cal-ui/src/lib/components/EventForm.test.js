@@ -167,7 +167,6 @@ describe("EventForm", () => {
         allDay: false,
         recurring: true,
         frequency: "monthly",
-        recurrenceBegins: new Date(getDateTimeString("2022-02-15", "04:00")),
         recurrenceEnds: "2023-02-15",
       });
     });

@@ -44,7 +44,6 @@ const EventForm = ({
   const currentHour = new Date().getHours();
   const DEFAULT_START_TIME = `${padNumberWith0Zero(currentHour + 1)}:00`;
   const DEFAULT_END_TIME = `${padNumberWith0Zero(currentHour + 2)}:00`;
-  const recurrenceBeginDate = new Date(getDateTimeString(startDate, startTime));
   const [recurrenceEndDate, setRecurrenceEndDate] = useState(
     formatDate(new Date(initialRecurrenceEnd)),
   );
@@ -90,7 +89,6 @@ const EventForm = ({
         allDay,
         recurring,
         frequency: recurrenceFrequency,
-        recurrenceBegins: recurrenceBeginDate,
         recurrenceEnds: recurrenceEndDate,
       });
     }

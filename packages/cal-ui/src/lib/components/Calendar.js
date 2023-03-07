@@ -68,7 +68,8 @@ const Calendar = ({
       .then((entries) => {
         setEventsWithStart(entries);
       })
-      .catch(() => {
+      .catch((err) => {
+        console.log("Error:", err.message)
         flashApiErrorMessage();
       });
   }, [getEntries, rangeStart, rangeEnd]);
@@ -111,9 +112,10 @@ const Calendar = ({
           setShowOverlay(false);
         });
       })
-      .catch(() => {
+      .catch((err) => {
         setShowOverlay(false);
         setShowDeletionSelectionScreen(false);
+        console.log("Error:", err.message)
         flashApiErrorMessage();
       });
   };
@@ -127,9 +129,10 @@ const Calendar = ({
           setShowOverlay(false);
         });
       })
-      .catch(() => {
+      .catch((err) => {
         setShowOverlay(false);
         setShowDeletionSelectionScreen(false);
+        console.log("Error:", err.message)
         flashApiErrorMessage();
       });
   };
@@ -146,7 +149,6 @@ const Calendar = ({
         allDay: data.allDay,
         recurring: data.recurring,
         frequency: data.frequency,
-        recurrenceBegins: data.recurrenceBegins,
         recurrenceEndUtc: data.recurrenceEndUtc,
       },
       displayedEventData.startTimeUtc,
@@ -159,9 +161,10 @@ const Calendar = ({
         setShowOverlay(false);
         setShowEditSelectionScreen(false);
       })
-      .catch(() => {
+      .catch((err) => {
         setShowOverlay(false);
         setShowEditSelectionScreen(false);
+        console.log("Error:", err.message)
         flashApiErrorMessage();
       });
   }
@@ -178,7 +181,6 @@ const Calendar = ({
         allDay: data.allDay,
         recurring: data.recurring,
         frequency: data.frequency,
-        recurrenceBegins: data.recurrenceBegins,
         recurrenceEndUtc: data.recurrenceEndUtc,
       },
       displayedEventData.startTimeUtc,
@@ -191,9 +193,10 @@ const Calendar = ({
         setShowOverlay(false);
         setShowEditSelectionScreen(false);
       })
-      .catch(() => {
+      .catch((err) => {
         setShowOverlay(false);
         setShowEditSelectionScreen(false);
+        console.log("Error:", err.message)
         flashApiErrorMessage();
       });
   }
@@ -218,8 +221,9 @@ const Calendar = ({
             setShowOverlay(false);
           });
         })
-        .catch(() => {
+        .catch((err) => {
           setShowOverlay(false);
+          console.log("Error:", err.message)
           flashApiErrorMessage();
         });
     }
@@ -235,7 +239,6 @@ const Calendar = ({
     allDay,
     recurring,
     frequency,
-    recurrenceBegins,
     recurrenceEnds,
   }) => {
     const startTimeUtc = new Date(getDateTimeString(startDate, startTime));
@@ -253,9 +256,9 @@ const Calendar = ({
       allDay,
       recurring,
       frequency,
-      recurrenceBegins,
       recurrenceEndUtc,
-    }).catch(() => {
+    }).catch((err) => {
+      console.log("Error:", err.message)
       flashApiErrorMessage();
     });
     getEntries(rangeStart, rangeEnd)
@@ -264,7 +267,8 @@ const Calendar = ({
         setShowOverlay(false);
         setInCreateMode(false);
       })
-      .catch(() => {
+      .catch((err) => {
+        console.log("Error:", err.message)
         flashApiErrorMessage();
       });
   };
@@ -276,8 +280,9 @@ const Calendar = ({
         setShowOverlay(true);
         setInEditMode(false);
       })
-      .catch(() => {
+      .catch((err) => {
         setShowOverlay(false);
+        console.log("Error:", err.message)
         flashApiErrorMessage();
       });
   };
@@ -310,7 +315,6 @@ const Calendar = ({
     allDay,
     recurring,
     frequency,
-    recurrenceBegins,
     recurrenceEnds,
   }) => {
     const startTimeUtc = new Date(getDateTimeString(startDate, startTime));
@@ -329,7 +333,6 @@ const Calendar = ({
         allDay,
         recurring,
         frequency,
-        recurrenceBegins,
         recurrenceEndUtc,
       }
 
@@ -349,7 +352,6 @@ const Calendar = ({
         allDay,
         recurring,
         frequency,
-        recurrenceBegins,
         recurrenceEndUtc,
       })
         .then(() => {
@@ -359,8 +361,9 @@ const Calendar = ({
           setShowOverlay(false);
           setInEditMode(false);
         })
-        .catch(() => {
+        .catch((err) => {
           setShowOverlay(false);
+          console.log("Error:", err.message)
           flashApiErrorMessage();
         });
     }

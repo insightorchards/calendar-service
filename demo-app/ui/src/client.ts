@@ -9,7 +9,6 @@ export interface CalendarEntryInput {
   allDay: boolean;
   recurring: boolean;
   frequency?: string;
-  recurrenceBegins?: Date;
   recurrenceEndUtc?: Date;
 }
 
@@ -68,7 +67,6 @@ const createEntry = async ({
   allDay,
   recurring,
   frequency,
-  recurrenceBegins,
   recurrenceEndUtc,
 }: CalendarEntryInput) => {
   let response;
@@ -88,7 +86,6 @@ const createEntry = async ({
         allDay,
         recurring,
         frequency,
-        recurrenceBegins: recurrenceBegins?.toISOString(),
         recurrenceEndsUtc: recurrenceEndUtc?.toISOString(),
       }),
     });
@@ -127,14 +124,16 @@ const updateEntry = async (
     allDay,
     recurring,
     frequency,
-    recurrenceBegins,
     recurrenceEndUtc,
   }: CalendarEntryInput,
   start?: string,
   applyToSeries?: boolean,
 ) => {
+  console.log("inside the function")
   let response;
   if (recurring) {
+    console.log("about to make the request")
+    console.log({startTimeUtc, endTimeUtc, recurrenceEndUtc})
     response = await fetch(
       `${CALENDAR_BACKEND_URL}/entries/${entryId}?start=${start}&applyToSeries=${applyToSeries}`,
       {
@@ -152,11 +151,11 @@ const updateEntry = async (
           allDay,
           recurring,
           frequency,
-          recurrenceBegins: recurrenceBegins?.toISOString(),
           recurrenceEnds: recurrenceEndUtc?.toISOString(),
         }),
       },
     );
+    console.log({response})
   } else {
     response = await fetch(`${CALENDAR_BACKEND_URL}/entries/${entryId}`, {
       method: "PATCH",
@@ -176,6 +175,7 @@ const updateEntry = async (
     });
   }
   if (notOk(response.status)) {
+    console.log("hitting not ok block")
     throw new Error("Update entry request failed");
   }
   const result = await response.json();
