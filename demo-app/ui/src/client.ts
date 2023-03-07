@@ -151,7 +151,7 @@ const updateEntry = async (
           allDay,
           recurring,
           frequency,
-          recurrenceEnds: recurrenceEndUtc?.toISOString(),
+          recurrenceEndsUtc: recurrenceEndUtc?.toISOString(),
         }),
       },
     );
