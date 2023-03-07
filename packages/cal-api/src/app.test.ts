@@ -856,11 +856,12 @@ describe("PATCH / entry?start=<start-time>&applyToSeries=<boolean>", () => {
     );
   });
 
-  it.only("editing a series updates the entry exception", async () => {
+  it("editing a series updates entry exceptions", async () => {
     const {
       janFourth,
       oneYearLater,
       febFourth,
+      marFourth,
       febFifth,
       updatedEndDate
     } = generateRecurrenceData()
@@ -912,25 +913,26 @@ describe("PATCH / entry?start=<start-time>&applyToSeries=<boolean>", () => {
       }),
     );
 
-    const janFourth1600 = new Date("04 January 2023 16:00 UTC")
+  const janFourth1600 = new Date("04 January 2023 16:00 UTC")
 
-    await supertest(app)
-      .patch(
-        `/entries/${
-          createdEvent._id
-        }?start=${janFourth.toISOString()}&applyToSeries=true`,
-      )
-      .send({
-        title: "Listen to Country Roads",
-        startTimeUtc: janFourth1600,
-        endTimeUtc: dayAfter(janFourth1600),
-        description: "by J. Denver",
-        allDay: false,
-        frequency: "monthly",
-        recurrenceEndsUtc: oneYearLater,
-      })
-      .expect(200);
+  await supertest(app)
+    .patch(
+      `/entries/${
+        createdEvent._id
+      }?start=${janFourth.toISOString()}&applyToSeries=true`,
+    )
+    .send({
+      title: "Listen to Country Roads",
+      startTimeUtc: janFourth1600,
+      endTimeUtc: dayAfter(janFourth1600),
+      description: "by J. Denver",
+      allDay: false,
+      frequency: "monthly",
+      recurrenceEndsUtc: oneYearLater,
+    })
+    .expect(200);
 
+    const febFourth1600 = new Date("04 February 2023 16:00 UTC");
     const febFifth1600 = new Date("05 February 2023 16:00 UTC");
 
     const modifiedExceptions = await EntryException.where("modified").equals(
@@ -946,6 +948,17 @@ describe("PATCH / entry?start=<start-time>&applyToSeries=<boolean>", () => {
         allDay: false,
       }),
     );
+
+    const deletedExceptions = await EntryException.where(
+      "deleted",
+    ).equals(true);
+    expect(deletedExceptions[0]).toEqual(
+      expect.objectContaining({
+        startTimeUtc: febFourth1600,
+        deleted: true,
+      })
+    )
+
   })
 
   it("catches and returns an error from CalendarEntry.findByIdAndUpdate", async () => {
@@ -995,6 +1008,7 @@ const generateRecurrenceData = () => {
   const recurrences = rule.all();
 
   const febFourth = recurrences[1];
+  const marFourth = recurrences[2]
   const febFifth = new Date("05 February 2023 14:48 UTC");
   const updatedEndDate = dayAfter(febFifth);
 
@@ -1004,6 +1018,7 @@ const generateRecurrenceData = () => {
     rule,
     recurrences,
     febFourth,
+    marFourth,
     febFifth,
     updatedEndDate
   }

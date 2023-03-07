@@ -230,7 +230,7 @@ const calculateNewStartAndEnd = (originalEntry, newStart, newEnd) => {
 }
 
 export const updateEntryExceptionsForEntry = async (entry) => {
-  const entryExceptions = await EntryException.find({
+  const modifiedEntryExceptions = await EntryException.find({
     entryId: entry._id,
     modified: true,
   })
@@ -238,12 +238,22 @@ export const updateEntryExceptionsForEntry = async (entry) => {
   const {hours: newStartHours, minutes: newStartMinutes} = getTimeFromDate(entry.startTimeUtc)
   const {hours: newEndHours, minutes: newEndMinutes} = getTimeFromDate(entry.endTimeUtc)
 
-  for (const exception of entryExceptions) {
+  for (const exception of modifiedEntryExceptions) {
     exception.title = entry.title
     exception.description = entry.description
     exception.allDay = entry.allDay
     exception.startTimeUtc = setTimeForDate(exception.startTimeUtc, newStartHours, newStartMinutes)
     exception.endTimeUtc = setTimeForDate(exception.endTimeUtc, newEndHours, newEndMinutes)
+    await exception.save()
+  }
+
+  const deletedEntryExceptions = await EntryException.find({
+    entryId: entry._id,
+    deleted: true,
+  })
+
+  for (const exception of deletedEntryExceptions) {
+    exception.startTimeUtc = setTimeForDate(exception.startTimeUtc, newStartHours, newStartMinutes)
     await exception.save()
   }
 }
