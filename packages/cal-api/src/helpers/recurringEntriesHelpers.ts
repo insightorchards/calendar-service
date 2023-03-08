@@ -69,6 +69,8 @@ export const findMatchingModifiedExceptions = async (start, parentCalendarEntry)
 export const getExpandedRecurringEntries = (ruleSet, calendarEntry, start, end, duration) => {
   const recurrences = ruleSet.between(new Date(start), new Date(end));
 
+  console.log({expandedDates: recurrences})
+
   return recurrences.map((date) => {
     return {
       _id: calendarEntry._id,
@@ -84,6 +86,15 @@ export const getExpandedRecurringEntries = (ruleSet, calendarEntry, start, end, 
       recurrenceEndsUtc: calendarEntry.recurrenceEndsUtc,
     };
   });
+}
+
+export const testRrule = (date, endDate) => {
+  const rule = new RRule({
+    freq: RRule.WEEKLY,
+    dtstart: date,
+    until: endDate,
+  });
+  return rule.all()
 }
 
 export const getRecurringEntriesWithinRange = async (start, end) => {
