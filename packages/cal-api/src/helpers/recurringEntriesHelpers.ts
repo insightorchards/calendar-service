@@ -88,6 +88,9 @@ export const testRrule = (date, endDate) => {
 export const getExpandedRecurringEntries = (ruleSet, calendarEntry, start, end, duration) => {
   const recurrences = ruleSet.between(new Date(start), new Date(end));
 
+  console.log("recurrences", recurrences)
+  console.log("recurrencesISO:", recurrences.map(r => r.toISOString()))
+
   return recurrences.map((date) => {
     return {
       _id: calendarEntry._id,

@@ -17,6 +17,7 @@ const notOk = (status: number) => {
 };
 
 const getEntries = async (start: string, end: string) => {
+  console.log("inside getEntries")
   return fetch(`${CALENDAR_BACKEND_URL}/entries?start=${start}&end=${end}`, {
     method: "GET",
     headers: {
@@ -41,6 +42,7 @@ const getEntries = async (start: string, end: string) => {
           recurrenceEnd: event.recurrenceEndsUtc,
         };
       });
+      console.log("events", JSON.stringify(result))
       return result;
     });
 };
