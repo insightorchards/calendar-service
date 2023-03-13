@@ -69,9 +69,19 @@ export const findMatchingModifiedExceptions = async (start, parentCalendarEntry)
 export const getExpandedRecurringEntries = (ruleSet, calendarEntry, start, end, duration) => {
   const recurrences = ruleSet.between(new Date(start), new Date(end));
 
-  console.log({expandedDates: recurrences})
 
-  return recurrences.map((date) => {
+  const updatedDates = recurrences.map((d) => Date.UTC(
+    d.getUTCFullYear(),
+    d.getUTCMonth(),
+    d.getUTCDate(),
+    d.getUTCHours(),
+    d.getUTCMinutes(),
+  ))
+
+  // const utcDates = updatedDates.map((d) => Date.UTC(d))
+  console.log({before: recurrences, after: updatedDates})
+
+  return updatedDates.map((date) => {
     return {
       _id: calendarEntry._id,
       eventId: calendarEntry.eventId,
@@ -92,9 +102,19 @@ export const testRrule = (date, endDate) => {
   const rule = new RRule({
     freq: RRule.WEEKLY,
     dtstart: date,
+    // dtstart: new Date(Date.UTC(2023, 2, 1, 12, 0)),
     until: endDate,
+    // tzid: 'America/Denver',
   });
-  return rule.all()
+  const instances = rule.all()
+  const output = instances.map((d) => new Date(
+    d.getUTCFullYear(),
+    d.getUTCMonth(),
+    d.getUTCDate(),
+    d.getUTCHours(),
+    d.getUTCMinutes(),
+  ))
+  return output
 }
 
 export const getRecurringEntriesWithinRange = async (start, end) => {
@@ -183,6 +203,7 @@ export const updateRecurrenceRule = async (entry) => {
     freq: FREQUENCY_MAPPING[entry.frequency],
     dtstart: entry.startTimeUtc,
     until: entry.recurrenceEndsUtc,
+    tzid: 'America/Denver'
   });
   entry.recurrencePattern = rule.toString();
   await entry.save();
