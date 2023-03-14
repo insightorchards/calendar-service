@@ -16,6 +16,26 @@ const notOk = (status: number) => {
   return !status.toString().match(/2\d+/);
 };
 
+const calculateOffset = () => {
+  const date = new Date(new Date().getFullYear(), 0, 1);
+  return date.getTimezoneOffset()
+}
+
+const adjustForDaylightSavings = (date: any) => {
+  const d = new Date(date)
+  const utcDate = new Date(
+    d.getUTCFullYear(),
+    d.getUTCMonth(),
+    d.getUTCDate(),
+    d.getUTCHours(),
+    d.getUTCMinutes(),
+  )
+
+  const offset = calculateOffset()
+
+  return utcDate.setMinutes(utcDate.getMinutes() - offset)
+}
+
 const getEntries = async (start: string, end: string) => {
   console.log("inside getEntries")
   return fetch(`${CALENDAR_BACKEND_URL}/entries?start=${start}&end=${end}`, {
@@ -42,7 +62,6 @@ const getEntries = async (start: string, end: string) => {
           recurrenceEnd: event.recurrenceEndsUtc,
         };
       });
-      console.log("events", JSON.stringify(result))
       return result;
     });
 };
