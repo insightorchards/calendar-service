@@ -66,30 +66,8 @@ export const findMatchingModifiedExceptions = async (start, parentCalendarEntry)
     .lt(oneMinAfter);
 };
 
-export const testRrule = (date, endDate) => {
-  const rule = new RRule({
-    freq: RRule.WEEKLY,
-    dtstart: date,
-    // dtstart: new Date(Date.UTC(2023, 2, 1, 12, 0)),
-    until: endDate,
-    // tzid: 'America/Denver',
-  });
-  const instances = rule.all()
-  const output = instances.map((d) => new Date(
-    d.getUTCFullYear(),
-    d.getUTCMonth(),
-    d.getUTCDate(),
-    d.getUTCHours(),
-    d.getUTCMinutes(),
-  ))
-  return output
-}
-
 export const getExpandedRecurringEntries = (ruleSet, calendarEntry, start, end, duration) => {
   const recurrences = ruleSet.between(new Date(start), new Date(end));
-
-  console.log("recurrences", recurrences)
-  console.log("recurrencesISO:", recurrences.map(r => r.toISOString()))
 
   return recurrences.map((date) => {
     return {
