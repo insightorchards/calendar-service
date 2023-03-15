@@ -16,7 +16,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "GENERATE_SOURCEMAP=false react-scripts start",
+    "start": "react-scripts start",
     "build": "GENERATE_SOURCEMAP=false react-scripts --max_old_space_size=256 build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
