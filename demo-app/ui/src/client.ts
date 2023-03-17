@@ -16,12 +16,12 @@ const notOk = (status: number) => {
   return !status.toString().match(/2\d+/);
 };
 
-const calculateOffset = () => {
-  const date = new Date(new Date().getFullYear(), 0, 1);
+const calculateOffset = (utcDate: string) => {
+  const date = new Date(utcDate);
   return date.getTimezoneOffset()
 }
 
-const adjustForDaylightSavings = (date: any) => {
+const adjustForDaylightSavings = (date: string, offset: number) => {
   const d = new Date(date)
   const utcDate = new Date(
     d.getUTCFullYear(),
@@ -31,13 +31,24 @@ const adjustForDaylightSavings = (date: any) => {
     d.getUTCMinutes(),
   )
 
-  const offset = calculateOffset()
+  const adjustedDate = utcDate.setMinutes(utcDate.getMinutes() - offset)
+  return new Date(adjustedDate).toISOString()
+}
 
-  return utcDate.setMinutes(utcDate.getMinutes() - offset)
+const buildEventObject = (eventData: any) => {
+  const offset = calculateOffset(eventData.seriesStart) || 0
+  return {
+    _id: eventData._id,
+    title: eventData.title,
+    start: adjustForDaylightSavings(eventData.startTimeUtc, offset),
+    end: adjustForDaylightSavings(eventData.endTimeUtc, offset),
+    allDay: eventData.allDay,
+    recurring: eventData.recurring,
+    recurrenceEnd: eventData.recurrenceEndsUtc,
+  };
 }
 
 const getEntries = async (start: string, end: string) => {
-  console.log("inside getEntries")
   return fetch(`${CALENDAR_BACKEND_URL}/entries?start=${start}&end=${end}`, {
     method: "GET",
     headers: {
@@ -51,17 +62,7 @@ const getEntries = async (start: string, end: string) => {
       return response.json();
     })
     .then((data) => {
-      const result = data.map((event: any) => {
-        return {
-          _id: event._id,
-          title: event.title,
-          start: event.startTimeUtc,
-          end: event.endTimeUtc,
-          allDay: event.allDay,
-          recurring: event.recurring,
-          recurrenceEnd: event.recurrenceEndsUtc,
-        };
-      });
+      const result = data.map((event: any) => buildEventObject(event))
       return result;
     });
 };
@@ -77,7 +78,12 @@ const getEntry = async (entryId: string, start?: string) => {
       throw new Error("Get entry request failed");
     }
     return response.json();
-  });
+  }).then((data) => {
+    const offset = calculateOffset(data.seriesStart) || 0
+    return {...data,
+    startTimeUtc: adjustForDaylightSavings(data.startTimeUtc, offset),
+    endTimeUtc: adjustForDaylightSavings(data.endTimeUtc, offset)}
+  })
 };
 
 const createEntry = async ({

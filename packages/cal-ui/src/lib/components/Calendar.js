@@ -54,7 +54,6 @@ const Calendar = ({
   const [rangeStart, setRangeStart] = useState("");
   const [rangeEnd, setRangeEnd] = useState("");
   const [apiError, setApiError] = useState(false);
-  const [pendingEdits, setPendingEdits] = useState({});
   const [editingSeries, setEditingSeries] = useState(false)
 
   const [showDeletionSelectionScreen, setShowDeletionSelectionScreen] =

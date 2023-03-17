@@ -26,6 +26,7 @@ describe("client functions", () => {
               description: "Ange is turning 13!",
               allDay: false,
               recurring: true,
+              seriesStart: "2024-05-06T01:07:00.000Z",
               startTimeUtc: "2024-06-06T01:07:00.000Z",
               endTimeUtc: "2024-06-06T05:07:00.000Z",
               recurrenceEndsUtc: "2024-06-06T05:07:00.000Z",
@@ -91,6 +92,7 @@ describe("client functions", () => {
             allDay: false,
             recurring: false,
             startTimeUtc: startTime,
+            seriesStart: "2024-05-06T01:07:00.000Z",
             endTimeUtc: "2024-06-06T05:07:00.000Z",
             createdAt: "2022-12-05T05:27:52.212Z",
             updatedAt: "2022-12-05T05:27:52.212Z",
@@ -105,7 +107,7 @@ describe("client functions", () => {
 
       const result = await getEntry("638d815856e5c70955565b7e", startTime);
       expect(fetchSpy).toHaveBeenCalled();
-      expect(result).toEqual({
+      expect(result).toEqual(expect.objectContaining({
         _id: "638d815856e5c70955565b7e",
         eventId: "5678",
         creatorId: "1234",
@@ -118,7 +120,7 @@ describe("client functions", () => {
         createdAt: "2022-12-05T05:27:52.212Z",
         updatedAt: "2022-12-05T05:27:52.212Z",
         __v: 0,
-      });
+      }));
     });
 
     it("throws an error on failure", () => {
