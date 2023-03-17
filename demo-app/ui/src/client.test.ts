@@ -59,6 +59,52 @@ describe("client functions", () => {
       ]);
     });
 
+    it("adjusts for DST offset when relevant", async () => {
+      const mockResponse = {
+        status: 200,
+        json: () => {
+          return [
+            {
+              _id: "638d815856e5c70955565b7e",
+              eventId: "5678",
+              creatorId: "1234",
+              title: "Ange's Bat Mitzvah",
+              description: "Ange is turning 13!",
+              allDay: false,
+              recurring: true,
+              seriesStart: "2024-01-06T01:07:00.000Z",
+              startTimeUtc: "2024-06-06T01:07:00.000Z",
+              endTimeUtc: "2024-06-06T05:07:00.000Z",
+              recurrenceEndsUtc: "2024-06-06T05:07:00.000Z",
+              createdAt: "2022-12-05T05:27:52.212Z",
+              updatedAt: "2022-12-05T05:27:52.212Z",
+              __v: 0,
+            },
+          ] as any;
+        },
+      } as Response;
+
+      const fetchSpy = jest
+        .spyOn(window, "fetch")
+        .mockResolvedValue(mockResponse);
+
+      const start = "2023-01-01T08:00:00.000Z";
+      const end = "2023-02-12T08:00:00.000Z";
+      const result = await getEntries(start, end);
+      expect(fetchSpy).toHaveBeenCalled();
+      expect(result).toEqual([
+        {
+          _id: "638d815856e5c70955565b7e",
+          allDay: false,
+          recurring: true,
+          start: "2024-06-06T00:07:00.000Z",
+          end: "2024-06-06T04:07:00.000Z",
+          recurrenceEnd: "2024-06-06T05:07:00.000Z",
+          title: "Ange's Bat Mitzvah",
+        },
+      ]);
+    });
+
     it("throws an error on failure", () => {
       const mockResponse = {
         status: 400,
@@ -117,6 +163,51 @@ describe("client functions", () => {
         recurring: false,
         startTimeUtc: "2024-06-06T01:07:00.000Z",
         endTimeUtc: "2024-06-06T05:07:00.000Z",
+        createdAt: "2022-12-05T05:27:52.212Z",
+        updatedAt: "2022-12-05T05:27:52.212Z",
+        __v: 0,
+      }));
+    });
+
+    it("adjusts for DST offset when relevant", async () => {
+      const startTime = "2024-06-06T01:07:00.000Z";
+      const mockResponse = {
+        status: 200,
+        json: () => {
+          return {
+            _id: "638d815856e5c70955565b7e",
+            eventId: "5678",
+            creatorId: "1234",
+            title: "Ange's Bat Mitzvah",
+            description: "Ange is turning 13!",
+            allDay: false,
+            recurring: false,
+            seriesStart: "2024-01-06T01:07:00.000Z",
+            startTimeUtc: startTime,
+            endTimeUtc: "2024-06-06T05:07:00.000Z",
+            createdAt: "2022-12-05T05:27:52.212Z",
+            updatedAt: "2022-12-05T05:27:52.212Z",
+            __v: 0,
+          } as any;
+        },
+      } as Response;
+
+      const fetchSpy = jest
+        .spyOn(window, "fetch")
+        .mockResolvedValue(mockResponse);
+
+      const result = await getEntry("638d815856e5c70955565b7e", startTime);
+      expect(fetchSpy).toHaveBeenCalled();
+      expect(result).toEqual(expect.objectContaining({
+        _id: "638d815856e5c70955565b7e",
+        eventId: "5678",
+        creatorId: "1234",
+        title: "Ange's Bat Mitzvah",
+        description: "Ange is turning 13!",
+        allDay: false,
+        recurring: false,
+        startTimeUtc: "2024-06-06T00:07:00.000Z",
+        endTimeUtc: "2024-06-06T04:07:00.000Z",
         createdAt: "2022-12-05T05:27:52.212Z",
         updatedAt: "2022-12-05T05:27:52.212Z",
         __v: 0,
