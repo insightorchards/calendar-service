@@ -95,7 +95,7 @@ const Calendar = ({
     const expandedEvents = events.map((event) => {
       return {
         ...event,
-        entryStart: event.start,
+        entryStart: event.unadjustedStart,
       };
     });
 
@@ -150,7 +150,7 @@ const Calendar = ({
         frequency: data.frequency,
         recurrenceEndUtc: data.recurrenceEndUtc,
       },
-      displayedEventData.startTimeUtc,
+      displayedEventData.unadjustedStart,
       true,
     )
       .then(() => {
@@ -182,7 +182,7 @@ const Calendar = ({
         frequency: data.frequency,
         recurrenceEndUtc: data.recurrenceEndUtc,
       },
-      displayedEventData.startTimeUtc,
+      displayedEventData.unadjustedStart,
       false,
     )
       .then(() => {

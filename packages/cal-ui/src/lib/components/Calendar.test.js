@@ -155,6 +155,7 @@ describe("Calendar", () => {
           _id: "123",
           end: "2022-02-27T05:43:37.868Z",
           start: "2022-02-27T05:43:37.868Z",
+          unadjustedStart: "2022-02-27T04:43:37.868Z",
           title: "Berta goes to the baseball game!",
           allDay: false,
         },
@@ -162,6 +163,7 @@ describe("Calendar", () => {
           _id: "345",
           end: "2022-02-24T05:43:37.868Z",
           start: "2022-02-24T05:43:37.868Z",
+          unadjustedStart: "2022-02-24T04:43:37.868Z",
           title: "Dance",
           allDay: false,
         },
@@ -172,6 +174,7 @@ describe("Calendar", () => {
           _id: "345",
           end: "2022-02-24T05:43:37.868Z",
           start: "2022-02-24T05:43:37.868Z",
+          unadjustedStart: "2022-02-24T04:43:37.868Z",
           title: "Dance",
           allDay: false,
         },
@@ -192,7 +195,7 @@ describe("Calendar", () => {
       eventText.click();
       expect(mockGetEntry).toHaveBeenCalledWith(
         "345",
-        "2022-02-24T05:43:37.868Z",
+        "2022-02-24T04:43:37.868Z",
       );
       const modal = await screen.findByRole("dialog");
       expect(modal).toBeVisible();
@@ -331,6 +334,7 @@ describe("Calendar", () => {
           _id: "123",
           end: "2022-02-27T05:43:37.868Z",
           start: "2022-02-27T05:43:37.868Z",
+          unadjustedStart: "2022-02-27T04:43:37.868Z",
           title: "Berta goes to the baseball game!",
           recurring: true,
         },
@@ -338,6 +342,7 @@ describe("Calendar", () => {
           _id: "345",
           end: "2022-02-24T05:43:37.868Z",
           start: "2022-02-24T05:43:37.868Z",
+          unadjustedStart: "2022-02-24T04:43:37.868Z",
           title: "Dance",
           recurring: true,
         },
@@ -347,6 +352,7 @@ describe("Calendar", () => {
         _id: "345",
         end: "2022-02-24T05:43:37.868Z",
         startTimeUtc: "2022-02-24T05:43:37.868Z",
+        unadjustedStart: "2022-02-24T04:43:37.868Z",
         endTimeUtc: "2022-02-25T05:43:37.868Z",
         title: "Dance",
         description: "fun times",
@@ -405,7 +411,7 @@ describe("Calendar", () => {
           title: "Dance",
           description: "fun times at the grand royale",
         }),
-        "2022-02-24T05:43:37.868Z",
+        "2022-02-24T04:43:37.868Z",
         false,
       );
     });
