@@ -47,7 +47,7 @@ describe("client functions", () => {
       const result = await getEntries(start, end);
       expect(fetchSpy).toHaveBeenCalled();
       expect(result).toEqual([
-        {
+        expect.objectContaining({
           _id: "638d815856e5c70955565b7e",
           allDay: false,
           recurring: true,
@@ -55,7 +55,7 @@ describe("client functions", () => {
           start: "2024-06-06T01:07:00.000Z",
           recurrenceEnd: "2024-06-06T05:07:00.000Z",
           title: "Ange's Bat Mitzvah",
-        },
+        }),
       ]);
     });
 
@@ -93,15 +93,16 @@ describe("client functions", () => {
       const result = await getEntries(start, end);
       expect(fetchSpy).toHaveBeenCalled();
       expect(result).toEqual([
-        {
+        expect.objectContaining({
           _id: "638d815856e5c70955565b7e",
           allDay: false,
           recurring: true,
           start: "2024-06-06T00:07:00.000Z",
           end: "2024-06-06T04:07:00.000Z",
           recurrenceEnd: "2024-06-06T05:07:00.000Z",
+          unadjustedStart: "2024-06-06T01:07:00.000Z",
           title: "Ange's Bat Mitzvah",
-        },
+        }),
       ]);
     });
 
@@ -206,6 +207,7 @@ describe("client functions", () => {
         description: "Ange is turning 13!",
         allDay: false,
         recurring: false,
+        unadjustedStart: "2024-06-06T01:07:00.000Z",
         startTimeUtc: "2024-06-06T00:07:00.000Z",
         endTimeUtc: "2024-06-06T04:07:00.000Z",
         createdAt: "2022-12-05T05:27:52.212Z",

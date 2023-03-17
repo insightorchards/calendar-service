@@ -40,6 +40,7 @@ const buildEventObject = (eventData: any) => {
   return {
     _id: eventData._id,
     title: eventData.title,
+    unadjustedStart: eventData.startTimeUtc,
     start: adjustForDaylightSavings(eventData.startTimeUtc, offset),
     end: adjustForDaylightSavings(eventData.endTimeUtc, offset),
     allDay: eventData.allDay,
@@ -82,7 +83,8 @@ const getEntry = async (entryId: string, start?: string) => {
     const offset = calculateOffset(data.seriesStart) || 0
     return {...data,
     startTimeUtc: adjustForDaylightSavings(data.startTimeUtc, offset),
-    endTimeUtc: adjustForDaylightSavings(data.endTimeUtc, offset)}
+    endTimeUtc: adjustForDaylightSavings(data.endTimeUtc, offset),
+    unadjustedStart: data.startTimeUtc,}
   })
 };
 
