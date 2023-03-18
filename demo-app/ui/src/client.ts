@@ -10,6 +10,13 @@ export interface CalendarEntryInput {
   recurring: boolean;
   frequency?: string;
   recurrenceEndUtc?: Date;
+  seriesStart?: string
+}
+
+interface AdjustStartAndEndInput {
+  seriesStart: string,
+  startTimeUtc: Date,
+  endTimeUtc: Date
 }
 
 const notOk = (status: number) => {
@@ -34,6 +41,32 @@ const adjustForDaylightSavings = (date: string, offset: number) => {
   const adjustedDate = utcDate.setMinutes(utcDate.getMinutes() - offset)
   return new Date(adjustedDate).toISOString()
 }
+
+const adjustStartAndEndForDst = ({
+  seriesStart,
+  startTimeUtc,
+  endTimeUtc}: AdjustStartAndEndInput) => {
+    const start = startTimeUtc.toISOString()
+    const end = endTimeUtc.toISOString()
+
+    const originalOffset = calculateOffset(seriesStart) || 0
+    const currentOffset = calculateOffset(start) || 0
+
+    if (currentOffset != originalOffset) {
+      const offsetDifference = currentOffset - originalOffset
+      const newOffset = currentOffset + offsetDifference
+
+      return {
+        adjustedStart: adjustForDaylightSavings(start, newOffset),
+        adjustedEnd: adjustForDaylightSavings(end, newOffset)
+      }
+    } else {
+        return {
+          adjustedStart: start,
+          adjustedEnd: end,
+        }
+      }
+  }
 
 const buildEventObject = (eventData: any) => {
   const offset = calculateOffset(eventData.seriesStart) || 0
@@ -84,7 +117,8 @@ const getEntry = async (entryId: string, start?: string) => {
     return {...data,
     startTimeUtc: adjustForDaylightSavings(data.startTimeUtc, offset),
     endTimeUtc: adjustForDaylightSavings(data.endTimeUtc, offset),
-    unadjustedStart: data.startTimeUtc,}
+    unadjustedStart: data.startTimeUtc,
+  }
   })
 };
 
@@ -149,6 +183,7 @@ const updateEntry = async (
     title,
     startTimeUtc,
     endTimeUtc,
+    seriesStart,
     description,
     allDay,
     recurring,
@@ -160,6 +195,13 @@ const updateEntry = async (
 ) => {
   let response;
   if (recurring) {
+    const {adjustedStart, adjustedEnd} = adjustStartAndEndForDst({
+      seriesStart: seriesStart!,
+      startTimeUtc,
+      endTimeUtc
+    })
+
+
     response = await fetch(
       `${CALENDAR_BACKEND_URL}/entries/${entryId}?start=${start}&applyToSeries=${applyToSeries}`,
       {
@@ -172,8 +214,8 @@ const updateEntry = async (
           title: title,
           creatorId: "1234",
           eventId: "5678",
-          startTimeUtc: startTimeUtc.toISOString(),
-          endTimeUtc: endTimeUtc.toISOString(),
+          startTimeUtc: adjustedStart,
+          endTimeUtc: adjustedEnd,
           allDay,
           recurring,
           frequency,

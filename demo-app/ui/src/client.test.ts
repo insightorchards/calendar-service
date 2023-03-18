@@ -208,6 +208,7 @@ describe("client functions", () => {
         allDay: false,
         recurring: false,
         unadjustedStart: "2024-06-06T01:07:00.000Z",
+        seriesStart: "2024-01-06T01:07:00.000Z",
         startTimeUtc: "2024-06-06T00:07:00.000Z",
         endTimeUtc: "2024-06-06T04:07:00.000Z",
         createdAt: "2022-12-05T05:27:52.212Z",
@@ -413,7 +414,7 @@ describe("client functions", () => {
       });
     });
 
-    it("succeeds for recurring events", async () => {
+    it("succeeds and adjusts DST for recurring events", async () => {
       const mockResponse = {
         status: 200,
         json: () => {
@@ -426,8 +427,8 @@ describe("client functions", () => {
             allDay: false,
             recurring: true,
             recurrenceEndsUtc: "2025-06-06T01:07:00.000Z",
-            startTimeUtc: "2024-06-06T01:07:00.000Z",
-            endTimeUtc: "2024-06-06T05:07:00.000Z",
+            startTimeUtc: "2024-06-06T02:07:00.000Z",
+            endTimeUtc: "2024-06-06T03:07:00.000Z",
             createdAt: "2022-12-05T05:27:52.212Z",
             updatedAt: "2022-12-05T05:27:52.212Z",
             __v: 0,
@@ -445,7 +446,8 @@ describe("client functions", () => {
           title: "Barbies's Bat Mitzvah",
           description: "Barbie is turning 13!",
           startTimeUtc: new Date("2024-06-06T01:07:00.000Z"),
-          endTimeUtc: new Date("2024-06-06T01:07:00.000Z"),
+          endTimeUtc: new Date("2024-06-06T02:07:00.000Z"),
+          seriesStart: "2024-01-06T03:07:00.000Z",
           allDay: true,
           recurring: true,
           frequency: "monthly",
@@ -454,7 +456,8 @@ describe("client functions", () => {
         "2024-06-06T01:07:00.000Z",
         true,
       );
-      expect(fetchSpy).toHaveBeenCalled();
+      expect(fetchSpy).toHaveBeenCalledWith("http://localhost:4000/entries/638d815856e5c70955565b7e?start=2024-06-06T01:07:00.000Z&applyToSeries=true", {"body": "{\"description\":\"Barbie is turning 13!\",\"title\":\"Barbies's Bat Mitzvah\",\"creatorId\":\"1234\",\"eventId\":\"5678\",\"startTimeUtc\":\"2024-06-06T02:07:00.000Z\",\"endTimeUtc\":\"2024-06-06T03:07:00.000Z\",\"allDay\":true,\"recurring\":true,\"frequency\":\"monthly\",\"recurrenceEndsUtc\":\"2025-06-06T01:07:00.000Z\"}", "headers": {"Content-Type": "application/json"}, "method": "PATCH"});
+
       expect(result).toEqual({
         _id: "638d815856e5c70955565b7e",
         eventId: "5678",
@@ -464,8 +467,8 @@ describe("client functions", () => {
         allDay: false,
         recurring: true,
         recurrenceEndsUtc: "2025-06-06T01:07:00.000Z",
-        startTimeUtc: "2024-06-06T01:07:00.000Z",
-        endTimeUtc: "2024-06-06T05:07:00.000Z",
+        startTimeUtc: "2024-06-06T02:07:00.000Z",
+        endTimeUtc: "2024-06-06T03:07:00.000Z",
         createdAt: "2022-12-05T05:27:52.212Z",
         updatedAt: "2022-12-05T05:27:52.212Z",
         __v: 0,

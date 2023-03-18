@@ -149,6 +149,7 @@ const Calendar = ({
         recurring: data.recurring,
         frequency: data.frequency,
         recurrenceEndUtc: data.recurrenceEndUtc,
+        seriesStart: displayedEventData.seriesStart
       },
       displayedEventData.unadjustedStart,
       true,
@@ -181,6 +182,7 @@ const Calendar = ({
         recurring: data.recurring,
         frequency: data.frequency,
         recurrenceEndUtc: data.recurrenceEndUtc,
+        seriesStart: displayedEventData.seriesStart,
       },
       displayedEventData.unadjustedStart,
       false,

@@ -352,8 +352,9 @@ describe("Calendar", () => {
         _id: "345",
         end: "2022-02-24T05:43:37.868Z",
         startTimeUtc: "2022-02-24T05:43:37.868Z",
-        unadjustedStart: "2022-02-24T04:43:37.868Z",
         endTimeUtc: "2022-02-25T05:43:37.868Z",
+        unadjustedStart: "2022-02-24T04:43:37.868Z",
+        seriesStart: "2022-01-24T05:43:37.868Z",
         title: "Dance",
         description: "fun times",
         recurring: true,
@@ -410,6 +411,7 @@ describe("Calendar", () => {
         expect.objectContaining({
           title: "Dance",
           description: "fun times at the grand royale",
+          seriesStart: "2022-01-24T05:43:37.868Z"
         }),
         "2022-02-24T04:43:37.868Z",
         false,
