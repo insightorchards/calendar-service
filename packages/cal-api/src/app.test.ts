@@ -315,6 +315,7 @@ describe("GET /entry/:entryId?start=<start-time>", () => {
         description: "and a happy night too",
         allDay: false,
         recurring: true,
+        seriesStart: janFourth.toISOString(),
         startTimeUtc: febFourth.toISOString(),
         endTimeUtc: dayAfter(febFourth).toISOString(),
       }),
@@ -374,6 +375,7 @@ describe("GET /entry/:entryId?start=<start-time>", () => {
         description: "by John Denver",
         allDay: false,
         recurring: true,
+        seriesStart: janFourth.toISOString(),
         startTimeUtc: febFifth.toISOString(),
         endTimeUtc: dayAfter(febFifth).toISOString(),
       }),
@@ -861,7 +863,6 @@ describe("PATCH / entry?start=<start-time>&applyToSeries=<boolean>", () => {
       janFourth,
       oneYearLater,
       febFourth,
-      marFourth,
       febFifth,
       updatedEndDate
     } = generateRecurrenceData()

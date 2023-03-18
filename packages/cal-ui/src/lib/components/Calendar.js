@@ -54,7 +54,6 @@ const Calendar = ({
   const [rangeStart, setRangeStart] = useState("");
   const [rangeEnd, setRangeEnd] = useState("");
   const [apiError, setApiError] = useState(false);
-  const [pendingEdits, setPendingEdits] = useState({});
   const [editingSeries, setEditingSeries] = useState(false)
 
   const [showDeletionSelectionScreen, setShowDeletionSelectionScreen] =
@@ -96,7 +95,7 @@ const Calendar = ({
     const expandedEvents = events.map((event) => {
       return {
         ...event,
-        entryStart: event.start,
+        entryStart: event.unadjustedStart,
       };
     });
 
@@ -150,8 +149,9 @@ const Calendar = ({
         recurring: data.recurring,
         frequency: data.frequency,
         recurrenceEndUtc: data.recurrenceEndUtc,
+        seriesStart: displayedEventData.seriesStart
       },
-      displayedEventData.startTimeUtc,
+      displayedEventData.unadjustedStart,
       true,
     )
       .then(() => {
@@ -182,8 +182,9 @@ const Calendar = ({
         recurring: data.recurring,
         frequency: data.frequency,
         recurrenceEndUtc: data.recurrenceEndUtc,
+        seriesStart: displayedEventData.seriesStart,
       },
-      displayedEventData.startTimeUtc,
+      displayedEventData.unadjustedStart,
       false,
     )
       .then(() => {

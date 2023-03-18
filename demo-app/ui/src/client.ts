@@ -10,11 +10,91 @@ export interface CalendarEntryInput {
   recurring: boolean;
   frequency?: string;
   recurrenceEndUtc?: Date;
+  seriesStart?: string
+}
+
+interface AdjustStartAndEndInput {
+  seriesStart: string,
+  startTimeUtc: Date,
+  endTimeUtc: Date
 }
 
 const notOk = (status: number) => {
   return !status.toString().match(/2\d+/);
 };
+
+const calculateOffset = (utcDate: string) => {
+  const date = new Date(utcDate);
+  return date.getTimezoneOffset()
+}
+
+const adjustForDaylightSavings = (date: string, offset: number) => {
+  const d = new Date(date)
+  const utcDate = new Date(
+    d.getUTCFullYear(),
+    d.getUTCMonth(),
+    d.getUTCDate(),
+    d.getUTCHours(),
+    d.getUTCMinutes(),
+  )
+
+  const adjustedDate = utcDate.setMinutes(utcDate.getMinutes() - offset)
+  return new Date(adjustedDate).toISOString()
+}
+
+const adjustStartAndEndForDst = ({
+  seriesStart,
+  startTimeUtc,
+  endTimeUtc}: AdjustStartAndEndInput) => {
+    const start = startTimeUtc.toISOString()
+    const end = endTimeUtc.toISOString()
+
+    const originalOffset = calculateOffset(seriesStart) || 0
+    const currentOffset = calculateOffset(start) || 0
+
+    if (currentOffset !== originalOffset) {
+      const offsetDifference = currentOffset - originalOffset
+      const newOffset = currentOffset + offsetDifference
+
+      return {
+        adjustedStart: adjustForDaylightSavings(start, newOffset),
+        adjustedEnd: adjustForDaylightSavings(end, newOffset)
+      }
+    } else {
+        return {
+          adjustedStart: start,
+          adjustedEnd: end,
+        }
+      }
+  }
+
+const buildEventObject = (eventData: any) => {
+  if (eventData.recurring) {
+    console.log({seriesStart: eventData.seriesStart})
+    const offset = calculateOffset(eventData.seriesStart) || 0
+    return {
+      _id: eventData._id,
+      title: eventData.title,
+      unadjustedStart: eventData.startTimeUtc,
+      start: adjustForDaylightSavings(eventData.startTimeUtc, offset),
+      end: adjustForDaylightSavings(eventData.endTimeUtc, offset),
+      allDay: eventData.allDay,
+      recurring: eventData.recurring,
+      recurrenceEnd: eventData.recurrenceEndsUtc,
+    };
+  } else {
+    return {
+      _id: eventData._id,
+      title: eventData.title,
+      unadjustedStart: eventData.startTimeUtc,
+      start: eventData.startTimeUtc,
+      end: eventData.endTimeUtc,
+      allDay: eventData.allDay,
+      recurring: eventData.recurring,
+      recurrenceEnd: eventData.recurrenceEndsUtc,
+    };
+  }
+}
 
 const getEntries = async (start: string, end: string) => {
   return fetch(`${CALENDAR_BACKEND_URL}/entries?start=${start}&end=${end}`, {
@@ -30,18 +110,8 @@ const getEntries = async (start: string, end: string) => {
       return response.json();
     })
     .then((data) => {
-      const result = data.map((event: any) => {
-        return {
-          _id: event._id,
-          title: event.title,
-          start: event.startTimeUtc,
-          end: event.endTimeUtc,
-          allDay: event.allDay,
-          recurring: event.recurring,
-          recurrenceEnd: event.recurrenceEndsUtc,
-        };
-      });
-      return result;
+      const result = data.map((event: any) => buildEventObject(event))
+      return result
     });
 };
 
@@ -56,7 +126,18 @@ const getEntry = async (entryId: string, start?: string) => {
       throw new Error("Get entry request failed");
     }
     return response.json();
-  });
+  }).then((data) => {
+    if (data.recurring) {
+      const offset = calculateOffset(data.seriesStart) || 0
+      return {...data,
+      startTimeUtc: adjustForDaylightSavings(data.startTimeUtc, offset),
+      endTimeUtc: adjustForDaylightSavings(data.endTimeUtc, offset),
+      unadjustedStart: data.startTimeUtc,
+      }
+    } else {
+      return data
+    }
+  })
 };
 
 const createEntry = async ({
@@ -120,6 +201,7 @@ const updateEntry = async (
     title,
     startTimeUtc,
     endTimeUtc,
+    seriesStart,
     description,
     allDay,
     recurring,
@@ -131,6 +213,13 @@ const updateEntry = async (
 ) => {
   let response;
   if (recurring) {
+    const {adjustedStart, adjustedEnd} = adjustStartAndEndForDst({
+      seriesStart: seriesStart!,
+      startTimeUtc,
+      endTimeUtc
+    })
+
+
     response = await fetch(
       `${CALENDAR_BACKEND_URL}/entries/${entryId}?start=${start}&applyToSeries=${applyToSeries}`,
       {
@@ -143,8 +232,8 @@ const updateEntry = async (
           title: title,
           creatorId: "1234",
           eventId: "5678",
-          startTimeUtc: startTimeUtc.toISOString(),
-          endTimeUtc: endTimeUtc.toISOString(),
+          startTimeUtc: adjustedStart,
+          endTimeUtc: adjustedEnd,
           allDay,
           recurring,
           frequency,

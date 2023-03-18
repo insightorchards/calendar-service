@@ -17,7 +17,8 @@ import {
   updateExceptionDetails,
   createEntryException,
   updateRelevantFieldsOnSeries,
-  updateEntryExceptionsForEntry
+  updateEntryExceptionsForEntry,
+  updateRecurrenceRule
 } from "../helpers/recurringEntriesHelpers";
 
 export const FREQUENCY_MAPPING = {
@@ -80,13 +81,7 @@ export const createCalendarEntry = async (
   try {
     const entry = await CalendarEntry.create(req.body as CalendarEntryType);
     if (isRecurringEntry(entry)) {
-      const rule = new RRule({
-        freq: FREQUENCY_MAPPING[entry.frequency],
-        dtstart: entry.startTimeUtc,
-        until: entry.recurrenceEndsUtc,
-      });
-      entry.recurrencePattern = rule.toString();
-      entry.save();
+      await updateRecurrenceRule(entry)
     }
     res.status(201).json(entry);
   } catch (err) {
