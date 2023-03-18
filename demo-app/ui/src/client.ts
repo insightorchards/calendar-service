@@ -52,7 +52,7 @@ const adjustStartAndEndForDst = ({
     const originalOffset = calculateOffset(seriesStart) || 0
     const currentOffset = calculateOffset(start) || 0
 
-    if (currentOffset != originalOffset) {
+    if (currentOffset !== originalOffset) {
       const offsetDifference = currentOffset - originalOffset
       const newOffset = currentOffset + offsetDifference
 
@@ -69,17 +69,31 @@ const adjustStartAndEndForDst = ({
   }
 
 const buildEventObject = (eventData: any) => {
-  const offset = calculateOffset(eventData.seriesStart) || 0
-  return {
-    _id: eventData._id,
-    title: eventData.title,
-    unadjustedStart: eventData.startTimeUtc,
-    start: adjustForDaylightSavings(eventData.startTimeUtc, offset),
-    end: adjustForDaylightSavings(eventData.endTimeUtc, offset),
-    allDay: eventData.allDay,
-    recurring: eventData.recurring,
-    recurrenceEnd: eventData.recurrenceEndsUtc,
-  };
+  if (eventData.recurring) {
+    console.log({seriesStart: eventData.seriesStart})
+    const offset = calculateOffset(eventData.seriesStart) || 0
+    return {
+      _id: eventData._id,
+      title: eventData.title,
+      unadjustedStart: eventData.startTimeUtc,
+      start: adjustForDaylightSavings(eventData.startTimeUtc, offset),
+      end: adjustForDaylightSavings(eventData.endTimeUtc, offset),
+      allDay: eventData.allDay,
+      recurring: eventData.recurring,
+      recurrenceEnd: eventData.recurrenceEndsUtc,
+    };
+  } else {
+    return {
+      _id: eventData._id,
+      title: eventData.title,
+      unadjustedStart: eventData.startTimeUtc,
+      start: eventData.startTimeUtc,
+      end: eventData.endTimeUtc,
+      allDay: eventData.allDay,
+      recurring: eventData.recurring,
+      recurrenceEnd: eventData.recurrenceEndsUtc,
+    };
+  }
 }
 
 const getEntries = async (start: string, end: string) => {
@@ -97,7 +111,7 @@ const getEntries = async (start: string, end: string) => {
     })
     .then((data) => {
       const result = data.map((event: any) => buildEventObject(event))
-      return result;
+      return result
     });
 };
 
@@ -113,12 +127,16 @@ const getEntry = async (entryId: string, start?: string) => {
     }
     return response.json();
   }).then((data) => {
-    const offset = calculateOffset(data.seriesStart) || 0
-    return {...data,
-    startTimeUtc: adjustForDaylightSavings(data.startTimeUtc, offset),
-    endTimeUtc: adjustForDaylightSavings(data.endTimeUtc, offset),
-    unadjustedStart: data.startTimeUtc,
-  }
+    if (data.recurring) {
+      const offset = calculateOffset(data.seriesStart) || 0
+      return {...data,
+      startTimeUtc: adjustForDaylightSavings(data.startTimeUtc, offset),
+      endTimeUtc: adjustForDaylightSavings(data.endTimeUtc, offset),
+      unadjustedStart: data.startTimeUtc,
+      }
+    } else {
+      return data
+    }
   })
 };
 

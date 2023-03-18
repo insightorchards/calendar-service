@@ -863,7 +863,6 @@ describe("PATCH / entry?start=<start-time>&applyToSeries=<boolean>", () => {
       janFourth,
       oneYearLater,
       febFourth,
-      marFourth,
       febFifth,
       updatedEndDate
     } = generateRecurrenceData()
