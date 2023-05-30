@@ -1,25 +1,28 @@
-import { Request, Response, NextFunction } from "express";
-import { CalendarEntry } from "../models/calendarEntry";
-import { EntryException } from "../models/entryException";
-import { type CalendarEntryType, type NonRecurringEntryType, type RecurringEntryType, } from "../types"
-import {
-  dayAfter,
-  dateMinusMinutes,
-  datePlusMinutes,
-} from "../helpers/dateHelpers";
+import { NextFunction, Request, Response } from "express";
 import { RRule } from "rrule";
 import {
+  dateMinusMinutes,
+  datePlusMinutes,
+  dayAfter,
+} from "../helpers/dateHelpers";
+import {
+  createEntryException,
   expandModifiedEntryException,
+  expandRecurringEntry,
   findMatchingModifiedExceptions,
   getRecurringEntriesWithinRange,
-  expandRecurringEntry,
   handleRecurringEntryDeletion,
-  updateExceptionDetails,
-  createEntryException,
-  updateRelevantFieldsOnSeries,
   updateEntryExceptionsForEntry,
-  updateRecurrenceRule
+  updateExceptionDetails,
+  updateRecurrenceRule,
+  updateRelevantFieldsOnSeries,
 } from "../helpers/recurringEntriesHelpers";
+import { CalendarEntry } from "../models/calendarEntry";
+import {
+  type CalendarEntryType,
+  type NonRecurringEntryType,
+  type RecurringEntryType,
+} from "../types";
 
 export const FREQUENCY_MAPPING = {
   monthly: RRule.MONTHLY,
@@ -34,7 +37,7 @@ const isRecurringEntry = (entry) => {
 export const seedDatabaseWithEntry = async (
   _req: Request,
   res: Response,
-  _next: NextFunction,
+  _next: NextFunction
 ) => {
   const today = new Date();
   await CalendarEntry.insertMany([
@@ -76,12 +79,12 @@ export const seedDatabaseWithEntry = async (
 export const createCalendarEntry = async (
   req: Request,
   res: Response,
-  _next: NextFunction,
+  _next: NextFunction
 ) => {
   try {
     const entry = await CalendarEntry.create(req.body as CalendarEntryType);
     if (isRecurringEntry(entry)) {
-      await updateRecurrenceRule(entry)
+      await updateRecurrenceRule(entry);
     }
     res.status(201).json(entry);
   } catch (err) {
@@ -93,19 +96,20 @@ export const createCalendarEntry = async (
 export const getCalendarEntries = async (
   req: Request,
   res: Response,
-  _next: NextFunction,
+  _next: NextFunction
 ) => {
   try {
     const { start, end } = req.query;
-    const nonRecurringEntries: NonRecurringEntryType[] = await CalendarEntry.find()
-      .where("recurring")
-      .equals(false)
-      .where("startTimeUtc")
-      .gte(start)
-      .where("endTimeUtc")
-      .lte(end);
+    const nonRecurringEntries: NonRecurringEntryType[] =
+      await CalendarEntry.find()
+        .where("recurring")
+        .equals(false)
+        .where("startTimeUtc")
+        .gte(start)
+        .where("endTimeUtc")
+        .lte(end);
 
-    const allRecurrences = await getRecurringEntriesWithinRange(start, end)
+    const allRecurrences = await getRecurringEntriesWithinRange(start, end);
 
     const allEntries = [...nonRecurringEntries, ...allRecurrences];
 
@@ -119,7 +123,7 @@ export const getCalendarEntries = async (
 export const getCalendarEntry = async (
   req: Request,
   res: Response,
-  _next: NextFunction,
+  _next: NextFunction
 ) => {
   const { id } = req.params;
   const { start } = req.query;
@@ -132,7 +136,7 @@ export const getCalendarEntry = async (
       const expandedEntry = await expandRecurringEntry(
         entry,
         oneMinBefore,
-        oneMinAfter,
+        oneMinAfter
       );
       if (expandedEntry.length > 0) {
         res.status(200).json(expandedEntry[0]);
@@ -151,7 +155,7 @@ export const getCalendarEntry = async (
 export const deleteCalendarEntry = async (
   req: Request,
   res: Response,
-  _next: NextFunction,
+  _next: NextFunction
 ) => {
   const { id } = req.params;
   const { start, applyToSeries } = req.query;
@@ -163,7 +167,7 @@ export const deleteCalendarEntry = async (
     }
 
     if (isRecurringEntry(entryToDelete) && applyToSeries === "false") {
-      handleRecurringEntryDeletion(entryToDelete, start)
+      handleRecurringEntryDeletion(entryToDelete, start);
     } else {
       entryToDelete.remove();
     }
@@ -177,35 +181,44 @@ export const deleteCalendarEntry = async (
 export const updateCalendarEntry = async (
   req: Request,
   res: Response,
-  _next: NextFunction,
+  _next: NextFunction
 ) => {
   const { id } = req.params;
   const { start, applyToSeries } = req.query;
   try {
     const entryToUpdate = await CalendarEntry.findById(id);
     if (isRecurringEntry(entryToUpdate) && applyToSeries === "true") {
-      const updatedEntry = await updateRelevantFieldsOnSeries(entryToUpdate, req.body as CalendarEntryType)
-      await updateEntryExceptionsForEntry(updatedEntry)
+      const updatedEntry = await updateRelevantFieldsOnSeries(
+        entryToUpdate,
+        req.body as CalendarEntryType
+      );
+      await updateEntryExceptionsForEntry(updatedEntry);
       res.status(200).json(updatedEntry);
     } else if (isRecurringEntry(entryToUpdate) && applyToSeries === "false") {
       const existingModifiedExceptions = await findMatchingModifiedExceptions(
         start,
-        entryToUpdate,
+        entryToUpdate
       );
       if (existingModifiedExceptions.length > 0) {
         const exceptionToUpdate = existingModifiedExceptions[0];
-        const updatedException = updateExceptionDetails(exceptionToUpdate, req.body)
+        const updatedException = updateExceptionDetails(
+          exceptionToUpdate,
+          req.body
+        );
         const updatedEntry = expandModifiedEntryException(
           updatedException,
-          entryToUpdate,
+          entryToUpdate
         );
         res.status(200).json(updatedEntry);
       } else {
-        const updatedEntryException = await createEntryException(entryToUpdate, { ...req.body, start })
+        const updatedEntryException = await createEntryException(
+          entryToUpdate,
+          { ...req.body, start }
+        );
 
         const updatedEntry = expandModifiedEntryException(
           updatedEntryException,
-          entryToUpdate,
+          entryToUpdate
         );
         res.status(200).json(updatedEntry);
       }
@@ -213,7 +226,7 @@ export const updateCalendarEntry = async (
       const updatedEntry = await CalendarEntry.findByIdAndUpdate(
         id,
         req.body as CalendarEntryType,
-        { returnDocument: "after" },
+        { returnDocument: "after" }
       );
       res.status(200).json(updatedEntry);
     }
