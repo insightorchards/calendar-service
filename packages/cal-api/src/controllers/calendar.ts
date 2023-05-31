@@ -77,12 +77,12 @@ export const seedDatabaseWithEntry = async (
 };
 
 export const createCalendarEntry = async (
-  req: Request,
+  req: Request<{}, {}, CalendarEntryType>,
   res: Response,
   _next: NextFunction
 ) => {
   try {
-    const entry = await CalendarEntry.create(req.body as CalendarEntryType);
+    const entry = await CalendarEntry.create(req.body);
     if (isRecurringEntry(entry)) {
       await updateRecurrenceRule(entry);
     }
