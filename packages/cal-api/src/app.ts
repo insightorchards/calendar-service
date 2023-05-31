@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { createCalendar } from "./controllers/calendar";
 import {
   createCalendarEntry,
   deleteCalendarEntry,
@@ -6,9 +7,12 @@ import {
   getCalendarEntry,
   seedDatabaseWithEntry,
   updateCalendarEntry,
-} from "./controllers/calendar";
+} from "./controllers/calendarEntries";
 
 const addCalendarRoutes = async (app: any, dbConnectionString: string) => {
+  // calendar
+  app.post("/calendars", createCalendar);
+  // calendarEntries
   app.get("/entries", getCalendarEntries);
   app.post("/entries", createCalendarEntry);
   app.get("/entries/:id", getCalendarEntry);
