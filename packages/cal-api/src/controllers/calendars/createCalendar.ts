@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { Calendar } from "../models/calendar";
+import { Calendar } from "../../models/calendar";
 
 type CreateCalendarInputType = {
   eventId: string;

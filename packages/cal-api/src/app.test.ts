@@ -1,5 +1,3 @@
-// ⚠️ Test can be moved into calendar model directory
-import { Calendar } from "./models/calendar";
 const { connectDB, dropDB, dropCollections } = require("./setupTestDb");
 const { CalendarEntry } = require("./models/calendarEntryOld");
 const supertest = require("supertest");
@@ -952,32 +950,6 @@ describe("PATCH / entry?start=<start-time>&applyToSeries=<boolean>", () => {
       .expect(400);
     expect(response.text).toEqual('{"message":"error occurred"}');
     updateMock.mockRestore();
-  });
-});
-
-describe("POST /calendars", () => {
-  it("creates a calendar", async () => {
-    await supertest(app)
-      .post("/calendars")
-      .send({
-        eventId: "id of cosmic party event",
-        creatorId: "id of creator of cosmic party",
-        title: "Parties!",
-      })
-      .expect(201);
-
-    const calendar = await Calendar.findOne({}).sort({
-      $natural: -1,
-    });
-
-    expect(calendar).toEqual(
-      expect.objectContaining({
-        _id: expect.anything(),
-        eventId: "id of cosmic party event",
-        creatorId: "id of creator of cosmic party",
-        title: "Parties!",
-      })
-    );
   });
 });
 
