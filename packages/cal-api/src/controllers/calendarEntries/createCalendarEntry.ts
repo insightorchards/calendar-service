@@ -37,6 +37,9 @@ export const createCalendarEntry = async (
   _next: NextFunction
 ) => {
   try {
+    // ⚠️ when creating a calendar entry, leverage the req.params.id as calendarId
+    // meaning, we do not need to rely on the calendarId field via the req.body
+    // Not sure which is preferred but it seems to match REST resource convention better
     const entry: CalendarEntryType = await CalendarEntry.create(req.body);
     if (entry.recurring) {
       await updateRecurrenceRule(entry);
