@@ -1,9 +1,55 @@
-const mongoose = require("mongoose");
-const { EntryException } = require("./entryException");
+import mongoose from "mongoose";
+import { EntryException } from "./entryException";
+
+export type CalendarEntryType = NonRecurringEntryType | RecurringEntryType;
+
+export type EntryExceptionType = {
+  deleted: boolean;
+  modified: boolean;
+  entryId: mongoose.Schema.Types.ObjectId;
+  title: string;
+  description?: string;
+  allDay: boolean;
+  startTimeUtc: Date;
+  endTimeUtc: Date;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+export type NonRecurringEntryType = {
+  _id: mongoose.Types.ObjectId;
+  calendarId: string;
+  creatorId: string;
+  title: string;
+  description?: string;
+  allDay: boolean;
+  recurring: boolean;
+  startTimeUtc: Date;
+  endTimeUtc: Date;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+export type RecurringEntryType = {
+  _id: mongoose.Types.ObjectId;
+  calendarId: string;
+  creatorId: string;
+  title: string;
+  description?: string;
+  allDay: boolean;
+  recurring: boolean;
+  startTimeUtc: Date;
+  endTimeUtc: Date;
+  frequency: string;
+  recurrenceEndsUtc: Date;
+  recurrencePattern: string;
+  createdAt: Date;
+  updatedAt: Date;
+};
 
 const calendarEntrySchema = new mongoose.Schema(
   {
-    eventId: {
+    calendarId: {
       type: String,
       required: true,
     },
@@ -50,7 +96,7 @@ const calendarEntrySchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  },
+  }
 );
 
 calendarEntrySchema.pre("remove", { document: true }, function (next: any) {
@@ -62,7 +108,7 @@ calendarEntrySchema.pre("remove", { document: true }, function (next: any) {
 const CalendarEntry = mongoose.model(
   "CalendarEntry",
   calendarEntrySchema,
-  "calendarEntries",
+  "calendarEntries"
 );
 
 export { CalendarEntry };

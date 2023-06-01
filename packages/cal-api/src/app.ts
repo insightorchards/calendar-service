@@ -1,24 +1,25 @@
 import mongoose from "mongoose";
 import { createCalendar } from "./controllers/calendar";
 import {
-  createCalendarEntry,
+  createCalendarEntry as createCalendarEntryOld,
   deleteCalendarEntry,
   getCalendarEntries,
   getCalendarEntry,
   seedDatabaseWithEntry,
   updateCalendarEntry,
-} from "./controllers/calendarEntries";
+} from "./controllers/calendarEntries_old";
+
+import { createCalendarEntry } from "./controllers/calendarEntries/createCalendarEntry";
 
 const addCalendarRoutes = async (app: any, dbConnectionString: string) => {
-  // calendar
   app.post("/calendars", createCalendar);
-  // calendarEntries
   app.get("/entries", getCalendarEntries);
-  app.post("/entries", createCalendarEntry);
+  app.post("/entries", createCalendarEntryOld);
   app.get("/entries/:id", getCalendarEntry);
   app.patch("/entries/:id", updateCalendarEntry);
   app.delete("/entries/:id", deleteCalendarEntry);
   app.post("/seedDatabase", seedDatabaseWithEntry);
+  app.post("/calendars/:id/entries", createCalendarEntry);
 
   await mongoose
     .connect(dbConnectionString)

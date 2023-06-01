@@ -1,6 +1,6 @@
 import { RRule, RRuleSet, rrulestr } from "rrule";
-import { FREQUENCY_MAPPING } from "../controllers/calendarEntries";
-import { CalendarEntry } from "../models/calendarEntry";
+import { FREQUENCY_MAPPING } from "../controllers/calendarEntries_old";
+import { CalendarEntry } from "../models/calendarEntryOld";
 import { EntryException } from "../models/entryException";
 import { RecurringEntryType, type EntryExceptionType } from "../types";
 import {

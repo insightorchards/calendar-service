@@ -17,7 +17,7 @@ import {
   updateRecurrenceRule,
   updateRelevantFieldsOnSeries,
 } from "../helpers/recurringEntriesHelpers";
-import { CalendarEntry } from "../models/calendarEntry";
+import { CalendarEntry } from "../models/calendarEntryOld";
 import {
   type CalendarEntryType,
   type NonRecurringEntryType,

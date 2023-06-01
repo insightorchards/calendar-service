@@ -1,11 +1,11 @@
+// ⚠️ Test can be moved into calendar model directory
 import { Calendar } from "./models/calendar";
-
 const { connectDB, dropDB, dropCollections } = require("./setupTestDb");
-const { CalendarEntry } = require("./models/calendarEntry");
+const { CalendarEntry } = require("./models/calendarEntryOld");
 const supertest = require("supertest");
 const { app } = require("./setupTestApp");
 const { dayAfter, yearAfter } = require("./helpers/dateHelpers");
-const { RRule, RRuleSet, rrulestr } = require("rrule");
+const { RRule } = require("rrule");
 const { EntryException } = require("./models/entryException");
 
 let server: any;
