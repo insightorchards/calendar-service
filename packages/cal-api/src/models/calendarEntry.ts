@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { withIdVirtualField } from "../plugins/withIdVirtualField";
 import { EntryException } from "./entryException";
 
 export type CalendarEntryType = NonRecurringEntryType | RecurringEntryType;
@@ -99,6 +100,7 @@ const calendarEntrySchema = new mongoose.Schema(
   }
 );
 
+calendarEntrySchema.plugin(withIdVirtualField);
 calendarEntrySchema.pre("remove", { document: true }, function (next: any) {
   // @ts-ignore
   EntryException.remove({ entryId: this._id }).exec();

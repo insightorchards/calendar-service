@@ -214,25 +214,9 @@ describe("GET /entries?start=<start-time>&end=<end-time>", () => {
   it("catches and returns an error from CalendarEntry.find", async () => {
     const findMock = jest
       .spyOn(CalendarEntry, "find")
-      .mockImplementation(() => ({
-        where: jest.fn(() => ({
-          equals: jest.fn(() => ({
-            where: jest.fn(() => ({
-              gte: jest.fn(() => ({
-                where: jest.fn(() => ({
-                  lte: jest.fn(() => {
-                    throw new Error("error occurred");
-                  }),
-                  lt: jest.fn(),
-                })),
-              })),
-              lt: jest.fn(() => ({
-                where: jest.fn(() => ({ gt: jest.fn() })),
-              })),
-            })),
-          })),
-        })),
-      }));
+      .mockImplementation(() => {
+        throw new Error("error occurred");
+      });
 
     const response = await supertest(app)
       .get(

@@ -5,40 +5,40 @@ export type CalendarEntryType = NonRecurringEntryType | RecurringEntryType;
 export type EntryExceptionType = {
   deleted: boolean;
   modified: boolean;
-  entryId: mongoose.Schema.Types.ObjectId;
-  title: string;
+  entryId: mongoose.Types.ObjectId;
+  title?: string;
   description?: string;
-  allDay: boolean;
+  allDay?: boolean;
   startTimeUtc: Date;
-  endTimeUtc: Date;
+  endTimeUtc?: Date;
   createdAt: Date;
   updatedAt: Date;
 };
 
 export type NonRecurringEntryType = {
-  id: string;
+  _id: mongoose.Types.ObjectId;
   eventId: string;
   creatorId: string;
-  title: string;
+  title?: string;
   description?: string;
-  allDay: boolean;
-  recurring: false;
+  allDay?: boolean;
+  recurring: boolean;
   startTimeUtc: Date;
-  endTimeUtc: Date;
+  endTimeUtc?: Date;
   createdAt: Date;
   updatedAt: Date;
 };
 
 export type RecurringEntryType = {
-  _id: string;
+  _id: mongoose.Types.ObjectId;
   eventId: string;
   creatorId: string;
-  title: string;
+  title?: string;
   description?: string;
-  allDay: boolean;
-  recurring: true;
+  allDay?: boolean;
+  recurring: boolean;
   startTimeUtc: Date;
-  endTimeUtc: Date;
+  endTimeUtc?: Date;
   frequency: string;
   recurrenceEndsUtc: Date;
   recurrencePattern: string;

@@ -1,4 +1,5 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
+import { withIdVirtualField } from "../plugins/withIdVirtualField";
 
 const entryExceptionSchema = new mongoose.Schema(
   {
@@ -38,13 +39,15 @@ const entryExceptionSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  },
+  }
 );
+
+entryExceptionSchema.plugin(withIdVirtualField);
 
 const EntryException = mongoose.model(
   "EntryException",
   entryExceptionSchema,
-  "entryExceptions",
+  "entryExceptions"
 );
 
 export { EntryException };

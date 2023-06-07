@@ -19,6 +19,7 @@ import {
 } from "../helpers/recurringEntriesHelpers";
 import { CalendarEntry } from "../models/calendarEntryOld";
 import {
+  EntryExceptionType,
   type CalendarEntryType,
   type NonRecurringEntryType,
   type RecurringEntryType,
@@ -100,14 +101,18 @@ export const getCalendarEntries = async (
 ) => {
   try {
     const { start, end } = req.query;
+    const findSpec: {
+      recurring: boolean;
+      startTimeUtc?: object;
+      endTimeUtc?: object;
+    } = {
+      recurring: false,
+    };
+
+    if (start) findSpec.startTimeUtc = { $gte: start };
+    if (end) findSpec.endTimeUtc = { $lte: end };
     const nonRecurringEntries: NonRecurringEntryType[] =
-      await CalendarEntry.find()
-        .where("recurring")
-        .equals(false)
-        .where("startTimeUtc")
-        .gte(start)
-        .where("endTimeUtc")
-        .lte(end);
+      await CalendarEntry.find(findSpec);
 
     const allRecurrences = await getRecurringEntriesWithinRange(start, end);
 
@@ -212,7 +217,7 @@ export const updateCalendarEntry = async (
         );
         const updatedEntry = expandModifiedEntryException(
           updatedException,
-          entryToUpdate
+          entryToUpdate as RecurringEntryType
         );
         res.status(200).json(updatedEntry);
       } else {
@@ -222,8 +227,8 @@ export const updateCalendarEntry = async (
         );
 
         const updatedEntry = expandModifiedEntryException(
-          updatedEntryException,
-          entryToUpdate
+          updatedEntryException as EntryExceptionType,
+          entryToUpdate as RecurringEntryType
         );
         res.status(200).json(updatedEntry);
       }

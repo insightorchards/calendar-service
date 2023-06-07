@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { withIdVirtualField } from "../plugins/withIdVirtualField";
 
 const schema = new mongoose.Schema(
   {
@@ -23,6 +24,8 @@ const schema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+schema.plugin(withIdVirtualField);
 
 const Calendar = mongoose.model("Calendar", schema, "calendars");
 

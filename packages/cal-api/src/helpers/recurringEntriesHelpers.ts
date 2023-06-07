@@ -70,11 +70,8 @@ export const findMatchingModifiedExceptions = async (
   return await EntryException.find({
     entryId: parentCalendarEntry._id,
     modified: true,
-  })
-    .where("startTimeUtc")
-    .gte(oneMinBefore)
-    .where("startTimeUtc")
-    .lt(oneMinAfter);
+    startTimeUtc: { $gte: oneMinBefore, $lt: oneMinAfter },
+  });
 };
 
 export const getExpandedRecurringEntries = (
@@ -105,22 +102,21 @@ export const getExpandedRecurringEntries = (
 };
 
 export const getRecurringEntriesWithinRange = async (start, end) => {
-  const recurringEntriesBeginsWithin: RecurringEntryType[] =
-    await CalendarEntry.find()
-      .where("recurring")
-      .equals(true)
-      .where("startTimeUtc")
-      .gte(start)
-      .where("startTimeUtc")
-      .lt(end);
-  const recurringEntriesBeginsBefore: RecurringEntryType[] =
-    await CalendarEntry.find()
-      .where("recurring")
-      .equals(true)
-      .where("startTimeUtc")
-      .lt(start)
-      .where("recurrenceEndsUtc")
-      .gt(start);
+  const recurringEntriesBeginsWithin = await CalendarEntry.find()
+    .where("recurring")
+    .equals(true)
+    .where("startTimeUtc")
+    .gte(start)
+    .where("startTimeUtc")
+    .lt(end);
+
+  const recurringEntriesBeginsBefore = await CalendarEntry.find()
+    .where("recurring")
+    .equals(true)
+    .where("startTimeUtc")
+    .lt(start)
+    .where("recurrenceEndsUtc")
+    .gt(start);
 
   const allRecurringEntries = [
     ...recurringEntriesBeginsWithin,
