@@ -8,16 +8,16 @@ type CreateCalendarInputType = {
   description?: string;
 };
 
-export const createCalendar = async (
+export const createCalendar = (
   req: Request<{}, {}, CreateCalendarInputType>,
   res: Response,
   _next: NextFunction
 ) => {
-  try {
-    const calendar = await Calendar.create(req.body);
-    res.status(201).json(calendar);
-  } catch (err) {
-    res.status(400).json(err);
-    res.send({ message: err.message });
-  }
+  return Calendar.create(req.body)
+    .then((calendar) => {
+      res.status(201).send(calendar);
+    })
+    .catch((err) => {
+      res.status(500).json(err);
+    });
 };
