@@ -245,7 +245,7 @@ describe("GET /entries?start=<start-time>&end=<end-time>", () => {
   });
 });
 
-describe("GET /entry/:entryId?start=<start-time>", () => {
+describe("GET /entries/:id?start=<start-time>", () => {
   let newEntry;
   const today = new Date();
   beforeEach(async () => {
@@ -383,6 +383,18 @@ describe("GET /entry/:entryId?start=<start-time>", () => {
       .expect(400);
     expect(response.text).toEqual('{"message":"error occurred"}');
     findOneMock.mockRestore();
+  });
+
+  it("returns a not found error when entry does not exist", async () => {
+    await supertest(app).delete(`/entries/${newEntry.id}`).expect(200);
+
+    const response = await supertest(app)
+      .get(`/entries/${newEntry.id}`)
+      .expect(404);
+    const responseMessage = JSON.parse(response.text).message;
+    expect(responseMessage).toEqual(
+      `no calendar entry found with id ${newEntry.id}`
+    );
   });
 });
 

@@ -129,6 +129,11 @@ export const getCalendarEntry = async (
   const { start } = req.query;
   try {
     const entry = await CalendarEntry.findById(id);
+    if (entry === null) {
+      res.status(404);
+      res.send({ message: `no calendar entry found with id ${id}` });
+      return;
+    }
     if (isRecurringEntry(entry)) {
       const startDate = new Date(start as string);
       const oneMinBefore = dateMinusMinutes(startDate, 1);
