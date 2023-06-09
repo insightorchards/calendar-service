@@ -85,6 +85,8 @@ export const getExpandedRecurringEntries = (
 
   return recurrences.map((date) => {
     return {
+      // ⚠️ TODO: instantiate class and leverage mongoose model schema
+      id: calendarEntry._id,
       _id: calendarEntry._id,
       eventId: calendarEntry.eventId,
       creatorId: calendarEntry.creatorId,
@@ -154,6 +156,7 @@ export const expandRecurringEntry = async (calendarEntry, start, end) => {
     end,
     duration
   );
+
   const expandedExceptionEntries = await getExpandedEntryExceptions(
     calendarEntry,
     start,
