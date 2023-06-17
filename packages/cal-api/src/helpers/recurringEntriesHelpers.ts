@@ -12,11 +12,12 @@ import {
   setTimeForDate,
 } from "./dateHelpers";
 
-export const expandModifiedEntryException = async (
+export const expandModifiedEntryException = (
   entryException: EntryExceptionType,
   parentCalendarEntry: RecurringEntryType
 ) => {
   return {
+    id: parentCalendarEntry._id,
     _id: parentCalendarEntry._id,
     title: entryException.title,
     description: entryException.description,
@@ -42,11 +43,9 @@ export const getExpandedEntryExceptions = async (calendarEntry, start, end) => {
     .where("startTimeUtc")
     .lt(end);
 
-  const promises = modifiedExceptions.map(async (exception) => {
+  return modifiedExceptions.map((exception) => {
     return expandModifiedEntryException(exception, calendarEntry);
   });
-
-  return await Promise.all(promises);
 };
 
 export const addDeletedDatesToRuleSet = async (ruleSet, calendarEntryId) => {
