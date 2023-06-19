@@ -1,3 +1,4 @@
+import { defaultTo } from "ramda";
 import { RRule, RRuleSet, rrulestr } from "rrule";
 import { FREQUENCY_MAPPING } from "../controllers/calendarEntries_old";
 import { CalendarEntry } from "../models/calendarEntryOld";
@@ -215,11 +216,11 @@ export const createEntryException = async (entry, data) => {
     deleted: false,
     modified: true,
     entryId: entry._id,
-    startTimeUtc: data.startTimeUtc,
-    title: data.title,
-    description: data.description,
-    allDay: data.allDay,
-    endTimeUtc: data.endTimeUtc,
+    startTimeUtc: defaultTo(entry.startTimeUtc, data.startTimeUtc),
+    title: defaultTo(entry.title, data.title),
+    description: defaultTo(entry.description, data.description),
+    allDay: defaultTo(entry.allDay, data.allDay),
+    endTimeUtc: defaultTo(entry.endTimeUtc, data.endTimeUtc),
   });
 };
 
