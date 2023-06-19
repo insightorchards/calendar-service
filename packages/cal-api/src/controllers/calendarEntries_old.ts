@@ -139,7 +139,7 @@ export const getCalendarEntry = async (
       res.send({ message: `no calendar entry found with id ${id}` });
       return;
     }
-    if (isRecurringEntry(entry)) {
+    if (isRecurringEntry(entry) && start) {
       const startDate = new Date(start as string);
       const oneMinBefore = dateMinusMinutes(startDate, 1);
       const oneMinAfter = datePlusMinutes(startDate, 1);
