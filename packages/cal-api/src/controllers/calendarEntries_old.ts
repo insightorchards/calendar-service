@@ -151,7 +151,10 @@ export const getCalendarEntry = async (
       if (expandedEntry.length > 0) {
         res.status(200).json(expandedEntry[0]);
       } else {
-        res.status(200).json({});
+        res.status(404);
+        res.send({
+          message: `no calendar entry found with id ${id} and startTime ${start}`,
+        });
       }
     } else {
       res.status(200).json(entry);
