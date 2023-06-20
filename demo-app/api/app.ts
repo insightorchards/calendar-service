@@ -17,7 +17,6 @@ const FINAL_PORT = process.env.PORT || LOCAL_PORT;
 const start = async () => {
   try {
     addCalendarRoutes(app, connectionString);
-    console.log("⭐️");
     console.log(connectionString);
     app.listen(FINAL_PORT, () =>
       console.log(`Server started on port ${FINAL_PORT}`)
