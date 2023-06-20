@@ -12,7 +12,6 @@ import { createCalendar } from "./controllers/calendars/createCalendar";
 import { createCalendarEntry } from "./controllers/calendarEntries/createCalendarEntry";
 import { getCalendarEntries } from "./controllers/calendarEntries/getCalendarEntries";
 import { getCalendar } from "./controllers/calendars/getCalendar";
-import { getCalendars } from "./controllers/calendars/getCalendars";
 
 const addCalendarRoutes = async (app: any, dbConnectionString: string) => {
   app.get("/entries", getCalendarEntriesOld);
@@ -21,15 +20,12 @@ const addCalendarRoutes = async (app: any, dbConnectionString: string) => {
   app.patch("/entries/:id", updateCalendarEntry);
   app.delete("/entries/:id", deleteCalendarEntry);
   app.post("/seedDatabase", seedDatabaseWithEntry);
-  app.get("/calendars", getCalendars);
   app.post("/calendars", createCalendar);
   app.get("/calendars/:id", getCalendar);
   app.post("/calendars/:id/entries", createCalendarEntry);
   app.get("/calendars/:id/entries", getCalendarEntries);
 
-  await mongoose
-    .connect(dbConnectionString)
-    .catch((error) => console.log(error));
+  await mongoose.connect(dbConnectionString).catch(error => console.log(error));
 };
 
 export { addCalendarRoutes };
