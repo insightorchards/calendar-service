@@ -44,7 +44,7 @@ export const getExpandedEntryExceptions = async (calendarEntry, start, end) => {
     .where("startTimeUtc")
     .lt(end);
 
-  return modifiedExceptions.map((exception) => {
+  return modifiedExceptions.map(exception => {
     return expandModifiedEntryException(exception, calendarEntry);
   });
 };
@@ -55,7 +55,7 @@ export const addDeletedDatesToRuleSet = async (ruleSet, calendarEntryId) => {
     deleted: true,
   });
 
-  deletedExceptions.forEach((exception) => {
+  deletedExceptions.forEach(exception => {
     ruleSet.exdate(exception.startTimeUtc);
   });
 };
@@ -83,9 +83,10 @@ export const getExpandedRecurringEntries = (
 ) => {
   const recurrences = ruleSet.between(new Date(start), new Date(end));
 
-  return recurrences.map((date) => {
+  return recurrences.map(date => {
     return {
-      // ⚠️ TODO: instantiate class and leverage mongoose model schema
+      // ⚠️ TODO: build CalendarEntry document via model so that
+      // we can leverage the built in schema validations
       id: calendarEntry._id,
       _id: calendarEntry._id,
       eventId: calendarEntry.eventId,
@@ -194,7 +195,7 @@ export const updateExceptionDetails = (exception, data) => {
   return exception;
 };
 
-export const updateRecurrenceRule = async (entry) => {
+export const updateRecurrenceRule = async entry => {
   const rule = new RRule({
     freq: FREQUENCY_MAPPING[entry.frequency],
     dtstart: entry.startTimeUtc,
@@ -254,7 +255,7 @@ export const updateRelevantFieldsOnSeries = async (entryToUpdate, data) => {
   return entryToUpdate;
 };
 
-export const updateEntryExceptionsForEntry = async (entry) => {
+export const updateEntryExceptionsForEntry = async entry => {
   const modifiedEntryExceptions = await EntryException.find({
     entryId: entry._id,
     modified: true,

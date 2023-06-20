@@ -40,9 +40,8 @@ describe("POST /calendars/:id/entries", () => {
     const END_TIME = "2023-05-31T06:59:59.999Z";
 
     const response = await supertest(app)
-      .post("/calendars/:id/entries")
+      .post(`/calendars/${calendar._id}/entries`)
       .send({
-        calendarId: calendar._id,
         creatorId: "id of creator of cosmic party",
         title: "Cosmic Party!",
         allDay: true,

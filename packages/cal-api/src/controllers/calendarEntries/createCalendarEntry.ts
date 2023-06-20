@@ -7,7 +7,6 @@ type CreateCalendarEntryInput =
   | CreateRecurringCalendarEntryInput;
 
 type CreateNonRecurringCalendarEntryInput = {
-  calendarId: string;
   creatorId: string;
   title: string;
   description?: string;
@@ -18,7 +17,6 @@ type CreateNonRecurringCalendarEntryInput = {
 };
 
 type CreateRecurringCalendarEntryInput = {
-  calendarId: string;
   creatorId: string;
   title: string;
   description?: string;
@@ -32,15 +30,16 @@ type CreateRecurringCalendarEntryInput = {
 };
 
 export const createCalendarEntry = async (
-  req: Request<{}, {}, CreateCalendarEntryInput>,
+  req: Request<{ id: string }, {}, CreateCalendarEntryInput>,
   res: Response,
   _next: NextFunction
 ) => {
   try {
-    // ⚠️ when creating a calendar entry, leverage the req.params.id as calendarId
-    // meaning, we do not need to rely on the calendarId field via the req.body
-    // Not sure which is preferred but it seems to match REST resource convention better
-    const entry: CalendarEntryType = await CalendarEntry.create(req.body);
+    const { id: calendarId } = req.params;
+    const entry: CalendarEntryType = await CalendarEntry.create({
+      ...req.body,
+      calendarId,
+    });
     if (entry.recurring) {
       await updateRecurrenceRule(entry);
     }
