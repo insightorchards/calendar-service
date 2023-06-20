@@ -24,26 +24,31 @@ export const getMillisecondsBetween = (startDateUtc: any, endDateUtc: any) => {
 
 export const addMillisecondsToDate = (
   dateUtc: any,
-  numMilliseconds: number,
+  numMilliseconds: number
 ) => {
   const date = new Date(dateUtc).valueOf();
   const timeAsMilliseconds = date + numMilliseconds;
   return new Date(timeAsMilliseconds).toISOString();
 };
 
+export const substractMillisecondsFromDate = (
+  dateUtc: any,
+  numMilliseconds: number
+) => addMillisecondsToDate(dateUtc, -numMilliseconds);
+
 export const getTimeFromDate = (dateUtc) => {
-  const date = new Date(dateUtc)
-  const hours = date.getUTCHours()
-  const minutes = date.getUTCMinutes()
+  const date = new Date(dateUtc);
+  const hours = date.getUTCHours();
+  const minutes = date.getUTCMinutes();
   return {
     hours,
-    minutes
-  }
-}
+    minutes,
+  };
+};
 
 export const setTimeForDate = (dateUtc, hours, minutes) => {
-  const date = new Date(dateUtc)
-  date.setUTCHours(hours)
-  date.setUTCMinutes(minutes)
-  return date
-}
+  const date = new Date(dateUtc);
+  date.setUTCHours(hours);
+  date.setUTCMinutes(minutes);
+  return date;
+};

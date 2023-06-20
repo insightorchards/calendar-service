@@ -1,5 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 import { map, reduce } from "ramda";
+import {
+  addMillisecondsToDate,
+  substractMillisecondsFromDate,
+} from "../../helpers/dateHelpers";
 import { expandRecurringEntry } from "../../helpers/recurringEntriesHelpers";
 import { CalendarEntry } from "../../models/calendarEntry";
 import { CalendarEntryType } from "../../types";
@@ -28,8 +32,8 @@ const getCalendarEntries = async (
         if (entry.recurring) {
           const recurringEntries = await expandRecurringEntry(
             entry,
-            start,
-            end
+            substractMillisecondsFromDate(start, 1),
+            addMillisecondsToDate(end, 1)
           );
           return [...recurringEntries];
         }

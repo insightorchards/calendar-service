@@ -224,47 +224,34 @@ export const createEntryException = async (entry, data) => {
   });
 };
 
-export const updateRelevantFieldsOnSeries = async (entry, data) => {
-  const { updatedStartUtc, updatedEndUtc } = calculateNewStartAndEnd(
-    entry,
-    data.startTimeUtc,
-    data.endTimeUtc
-  );
+export const updateRelevantFieldsOnSeries = async (entryToUpdate, data) => {
+  if (data.startTimeUtc) {
+    const { hours, minutes } = getTimeFromDate(data.startTimeUtc);
+    entryToUpdate.startTimeUtc = setTimeForDate(
+      entryToUpdate.startTimeUtc,
+      hours,
+      minutes
+    );
+  }
 
-  // The following are the only fields that are allowed to be edited on a recurring series
-  entry.startTimeUtc = updatedStartUtc;
-  entry.endTimeUtc = updatedEndUtc;
-  entry.title = data.title;
-  entry.description = data.description;
-  entry.recurrenceEndsUtc = data.recurrenceEndsUtc;
-  entry.frequency = data.frequency;
-  entry.allDay = data.allDay;
-  await entry.save();
-  await updateRecurrenceRule(entry);
-  return entry;
-};
+  if (data.endTimeUtc) {
+    const { hours, minutes } = getTimeFromDate(data.endTimeUtc);
+    entryToUpdate.endTimeUtc = setTimeForDate(
+      entryToUpdate.startTimeUtc,
+      hours,
+      minutes
+    );
+  }
 
-const calculateNewStartAndEnd = (originalEntry, newStart, newEnd) => {
-  const { hours: newStartHours, minutes: newStartMinutes } =
-    getTimeFromDate(newStart);
-  const { hours: newEndHours, minutes: newEndMinutes } =
-    getTimeFromDate(newEnd);
-
-  const updatedStartUtc = setTimeForDate(
-    originalEntry.startTimeUtc,
-    newStartHours,
-    newStartMinutes
-  );
-  const updatedEndUtc = setTimeForDate(
-    originalEntry.endTimeUtc,
-    newEndHours,
-    newEndMinutes
-  );
-
-  return {
-    updatedStartUtc,
-    updatedEndUtc,
-  };
+  if (data.title) entryToUpdate.title = data.title;
+  if (data.description) entryToUpdate.description = data.description;
+  if (data.recurrenceEndsUtc)
+    entryToUpdate.recurrenceEndsUtc = data.recurrenceEndsUtc;
+  if (data.frequency) entryToUpdate.frequency = data.frequency;
+  if (data.allDay) entryToUpdate.allDay = data.allDay;
+  await entryToUpdate.save();
+  await updateRecurrenceRule(entryToUpdate);
+  return entryToUpdate;
 };
 
 export const updateEntryExceptionsForEntry = async (entry) => {

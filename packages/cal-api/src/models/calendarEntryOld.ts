@@ -4,9 +4,10 @@ import { EntryException } from "./entryException";
 
 const calendarEntrySchema = new mongoose.Schema(
   {
+    // ⚠️ This field can most likely be deprecated. eventId reference is stored on the calendar itself
     eventId: {
       type: String,
-      required: true,
+      required: false,
     },
     creatorId: {
       type: String,
