@@ -6,7 +6,9 @@
   "repository": "https://github.com/insightorchards/calendar-service.git",
   "scripts": {
     "test": "jest --runInBand --detectOpenHandles --forceExit",
-    "build": "tsc --project tsconfig.build.json"
+    "build": "tsc --project tsconfig.build.json",
+    "prettier": "npx prettier --write .",
+    "prettier:check": "npx prettier --check ."
   },
   "files": [
     "lib/**/*"
@@ -33,7 +35,12 @@
     "express": "^4.18.2",
     "mongodb": "^4.10.0",
     "mongoose": "^6.6.7",
+    "prettier": "^2.8.7",
     "ramda": "^0.29.0",
     "rrule": "^2.7.1"
+  },
+  "prettier": {
+    "arrowParens": "avoid",
+    "semi": true
   }
 }
