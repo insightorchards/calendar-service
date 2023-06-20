@@ -31,7 +31,7 @@ export const FREQUENCY_MAPPING = {
   daily: RRule.DAILY,
 };
 
-const isRecurringEntry = (entry) => {
+const isRecurringEntry = entry => {
   return (entry as RecurringEntryType).recurring === true;
 };
 

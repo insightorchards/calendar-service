@@ -238,7 +238,7 @@ export const updateRelevantFieldsOnSeries = async (entryToUpdate, data) => {
   if (data.endTimeUtc) {
     const { hours, minutes } = getTimeFromDate(data.endTimeUtc);
     entryToUpdate.endTimeUtc = setTimeForDate(
-      entryToUpdate.startTimeUtc,
+      entryToUpdate.endTimeUtc,
       hours,
       minutes
     );

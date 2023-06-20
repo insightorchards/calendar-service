@@ -33,9 +33,8 @@ describe("GET /calendars/:id/entries", () => {
     const calendar = JSON.parse(createCalendarResponse.text);
 
     await supertest(app)
-      .post("/calendars/:id/entries")
+      .post(`/calendars/${calendar._id}/entries`)
       .send({
-        calendarId: calendar._id,
         creatorId: "id of creator of cosmic party",
         title: "Dance party at the Guggenheim",
         allDay: true,
@@ -46,9 +45,8 @@ describe("GET /calendars/:id/entries", () => {
       .expect(201);
 
     await supertest(app)
-      .post("/calendars/:id/entries")
+      .post(`/calendars/${calendar._id}/entries`)
       .send({
-        calendarId: calendar._id,
         creatorId: "id of creator of cosmic party",
         title: "Dinner party at Le Louvre",
         allDay: true,
@@ -92,9 +90,8 @@ describe("GET /calendars/:id/entries?start=<start-time>&end=<end-time>", () => {
     });
 
     await supertest(app)
-      .post("/calendars/:id/entries")
+      .post(`/calendars/${calendar._id}/entries`)
       .send({
-        calendarId: calendar._id,
         creatorId: "id of creator of cosmic party",
         title: "Dance party at the Guggenheim",
         allDay: true,
@@ -105,7 +102,7 @@ describe("GET /calendars/:id/entries?start=<start-time>&end=<end-time>", () => {
       .expect(201);
 
     await supertest(app)
-      .post("/calendars/:id/entries")
+      .post(`/calendars/${calendar._id}/entries`)
       .send({
         calendarId: calendar._id,
         creatorId: "id of creator of cosmic party",
@@ -118,7 +115,7 @@ describe("GET /calendars/:id/entries?start=<start-time>&end=<end-time>", () => {
       .expect(201);
 
     await supertest(app)
-      .post("/calendars/:id/entries")
+      .post(`/calendars/${calendar._id}/entries`)
       .send({
         calendarId: calendar._id,
         creatorId: "id of creator of cosmic party",
@@ -159,7 +156,7 @@ describe("GET /calendars/:id/entries?start=<start-time>&end=<end-time>", () => {
     });
 
     await supertest(app)
-      .post("/calendars/:id/entries")
+      .post(`/calendars/${calendar._id}/entries`)
       .send({
         calendarId: calendar._id,
         creatorId: "id of creator of cosmic party",
