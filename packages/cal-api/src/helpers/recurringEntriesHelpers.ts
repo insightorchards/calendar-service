@@ -1,15 +1,24 @@
-import { CalendarEntry } from "../models/calendarEntry";
-import {type EntryExceptionType, RecurringEntryType} from "../types"
-import { EntryException } from "../models/entryException";
-import { addMillisecondsToDate, dateMinusMinutes, datePlusMinutes, getMillisecondsBetween, getTimeFromDate, setTimeForDate } from "./dateHelpers";
+import { defaultTo } from "ramda";
 import { RRule, RRuleSet, rrulestr } from "rrule";
-import { FREQUENCY_MAPPING } from "../controllers/calendar";
+import { FREQUENCY_MAPPING } from "../controllers/calendarEntries_old";
+import { CalendarEntry } from "../models/calendarEntryOld";
+import { EntryException } from "../models/entryException";
+import { RecurringEntryType, type EntryExceptionType } from "../types";
+import {
+  addMillisecondsToDate,
+  dateMinusMinutes,
+  datePlusMinutes,
+  getMillisecondsBetween,
+  getTimeFromDate,
+  setTimeForDate,
+} from "./dateHelpers";
 
-export const expandModifiedEntryException = async (
+export const expandModifiedEntryException = (
   entryException: EntryExceptionType,
-  parentCalendarEntry: RecurringEntryType,
+  parentCalendarEntry: RecurringEntryType
 ) => {
   return {
+    id: parentCalendarEntry._id,
     _id: parentCalendarEntry._id,
     title: entryException.title,
     description: entryException.description,
@@ -35,12 +44,10 @@ export const getExpandedEntryExceptions = async (calendarEntry, start, end) => {
     .where("startTimeUtc")
     .lt(end);
 
-  const promises = modifiedExceptions.map(async (exception) => {
+  return modifiedExceptions.map(exception => {
     return expandModifiedEntryException(exception, calendarEntry);
   });
-
-  return await Promise.all(promises);
-}
+};
 
 export const addDeletedDatesToRuleSet = async (ruleSet, calendarEntryId) => {
   const deletedExceptions = await EntryException.find({
@@ -48,30 +55,39 @@ export const addDeletedDatesToRuleSet = async (ruleSet, calendarEntryId) => {
     deleted: true,
   });
 
-  deletedExceptions.forEach((exception) => {
+  deletedExceptions.forEach(exception => {
     ruleSet.exdate(exception.startTimeUtc);
   });
-}
+};
 
-export const findMatchingModifiedExceptions = async (start, parentCalendarEntry) => {
+export const findMatchingModifiedExceptions = async (
+  start,
+  parentCalendarEntry
+) => {
   const startDate = new Date(start as string);
   const oneMinBefore = dateMinusMinutes(startDate, 1);
   const oneMinAfter = datePlusMinutes(startDate, 1);
   return await EntryException.find({
     entryId: parentCalendarEntry._id,
     modified: true,
-  })
-    .where("startTimeUtc")
-    .gte(oneMinBefore)
-    .where("startTimeUtc")
-    .lt(oneMinAfter);
+    startTimeUtc: { $gte: oneMinBefore, $lt: oneMinAfter },
+  });
 };
 
-export const getExpandedRecurringEntries = (ruleSet, calendarEntry, start, end, duration) => {
+export const getExpandedRecurringEntries = (
+  ruleSet,
+  calendarEntry,
+  start,
+  end,
+  duration
+) => {
   const recurrences = ruleSet.between(new Date(start), new Date(end));
 
-  return recurrences.map((date) => {
+  return recurrences.map(date => {
     return {
+      // ⚠️ TODO: build CalendarEntry document via model so that
+      // we can leverage the built in schema validations
+      id: calendarEntry._id,
       _id: calendarEntry._id,
       eventId: calendarEntry.eventId,
       creatorId: calendarEntry.creatorId,
@@ -86,25 +102,24 @@ export const getExpandedRecurringEntries = (ruleSet, calendarEntry, start, end, 
       recurrenceEndsUtc: calendarEntry.recurrenceEndsUtc,
     };
   });
-}
+};
 
 export const getRecurringEntriesWithinRange = async (start, end) => {
-  const recurringEntriesBeginsWithin: RecurringEntryType[] =
-  await CalendarEntry.find()
+  const recurringEntriesBeginsWithin = await CalendarEntry.find()
     .where("recurring")
     .equals(true)
     .where("startTimeUtc")
     .gte(start)
     .where("startTimeUtc")
     .lt(end);
-  const recurringEntriesBeginsBefore: RecurringEntryType[] =
-    await CalendarEntry.find()
-      .where("recurring")
-      .equals(true)
-      .where("startTimeUtc")
-      .lt(start)
-      .where("recurrenceEndsUtc")
-      .gt(start);
+
+  const recurringEntriesBeginsBefore = await CalendarEntry.find()
+    .where("recurring")
+    .equals(true)
+    .where("startTimeUtc")
+    .lt(start)
+    .where("recurrenceEndsUtc")
+    .gt(start);
 
   const allRecurringEntries = [
     ...recurringEntriesBeginsWithin,
@@ -116,27 +131,38 @@ export const getRecurringEntriesWithinRange = async (start, end) => {
     const expandedEntries = await expandRecurringEntry(
       recurringEntry,
       start,
-      end,
+      end
     );
 
     allRecurrences.push(...expandedEntries);
   }
-  return allRecurrences
-}
+  return allRecurrences;
+};
 
 export const expandRecurringEntry = async (calendarEntry, start, end) => {
   const duration = getMillisecondsBetween(
     calendarEntry.startTimeUtc,
-    calendarEntry.endTimeUtc,
+    calendarEntry.endTimeUtc
   );
   const rule = rrulestr(calendarEntry.recurrencePattern);
   const rruleSet = new RRuleSet();
   rruleSet.rrule(rule);
 
-  await addDeletedDatesToRuleSet(rruleSet, calendarEntry._id)
+  await addDeletedDatesToRuleSet(rruleSet, calendarEntry._id);
 
-  const expandedRecurringEntries = getExpandedRecurringEntries(rruleSet, calendarEntry, start, end, duration)
-  const expandedExceptionEntries = await getExpandedEntryExceptions(calendarEntry, start, end)
+  const expandedRecurringEntries = getExpandedRecurringEntries(
+    rruleSet,
+    calendarEntry,
+    start,
+    end,
+    duration
+  );
+
+  const expandedExceptionEntries = await getExpandedEntryExceptions(
+    calendarEntry,
+    start,
+    end
+  );
 
   return expandedRecurringEntries.concat(expandedExceptionEntries);
 };
@@ -144,7 +170,7 @@ export const expandRecurringEntry = async (calendarEntry, start, end) => {
 export const handleRecurringEntryDeletion = async (entryToDelete, start) => {
   const existingModifiedExceptions = await findMatchingModifiedExceptions(
     start,
-    entryToDelete,
+    entryToDelete
   );
   if (existingModifiedExceptions.length > 0) {
     existingModifiedExceptions[0].remove();
@@ -156,7 +182,7 @@ export const handleRecurringEntryDeletion = async (entryToDelete, start) => {
       startTimeUtc: start,
     });
   }
-}
+};
 
 export const updateExceptionDetails = (exception, data) => {
   exception.title = data.title;
@@ -166,10 +192,10 @@ export const updateExceptionDetails = (exception, data) => {
   exception.startTimeUtc = data.startTimeUtc;
   exception.endTimeUtc = data.endTimeUtc;
   exception.save();
-  return exception  
-}
+  return exception;
+};
 
-export const updateRecurrenceRule = async (entry) => {
+export const updateRecurrenceRule = async entry => {
   const rule = new RRule({
     freq: FREQUENCY_MAPPING[entry.frequency],
     dtstart: entry.startTimeUtc,
@@ -177,7 +203,7 @@ export const updateRecurrenceRule = async (entry) => {
   });
   entry.recurrencePattern = rule.toString();
   await entry.save();
-}
+};
 
 export const createEntryException = async (entry, data) => {
   await EntryException.create({
@@ -191,71 +217,85 @@ export const createEntryException = async (entry, data) => {
     deleted: false,
     modified: true,
     entryId: entry._id,
-    startTimeUtc: data.startTimeUtc,
-    title: data.title,
-    description: data.description,
-    allDay: data.allDay,
-    endTimeUtc: data.endTimeUtc,
+    startTimeUtc: defaultTo(entry.startTimeUtc, data.startTimeUtc),
+    title: defaultTo(entry.title, data.title),
+    description: defaultTo(entry.description, data.description),
+    allDay: defaultTo(entry.allDay, data.allDay),
+    endTimeUtc: defaultTo(entry.endTimeUtc, data.endTimeUtc),
   });
-}
+};
 
-export const updateRelevantFieldsOnSeries = async (entry, data) => {
-  const {
-    updatedStartUtc,
-    updatedEndUtc
-  } = calculateNewStartAndEnd(entry, data.startTimeUtc, data.endTimeUtc)
-
-  // The following are the only fields that are allowed to be edited on a recurring series
-  entry.startTimeUtc = updatedStartUtc
-  entry.endTimeUtc = updatedEndUtc
-  entry.title = data.title
-  entry.description = data.description
-  entry.recurrenceEndsUtc = data.recurrenceEndsUtc
-  entry.frequency = data.frequency
-  entry.allDay = data.allDay
-  await entry.save()
-  await updateRecurrenceRule(entry)
-  return entry
-}
-
-const calculateNewStartAndEnd = (originalEntry, newStart, newEnd) => {
-  const {hours: newStartHours, minutes: newStartMinutes} = getTimeFromDate(newStart)
-  const {hours: newEndHours, minutes: newEndMinutes} = getTimeFromDate(newEnd)
-
-  const updatedStartUtc = setTimeForDate(originalEntry.startTimeUtc, newStartHours, newStartMinutes)
-  const updatedEndUtc = setTimeForDate(originalEntry.endTimeUtc, newEndHours, newEndMinutes)
-
-  return {
-    updatedStartUtc,
-    updatedEndUtc
+export const updateRelevantFieldsOnSeries = async (entryToUpdate, data) => {
+  if (data.startTimeUtc) {
+    const { hours, minutes } = getTimeFromDate(data.startTimeUtc);
+    entryToUpdate.startTimeUtc = setTimeForDate(
+      entryToUpdate.startTimeUtc,
+      hours,
+      minutes
+    );
   }
-}
 
-export const updateEntryExceptionsForEntry = async (entry) => {
+  if (data.endTimeUtc) {
+    const { hours, minutes } = getTimeFromDate(data.endTimeUtc);
+    entryToUpdate.endTimeUtc = setTimeForDate(
+      entryToUpdate.endTimeUtc,
+      hours,
+      minutes
+    );
+  }
+
+  if (data.title) entryToUpdate.title = data.title;
+  if (data.description) entryToUpdate.description = data.description;
+  if (data.recurrenceEndsUtc)
+    entryToUpdate.recurrenceEndsUtc = data.recurrenceEndsUtc;
+  if (data.frequency) entryToUpdate.frequency = data.frequency;
+  if (data.allDay) entryToUpdate.allDay = data.allDay;
+  await entryToUpdate.save();
+  await updateRecurrenceRule(entryToUpdate);
+  return entryToUpdate;
+};
+
+export const updateEntryExceptionsForEntry = async entry => {
   const modifiedEntryExceptions = await EntryException.find({
     entryId: entry._id,
     modified: true,
-  })
+  });
 
-  const {hours: newStartHours, minutes: newStartMinutes} = getTimeFromDate(entry.startTimeUtc)
-  const {hours: newEndHours, minutes: newEndMinutes} = getTimeFromDate(entry.endTimeUtc)
+  const { hours: newStartHours, minutes: newStartMinutes } = getTimeFromDate(
+    entry.startTimeUtc
+  );
+  const { hours: newEndHours, minutes: newEndMinutes } = getTimeFromDate(
+    entry.endTimeUtc
+  );
 
   for (const exception of modifiedEntryExceptions) {
-    exception.title = entry.title
-    exception.description = entry.description
-    exception.allDay = entry.allDay
-    exception.startTimeUtc = setTimeForDate(exception.startTimeUtc, newStartHours, newStartMinutes)
-    exception.endTimeUtc = setTimeForDate(exception.endTimeUtc, newEndHours, newEndMinutes)
-    await exception.save()
+    exception.title = entry.title;
+    exception.description = entry.description;
+    exception.allDay = entry.allDay;
+    exception.startTimeUtc = setTimeForDate(
+      exception.startTimeUtc,
+      newStartHours,
+      newStartMinutes
+    );
+    exception.endTimeUtc = setTimeForDate(
+      exception.endTimeUtc,
+      newEndHours,
+      newEndMinutes
+    );
+    await exception.save();
   }
 
   const deletedEntryExceptions = await EntryException.find({
     entryId: entry._id,
     deleted: true,
-  })
+  });
 
   for (const exception of deletedEntryExceptions) {
-    exception.startTimeUtc = setTimeForDate(exception.startTimeUtc, newStartHours, newStartMinutes)
-    await exception.save()
+    exception.startTimeUtc = setTimeForDate(
+      exception.startTimeUtc,
+      newStartHours,
+      newStartMinutes
+    );
+    await exception.save();
   }
-}
+};

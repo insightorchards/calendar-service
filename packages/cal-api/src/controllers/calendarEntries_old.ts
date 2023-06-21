@@ -1,25 +1,29 @@
-import { Request, Response, NextFunction } from "express";
-import { CalendarEntry } from "../models/calendarEntry";
-import { EntryException } from "../models/entryException";
-import { type CalendarEntryType, type NonRecurringEntryType, type RecurringEntryType, } from "../types"
-import {
-  dayAfter,
-  dateMinusMinutes,
-  datePlusMinutes,
-} from "../helpers/dateHelpers";
+import { NextFunction, Request, Response } from "express";
 import { RRule } from "rrule";
 import {
+  dateMinusMinutes,
+  datePlusMinutes,
+  dayAfter,
+} from "../helpers/dateHelpers";
+import {
+  createEntryException,
   expandModifiedEntryException,
+  expandRecurringEntry,
   findMatchingModifiedExceptions,
   getRecurringEntriesWithinRange,
-  expandRecurringEntry,
   handleRecurringEntryDeletion,
-  updateExceptionDetails,
-  createEntryException,
-  updateRelevantFieldsOnSeries,
   updateEntryExceptionsForEntry,
-  updateRecurrenceRule
+  updateExceptionDetails,
+  updateRecurrenceRule,
+  updateRelevantFieldsOnSeries,
 } from "../helpers/recurringEntriesHelpers";
+import { CalendarEntry } from "../models/calendarEntryOld";
+import {
+  EntryExceptionType,
+  type CalendarEntryType,
+  type NonRecurringEntryType,
+  type RecurringEntryType,
+} from "../types";
 
 export const FREQUENCY_MAPPING = {
   monthly: RRule.MONTHLY,
@@ -27,14 +31,14 @@ export const FREQUENCY_MAPPING = {
   daily: RRule.DAILY,
 };
 
-const isRecurringEntry = (entry) => {
+const isRecurringEntry = entry => {
   return (entry as RecurringEntryType).recurring === true;
 };
 
 export const seedDatabaseWithEntry = async (
   _req: Request,
   res: Response,
-  _next: NextFunction,
+  _next: NextFunction
 ) => {
   const today = new Date();
   await CalendarEntry.insertMany([
@@ -74,14 +78,14 @@ export const seedDatabaseWithEntry = async (
 };
 
 export const createCalendarEntry = async (
-  req: Request,
+  req: Request<{}, {}, CalendarEntryType>,
   res: Response,
-  _next: NextFunction,
+  _next: NextFunction
 ) => {
   try {
-    const entry = await CalendarEntry.create(req.body as CalendarEntryType);
+    const entry = await CalendarEntry.create(req.body);
     if (isRecurringEntry(entry)) {
-      await updateRecurrenceRule(entry)
+      await updateRecurrenceRule(entry);
     }
     res.status(201).json(entry);
   } catch (err) {
@@ -93,19 +97,24 @@ export const createCalendarEntry = async (
 export const getCalendarEntries = async (
   req: Request,
   res: Response,
-  _next: NextFunction,
+  _next: NextFunction
 ) => {
   try {
     const { start, end } = req.query;
-    const nonRecurringEntries: NonRecurringEntryType[] = await CalendarEntry.find()
-      .where("recurring")
-      .equals(false)
-      .where("startTimeUtc")
-      .gte(start)
-      .where("endTimeUtc")
-      .lte(end);
+    const findSpec: {
+      recurring: boolean;
+      startTimeUtc?: object;
+      endTimeUtc?: object;
+    } = {
+      recurring: false,
+    };
 
-    const allRecurrences = await getRecurringEntriesWithinRange(start, end)
+    if (start) findSpec.startTimeUtc = { $gte: start };
+    if (end) findSpec.endTimeUtc = { $lte: end };
+    const nonRecurringEntries: NonRecurringEntryType[] =
+      await CalendarEntry.find(findSpec);
+
+    const allRecurrences = await getRecurringEntriesWithinRange(start, end);
 
     const allEntries = [...nonRecurringEntries, ...allRecurrences];
 
@@ -119,25 +128,33 @@ export const getCalendarEntries = async (
 export const getCalendarEntry = async (
   req: Request,
   res: Response,
-  _next: NextFunction,
+  _next: NextFunction
 ) => {
   const { id } = req.params;
   const { start } = req.query;
   try {
     const entry = await CalendarEntry.findById(id);
-    if (isRecurringEntry(entry)) {
+    if (entry === null) {
+      res.status(404);
+      res.send({ message: `no calendar entry found with id ${id}` });
+      return;
+    }
+    if (isRecurringEntry(entry) && start) {
       const startDate = new Date(start as string);
       const oneMinBefore = dateMinusMinutes(startDate, 1);
       const oneMinAfter = datePlusMinutes(startDate, 1);
       const expandedEntry = await expandRecurringEntry(
         entry,
         oneMinBefore,
-        oneMinAfter,
+        oneMinAfter
       );
       if (expandedEntry.length > 0) {
         res.status(200).json(expandedEntry[0]);
       } else {
-        res.status(200).json({});
+        res.status(404);
+        res.send({
+          message: `no calendar entry found with id ${id} and startTime ${start}`,
+        });
       }
     } else {
       res.status(200).json(entry);
@@ -151,7 +168,7 @@ export const getCalendarEntry = async (
 export const deleteCalendarEntry = async (
   req: Request,
   res: Response,
-  _next: NextFunction,
+  _next: NextFunction
 ) => {
   const { id } = req.params;
   const { start, applyToSeries } = req.query;
@@ -163,7 +180,7 @@ export const deleteCalendarEntry = async (
     }
 
     if (isRecurringEntry(entryToDelete) && applyToSeries === "false") {
-      handleRecurringEntryDeletion(entryToDelete, start)
+      handleRecurringEntryDeletion(entryToDelete, start);
     } else {
       entryToDelete.remove();
     }
@@ -177,35 +194,44 @@ export const deleteCalendarEntry = async (
 export const updateCalendarEntry = async (
   req: Request,
   res: Response,
-  _next: NextFunction,
+  _next: NextFunction
 ) => {
   const { id } = req.params;
   const { start, applyToSeries } = req.query;
   try {
     const entryToUpdate = await CalendarEntry.findById(id);
     if (isRecurringEntry(entryToUpdate) && applyToSeries === "true") {
-      const updatedEntry = await updateRelevantFieldsOnSeries(entryToUpdate, req.body as CalendarEntryType)
-      await updateEntryExceptionsForEntry(updatedEntry)
+      const updatedEntry = await updateRelevantFieldsOnSeries(
+        entryToUpdate,
+        req.body as CalendarEntryType
+      );
+      await updateEntryExceptionsForEntry(updatedEntry);
       res.status(200).json(updatedEntry);
     } else if (isRecurringEntry(entryToUpdate) && applyToSeries === "false") {
       const existingModifiedExceptions = await findMatchingModifiedExceptions(
         start,
-        entryToUpdate,
+        entryToUpdate
       );
       if (existingModifiedExceptions.length > 0) {
         const exceptionToUpdate = existingModifiedExceptions[0];
-        const updatedException = updateExceptionDetails(exceptionToUpdate, req.body)
+        const updatedException = updateExceptionDetails(
+          exceptionToUpdate,
+          req.body
+        );
         const updatedEntry = expandModifiedEntryException(
           updatedException,
-          entryToUpdate,
+          entryToUpdate as RecurringEntryType
         );
         res.status(200).json(updatedEntry);
       } else {
-        const updatedEntryException = await createEntryException(entryToUpdate, { ...req.body, start })
+        const updatedEntryException = await createEntryException(
+          entryToUpdate,
+          { ...req.body, start }
+        );
 
         const updatedEntry = expandModifiedEntryException(
-          updatedEntryException,
-          entryToUpdate,
+          updatedEntryException as EntryExceptionType,
+          entryToUpdate as RecurringEntryType
         );
         res.status(200).json(updatedEntry);
       }
@@ -213,7 +239,7 @@ export const updateCalendarEntry = async (
       const updatedEntry = await CalendarEntry.findByIdAndUpdate(
         id,
         req.body as CalendarEntryType,
-        { returnDocument: "after" },
+        { returnDocument: "after" }
       );
       res.status(200).json(updatedEntry);
     }

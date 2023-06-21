@@ -2,57 +2,12 @@ import mongoose from "mongoose";
 import { withIdVirtualField } from "../plugins/withIdVirtualField";
 import { EntryException } from "./entryException";
 
-export type CalendarEntryType = NonRecurringEntryType | RecurringEntryType;
-
-export type EntryExceptionType = {
-  deleted: boolean;
-  modified: boolean;
-  entryId: mongoose.Schema.Types.ObjectId;
-  title: string;
-  description?: string;
-  allDay: boolean;
-  startTimeUtc: Date;
-  endTimeUtc: Date;
-  createdAt: Date;
-  updatedAt: Date;
-};
-
-export type NonRecurringEntryType = {
-  _id: mongoose.Types.ObjectId;
-  calendarId: string;
-  creatorId: string;
-  title: string;
-  description?: string;
-  allDay: boolean;
-  recurring: boolean;
-  startTimeUtc: Date;
-  endTimeUtc: Date;
-  createdAt: Date;
-  updatedAt: Date;
-};
-
-export type RecurringEntryType = {
-  _id: mongoose.Types.ObjectId;
-  calendarId: string;
-  creatorId: string;
-  title: string;
-  description?: string;
-  allDay: boolean;
-  recurring: boolean;
-  startTimeUtc: Date;
-  endTimeUtc: Date;
-  frequency: string;
-  recurrenceEndsUtc: Date;
-  recurrencePattern: string;
-  createdAt: Date;
-  updatedAt: Date;
-};
-
 const calendarEntrySchema = new mongoose.Schema(
   {
-    calendarId: {
+    // ⚠️ TODO: This field should be deprecated. eventId reference is stored on the calendar itself
+    eventId: {
       type: String,
-      required: true,
+      required: false,
     },
     creatorId: {
       type: String,
@@ -108,7 +63,7 @@ calendarEntrySchema.pre("remove", { document: true }, function (next: any) {
 });
 
 const CalendarEntry = mongoose.model(
-  "CalendarEntry",
+  "CalendarEntryOld",
   calendarEntrySchema,
   "calendarEntries"
 );
