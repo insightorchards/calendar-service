@@ -802,7 +802,7 @@ describe("PATCH / entry?start=<start-time>&applyToSeries=<boolean>", () => {
 
     const updatedRule = new RRule({
       freq: RRule.MONTHLY,
-      dtstart: janFourth1600,
+      dtstart: febFourth1600,
       until: newRecurrenceEnds,
     });
 
@@ -810,8 +810,8 @@ describe("PATCH / entry?start=<start-time>&applyToSeries=<boolean>", () => {
       expect.objectContaining({
         title: "Listen to Country Roads",
         description: "by John Denver",
-        startTimeUtc: janFourth1600,
-        endTimeUtc: dayAfter(janFourth1600),
+        startTimeUtc: febFourth1600,
+        endTimeUtc: dayAfter(febFourth1600),
         recurrenceEndsUtc: newRecurrenceEnds,
         recurrencePattern: updatedRule.toString(),
       })

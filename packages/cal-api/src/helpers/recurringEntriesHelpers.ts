@@ -225,36 +225,6 @@ export const createEntryException = async (entry, data) => {
   });
 };
 
-export const updateRelevantFieldsOnSeries = async (entryToUpdate, data) => {
-  if (data.startTimeUtc) {
-    const { hours, minutes } = getTimeFromDate(data.startTimeUtc);
-    entryToUpdate.startTimeUtc = setTimeForDate(
-      entryToUpdate.startTimeUtc,
-      hours,
-      minutes
-    );
-  }
-
-  if (data.endTimeUtc) {
-    const { hours, minutes } = getTimeFromDate(data.endTimeUtc);
-    entryToUpdate.endTimeUtc = setTimeForDate(
-      entryToUpdate.endTimeUtc,
-      hours,
-      minutes
-    );
-  }
-
-  if (data.title) entryToUpdate.title = data.title;
-  if (data.description) entryToUpdate.description = data.description;
-  if (data.recurrenceEndsUtc)
-    entryToUpdate.recurrenceEndsUtc = data.recurrenceEndsUtc;
-  if (data.frequency) entryToUpdate.frequency = data.frequency;
-  if (data.allDay) entryToUpdate.allDay = data.allDay;
-  await entryToUpdate.save();
-  await updateRecurrenceRule(entryToUpdate);
-  return entryToUpdate;
-};
-
 export const updateEntryExceptionsForEntry = async entry => {
   const modifiedEntryExceptions = await EntryException.find({
     entryId: entry._id,

@@ -15,7 +15,6 @@ import {
   updateEntryExceptionsForEntry,
   updateExceptionDetails,
   updateRecurrenceRule,
-  updateRelevantFieldsOnSeries,
 } from "../helpers/recurringEntriesHelpers";
 import { CalendarEntry } from "../models/calendarEntryOld";
 import {
@@ -201,10 +200,10 @@ export const updateCalendarEntry = async (
   try {
     const entryToUpdate = await CalendarEntry.findById(id);
     if (isRecurringEntry(entryToUpdate) && applyToSeries === "true") {
-      const updatedEntry = await updateRelevantFieldsOnSeries(
-        entryToUpdate,
-        req.body as CalendarEntryType
-      );
+      const updatedEntry = await CalendarEntry.findByIdAndUpdate(id, req.body, {
+        returnDocument: "after",
+      });
+      await updateRecurrenceRule(updatedEntry);
       await updateEntryExceptionsForEntry(updatedEntry);
       res.status(200).json(updatedEntry);
     } else if (isRecurringEntry(entryToUpdate) && applyToSeries === "false") {
