@@ -74,14 +74,27 @@ export const findMatchingModifiedExceptions = async (
   });
 };
 
-export const getExpandedRecurringEntries = (
+type GetExpandedRecurringEntries = (
+  ruleSet: RRuleSet,
+  calendarEntry: any,
+  start: string,
+  end: string,
+  duration: number,
+  inclusive?: boolean
+) => Array<any>;
+export const getExpandedRecurringEntries: GetExpandedRecurringEntries = (
   ruleSet,
   calendarEntry,
   start,
   end,
-  duration
+  duration,
+  inclusive = false
 ) => {
-  const recurrences = ruleSet.between(new Date(start), new Date(end));
+  const recurrences = ruleSet.between(
+    new Date(start),
+    new Date(end),
+    inclusive
+  );
 
   return recurrences.map(date => {
     return {
@@ -139,7 +152,12 @@ export const getRecurringEntriesWithinRange = async (start, end) => {
   return allRecurrences;
 };
 
-export const expandRecurringEntry = async (calendarEntry, start, end) => {
+export const expandRecurringEntry = async (
+  calendarEntry,
+  start,
+  end,
+  inclusive = false
+) => {
   const duration = getMillisecondsBetween(
     calendarEntry.startTimeUtc,
     calendarEntry.endTimeUtc
@@ -155,7 +173,8 @@ export const expandRecurringEntry = async (calendarEntry, start, end) => {
     calendarEntry,
     start,
     end,
-    duration
+    duration,
+    inclusive
   );
 
   const expandedExceptionEntries = await getExpandedEntryExceptions(
