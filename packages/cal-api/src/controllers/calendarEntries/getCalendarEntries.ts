@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { map, reduce } from "ramda";
+import { concat, map, reduce } from "ramda";
 import {
   addMillisecondsToDate,
   substractMillisecondsFromDate,
@@ -17,34 +17,58 @@ const getCalendarEntries = async (
     const { id: calendarId } = req.params;
     const { start, end } = req.query;
 
-    const findSpec: {
+    if (!start || !end) {
+      res.status(400);
+      res.send({ message: "Expected start, end to be passed" });
+      return;
+    }
+
+    const entriesWithinRangeFindSpec: {
+      calendarId: string;
+      startTimeUtc: object;
+    } = { calendarId, startTimeUtc: { $gte: start, $lte: end } };
+
+    const entriesWithinRange: CalendarEntryType[] = await CalendarEntry.find(
+      entriesWithinRangeFindSpec
+    );
+
+    const recurringEntriesBeforeRangeStartFindSpec: {
       calendarId: string;
       startTimeUtc?: object;
       endTimeUtc?: object;
-    } = { calendarId };
+      recurring: boolean;
+    } = {
+      calendarId,
+      recurring: true,
+      startTimeUtc: { $lt: start },
+      endTimeUtc: {
+        $gt: start,
+      },
+    };
 
-    if (start) findSpec.startTimeUtc = { $gte: start };
-    if (end) findSpec.endTimeUtc = { $lte: end };
+    const recurringEntriesBeforeRange: CalendarEntryType[] =
+      await CalendarEntry.find(recurringEntriesBeforeRangeStartFindSpec);
 
-    const entries: CalendarEntryType[] = await CalendarEntry.find(findSpec);
     const expandedEntries = await Promise.all(
       map(async (entry: CalendarEntryType) => {
         if (entry.recurring) {
           const recurringEntries = await expandRecurringEntry(
             entry,
-            substractMillisecondsFromDate(start, 1),
+            substractMillisecondsFromDate(entry.startTimeUtc, 1),
             addMillisecondsToDate(end, 1)
           );
           return [...recurringEntries];
         }
         return [entry];
-      }, entries)
+      }, concat(entriesWithinRange, recurringEntriesBeforeRange))
     );
+
     const accumulatedEntries = reduce(
       (acc, entries) => acc.concat(entries),
       [],
       expandedEntries
     );
+
     res.status(200).json(accumulatedEntries);
   } catch (err) {
     res.status(400);
