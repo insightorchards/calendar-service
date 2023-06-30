@@ -148,6 +148,42 @@ describe("GET /calendars/:id/entries?start=<start-time>&end=<end-time>", () => {
         })
       );
     });
+
+    it("gets all calendar entries that starts before the range but ends after the range start", async () => {
+      const calendar = await Calendar.findOne({}).sort({
+        $natural: -1,
+      });
+
+      await supertest(app)
+        .post(`/calendars/${calendar._id}/entries`)
+        .send({
+          creatorId: "id of creator of cosmic party",
+          title: "Dance party at the Guggenheim",
+          allDay: true,
+          recurring: false,
+          startTimeUtc: new Date("2023-05-30T23:00:00.000Z"),
+          endTimeUtc: new Date("2023-06-01T04:00:00.000Z"),
+        })
+        .expect(201);
+
+      const response = await supertest(app)
+        .get(
+          `/calendars/${calendar._id}/entries?start=2023-06-01T00:00:00.000Z&end=2023-06-01T23:59:59.999Z`
+        )
+        .send()
+        .expect(200);
+
+      const entries = JSON.parse(response.text);
+      expect(entries.length).toEqual(1);
+
+      expect(entries[0]).toEqual(
+        expect.objectContaining({
+          title: "Dance party at the Guggenheim",
+          startTimeUtc: "2023-05-30T23:00:00.000Z",
+          endTimeUtc: "2023-06-01T04:00:00.000Z",
+        })
+      );
+    });
   });
 
   describe("fetching recurring entries", () => {

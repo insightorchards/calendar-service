@@ -1,12 +1,11 @@
 import { NextFunction, Request, Response } from "express";
-import { concat, map, reduce } from "ramda";
+import { andThen, bind, map, pipe, reduce } from "ramda";
 import {
   getMillisecondsBetween,
   substractMillisecondsFromDate,
 } from "../../helpers/dateHelpers";
 import { expandRecurringEntry } from "../../helpers/recurringEntriesHelpers";
 import { CalendarEntry } from "../../models/calendarEntry";
-import { CalendarEntryType, RecurringEntryType } from "../../types";
 
 const getCalendarEntries = async (
   req: Request,
@@ -23,16 +22,41 @@ const getCalendarEntries = async (
       return;
     }
 
-    const entriesWithinRangeFindSpec = {
+    const nonRecurringEntriesSpec = {
       calendarId,
+      recurring: false,
+      $or: [
+        {
+          startTimeUtc: { $gte: start, $lte: end },
+        },
+        {
+          startTimeUtc: { $lt: start },
+          endTimeUtc: { $gt: start },
+        },
+      ],
+    };
+
+    const nonRecurringEntries = await CalendarEntry.find(
+      nonRecurringEntriesSpec
+    );
+
+    const recurringEntriesWithinRangeSpec = {
+      calendarId,
+      recurring: true,
       startTimeUtc: { $gte: start, $lte: end },
     };
 
-    const entriesWithinRange: CalendarEntryType[] = await CalendarEntry.find(
-      entriesWithinRangeFindSpec
+    const recurringEntriesWithinRange = await CalendarEntry.find(
+      recurringEntriesWithinRangeSpec
+    ).then(
+      pipe(
+        map(entry => expandRecurringEntry(entry, start, end, true)),
+        bind(Promise.all, Promise),
+        andThen(reduce((acc, entries) => acc.concat(entries), []))
+      )
     );
 
-    const recurringEntriesBeforeRangeStartFindSpec = {
+    const recurringEntriesBeforeRangeSpec = {
       calendarId,
       recurring: true,
       startTimeUtc: { $lt: start },
@@ -46,59 +70,51 @@ const getCalendarEntries = async (
       ],
     };
 
-    const recurringEntriesBeforeRange: CalendarEntryType[] =
-      await CalendarEntry.find(recurringEntriesBeforeRangeStartFindSpec);
-
-    const expandedEntries = await Promise.all(
-      map(async (entry: CalendarEntryType) => {
-        if (entry.recurring) {
+    const recurringEntriesBeforeRange = await CalendarEntry.find(
+      recurringEntriesBeforeRangeSpec
+    ).then(
+      pipe(
+        map(async entry => {
           if (
-            new Date(entry.startTimeUtc).valueOf() <
+            new Date(entry.endTimeUtc).valueOf() >=
             new Date(start as string).valueOf()
           ) {
-            if (
-              new Date(entry.endTimeUtc).valueOf() >=
+            const expandedRecurringEntries = await expandRecurringEntry(
+              entry,
+              start,
+              end
+            );
+            return [entry, ...expandedRecurringEntries];
+          } else if (
+            new Date(entry.endTimeUtc).valueOf() <
+              new Date(start as string).valueOf() &&
+            new Date(entry.recurrenceEndsUtc).valueOf() >=
               new Date(start as string).valueOf()
-            ) {
-              const expandedRecurringEntries = await expandRecurringEntry(
-                entry,
+          ) {
+            const expandedRecurringEntries = await expandRecurringEntry(
+              entry,
+              substractMillisecondsFromDate(
                 start,
-                end
-              );
-              return [entry, ...expandedRecurringEntries];
-            } else if (
-              new Date(entry.endTimeUtc).valueOf() <
-                new Date(start as string).valueOf() &&
-              new Date(
-                (entry as RecurringEntryType).recurrenceEndsUtc
-              ).valueOf() >= new Date(start as string).valueOf()
-            ) {
-              const expandedRecurringEntries = await expandRecurringEntry(
-                entry,
-                substractMillisecondsFromDate(
-                  start,
-                  getMillisecondsBetween(entry.startTimeUtc, entry.endTimeUtc)
-                ),
-                end
-              );
-              return expandedRecurringEntries;
-            }
-          } else {
-            return expandRecurringEntry(entry, start, end, true);
+                getMillisecondsBetween(entry.startTimeUtc, entry.endTimeUtc)
+              ),
+              end
+            );
+            return expandedRecurringEntries;
           }
-        } else {
-          return [entry];
-        }
-      }, concat(entriesWithinRange, recurringEntriesBeforeRange))
+          return [];
+        }),
+        bind(Promise.all, Promise),
+        andThen(reduce((acc, entries) => acc.concat(entries), []))
+      )
     );
 
-    const accumulatedEntries = reduce(
-      (acc, entries) => acc.concat(entries),
-      [],
-      expandedEntries
-    );
-
-    res.status(200).json(accumulatedEntries);
+    res
+      .status(200)
+      .json([
+        ...nonRecurringEntries,
+        ...recurringEntriesWithinRange,
+        ...recurringEntriesBeforeRange,
+      ]);
   } catch (err) {
     res.status(400);
     res.send({ message: err.message });
