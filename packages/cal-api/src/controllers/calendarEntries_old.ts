@@ -240,6 +240,10 @@ export const updateCalendarEntry = async (
         req.body as CalendarEntryType,
         { returnDocument: "after" }
       );
+
+      if (req.body.recurring) {
+        await updateRecurrenceRule(updatedEntry);
+      }
       res.status(200).json(updatedEntry);
     }
   } catch (err) {

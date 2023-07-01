@@ -615,6 +615,40 @@ describe("PATCH / entry?start=<start-time>&applyToSeries=<boolean>", () => {
     );
   });
 
+  it("edits an entry from non recurring to a recurring event", async () => {
+    const data = await CalendarEntry.create({
+      eventId: "123",
+      creatorId: "456",
+      title: "Evening strolling",
+      description: "ways to start a happy evening",
+      allDay: false,
+      recurring: false,
+      startTimeUtc: "2023-06-01T18:30:00.000Z",
+      endTimeUtc: "2023-06-01T19:30:00.000Z",
+    });
+
+    expect(data).not.toHaveProperty("recurrencepattern");
+
+    await supertest(app)
+      .patch(`/entries/${data._id}`)
+      .send({
+        recurring: true,
+        recurrenceEndTime: "2023-07-01T00:00:00.000Z",
+        frequency: "weekly",
+      })
+      .expect(200);
+
+    const editedEntry = await CalendarEntry.findById(data._id);
+    expect(editedEntry).toHaveProperty("recurrencePattern");
+
+    const response = await supertest(app)
+      .get(
+        "/entries?start=2023-06-01T00:00:00.000Z&end=2023-07-01T00:00:00.000Z"
+      )
+      .expect(200);
+    expect(response.body.length).toEqual(5);
+  });
+
   it("can edit a single instance of a recurring event", async () => {
     const { janFourth, oneYearLater, febFourth, febFifth, updatedEndDate } =
       generateRecurrenceData();
